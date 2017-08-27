@@ -1,0 +1,403 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.liwj.asem.dao.UserMapper">
+  <resultMap id="BaseResultMap" type="com.liwj.asem.model.User">
+    <constructor>
+      <idArg column="Id" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="username" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="college_id" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="grade_id" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="student_number" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="token" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="user_type" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="password" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="major_id" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="class_id" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="name" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="manage_college_id" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="manage_grade_id" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="mobile" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="email" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="api_token" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="expire" javaType="java.lang.Long" jdbcType="BIGINT" />
+    </constructor>
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    Id, username, college_id, grade_id, student_number, token, user_type, password, major_id, 
+    class_id, name, manage_college_id, manage_grade_id, mobile, email, api_token, expire
+  </sql>
+  <select id="selectByExample" parameterType="com.liwj.asem.model.UserExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from user
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from user
+    where Id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from user
+    where Id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.liwj.asem.model.UserExample">
+    delete from user
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.liwj.asem.model.User">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into user (username, college_id, grade_id, 
+      student_number, token, user_type, 
+      password, major_id, class_id, 
+      name, manage_college_id, manage_grade_id, 
+      mobile, email, api_token, 
+      expire)
+    values (#{username,jdbcType=VARCHAR}, #{collegeId,jdbcType=BIGINT}, #{gradeId,jdbcType=BIGINT}, 
+      #{studentNumber,jdbcType=VARCHAR}, #{token,jdbcType=VARCHAR}, #{userType,jdbcType=INTEGER}, 
+      #{password,jdbcType=VARCHAR}, #{majorId,jdbcType=BIGINT}, #{classId,jdbcType=BIGINT}, 
+      #{name,jdbcType=VARCHAR}, #{manageCollegeId,jdbcType=BIGINT}, #{manageGradeId,jdbcType=BIGINT}, 
+      #{mobile,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{apiToken,jdbcType=VARCHAR}, 
+      #{expire,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.liwj.asem.model.User">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into user
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="username != null">
+        username,
+      </if>
+      <if test="collegeId != null">
+        college_id,
+      </if>
+      <if test="gradeId != null">
+        grade_id,
+      </if>
+      <if test="studentNumber != null">
+        student_number,
+      </if>
+      <if test="token != null">
+        token,
+      </if>
+      <if test="userType != null">
+        user_type,
+      </if>
+      <if test="password != null">
+        password,
+      </if>
+      <if test="majorId != null">
+        major_id,
+      </if>
+      <if test="classId != null">
+        class_id,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="manageCollegeId != null">
+        manage_college_id,
+      </if>
+      <if test="manageGradeId != null">
+        manage_grade_id,
+      </if>
+      <if test="mobile != null">
+        mobile,
+      </if>
+      <if test="email != null">
+        email,
+      </if>
+      <if test="apiToken != null">
+        api_token,
+      </if>
+      <if test="expire != null">
+        expire,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="username != null">
+        #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="collegeId != null">
+        #{collegeId,jdbcType=BIGINT},
+      </if>
+      <if test="gradeId != null">
+        #{gradeId,jdbcType=BIGINT},
+      </if>
+      <if test="studentNumber != null">
+        #{studentNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="token != null">
+        #{token,jdbcType=VARCHAR},
+      </if>
+      <if test="userType != null">
+        #{userType,jdbcType=INTEGER},
+      </if>
+      <if test="password != null">
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="majorId != null">
+        #{majorId,jdbcType=BIGINT},
+      </if>
+      <if test="classId != null">
+        #{classId,jdbcType=BIGINT},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="manageCollegeId != null">
+        #{manageCollegeId,jdbcType=BIGINT},
+      </if>
+      <if test="manageGradeId != null">
+        #{manageGradeId,jdbcType=BIGINT},
+      </if>
+      <if test="mobile != null">
+        #{mobile,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null">
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="apiToken != null">
+        #{apiToken,jdbcType=VARCHAR},
+      </if>
+      <if test="expire != null">
+        #{expire,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.liwj.asem.model.UserExample" resultType="java.lang.Long">
+    select count(*) from user
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update user
+    <set>
+      <if test="record.id != null">
+        Id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.username != null">
+        username = #{record.username,jdbcType=VARCHAR},
+      </if>
+      <if test="record.collegeId != null">
+        college_id = #{record.collegeId,jdbcType=BIGINT},
+      </if>
+      <if test="record.gradeId != null">
+        grade_id = #{record.gradeId,jdbcType=BIGINT},
+      </if>
+      <if test="record.studentNumber != null">
+        student_number = #{record.studentNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="record.token != null">
+        token = #{record.token,jdbcType=VARCHAR},
+      </if>
+      <if test="record.userType != null">
+        user_type = #{record.userType,jdbcType=INTEGER},
+      </if>
+      <if test="record.password != null">
+        password = #{record.password,jdbcType=VARCHAR},
+      </if>
+      <if test="record.majorId != null">
+        major_id = #{record.majorId,jdbcType=BIGINT},
+      </if>
+      <if test="record.classId != null">
+        class_id = #{record.classId,jdbcType=BIGINT},
+      </if>
+      <if test="record.name != null">
+        name = #{record.name,jdbcType=VARCHAR},
+      </if>
+      <if test="record.manageCollegeId != null">
+        manage_college_id = #{record.manageCollegeId,jdbcType=BIGINT},
+      </if>
+      <if test="record.manageGradeId != null">
+        manage_grade_id = #{record.manageGradeId,jdbcType=BIGINT},
+      </if>
+      <if test="record.mobile != null">
+        mobile = #{record.mobile,jdbcType=VARCHAR},
+      </if>
+      <if test="record.email != null">
+        email = #{record.email,jdbcType=VARCHAR},
+      </if>
+      <if test="record.apiToken != null">
+        api_token = #{record.apiToken,jdbcType=VARCHAR},
+      </if>
+      <if test="record.expire != null">
+        expire = #{record.expire,jdbcType=BIGINT},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update user
+    set Id = #{record.id,jdbcType=BIGINT},
+      username = #{record.username,jdbcType=VARCHAR},
+      college_id = #{record.collegeId,jdbcType=BIGINT},
+      grade_id = #{record.gradeId,jdbcType=BIGINT},
+      student_number = #{record.studentNumber,jdbcType=VARCHAR},
+      token = #{record.token,jdbcType=VARCHAR},
+      user_type = #{record.userType,jdbcType=INTEGER},
+      password = #{record.password,jdbcType=VARCHAR},
+      major_id = #{record.majorId,jdbcType=BIGINT},
+      class_id = #{record.classId,jdbcType=BIGINT},
+      name = #{record.name,jdbcType=VARCHAR},
+      manage_college_id = #{record.manageCollegeId,jdbcType=BIGINT},
+      manage_grade_id = #{record.manageGradeId,jdbcType=BIGINT},
+      mobile = #{record.mobile,jdbcType=VARCHAR},
+      email = #{record.email,jdbcType=VARCHAR},
+      api_token = #{record.apiToken,jdbcType=VARCHAR},
+      expire = #{record.expire,jdbcType=BIGINT}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.liwj.asem.model.User">
+    update user
+    <set>
+      <if test="username != null">
+        username = #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="collegeId != null">
+        college_id = #{collegeId,jdbcType=BIGINT},
+      </if>
+      <if test="gradeId != null">
+        grade_id = #{gradeId,jdbcType=BIGINT},
+      </if>
+      <if test="studentNumber != null">
+        student_number = #{studentNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="token != null">
+        token = #{token,jdbcType=VARCHAR},
+      </if>
+      <if test="userType != null">
+        user_type = #{userType,jdbcType=INTEGER},
+      </if>
+      <if test="password != null">
+        password = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="majorId != null">
+        major_id = #{majorId,jdbcType=BIGINT},
+      </if>
+      <if test="classId != null">
+        class_id = #{classId,jdbcType=BIGINT},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="manageCollegeId != null">
+        manage_college_id = #{manageCollegeId,jdbcType=BIGINT},
+      </if>
+      <if test="manageGradeId != null">
+        manage_grade_id = #{manageGradeId,jdbcType=BIGINT},
+      </if>
+      <if test="mobile != null">
+        mobile = #{mobile,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null">
+        email = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="apiToken != null">
+        api_token = #{apiToken,jdbcType=VARCHAR},
+      </if>
+      <if test="expire != null">
+        expire = #{expire,jdbcType=BIGINT},
+      </if>
+    </set>
+    where Id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.liwj.asem.model.User">
+    update user
+    set username = #{username,jdbcType=VARCHAR},
+      college_id = #{collegeId,jdbcType=BIGINT},
+      grade_id = #{gradeId,jdbcType=BIGINT},
+      student_number = #{studentNumber,jdbcType=VARCHAR},
+      token = #{token,jdbcType=VARCHAR},
+      user_type = #{userType,jdbcType=INTEGER},
+      password = #{password,jdbcType=VARCHAR},
+      major_id = #{majorId,jdbcType=BIGINT},
+      class_id = #{classId,jdbcType=BIGINT},
+      name = #{name,jdbcType=VARCHAR},
+      manage_college_id = #{manageCollegeId,jdbcType=BIGINT},
+      manage_grade_id = #{manageGradeId,jdbcType=BIGINT},
+      mobile = #{mobile,jdbcType=VARCHAR},
+      email = #{email,jdbcType=VARCHAR},
+      api_token = #{apiToken,jdbcType=VARCHAR},
+      expire = #{expire,jdbcType=BIGINT}
+    where Id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

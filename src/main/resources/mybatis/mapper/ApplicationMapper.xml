@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.liwj.asem.dao.ApplicationMapper">
+  <resultMap id="BaseResultMap" type="com.liwj.asem.model.Application">
+    <constructor>
+      <idArg column="id" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="prize_id" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="scholarship_id" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="status" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="file_status" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="prize_status" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="user_id" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="create_date" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+    </constructor>
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.liwj.asem.model.Application">
+    <constructor>
+      <idArg column="id" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="prize_id" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="scholarship_id" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="status" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="file_status" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="prize_status" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="user_id" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="create_date" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <arg column="evaluation" javaType="java.lang.String" jdbcType="LONGVARCHAR" />
+    </constructor>
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, prize_id, scholarship_id, status, file_status, prize_status, user_id, create_date
+  </sql>
+  <sql id="Blob_Column_List">
+    evaluation
+  </sql>
+  <select id="selectByExampleWithBLOBs" parameterType="com.liwj.asem.model.ApplicationExample" resultMap="ResultMapWithBLOBs">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from application
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" parameterType="com.liwj.asem.model.ApplicationExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from application
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from application
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from application
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.liwj.asem.model.ApplicationExample">
+    delete from application
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.liwj.asem.model.Application">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into application (prize_id, scholarship_id, status, 
+      file_status, prize_status, user_id, 
+      create_date, evaluation)
+    values (#{prizeId,jdbcType=BIGINT}, #{scholarshipId,jdbcType=BIGINT}, #{status,jdbcType=INTEGER}, 
+      #{fileStatus,jdbcType=INTEGER}, #{prizeStatus,jdbcType=INTEGER}, #{userId,jdbcType=BIGINT}, 
+      #{createDate,jdbcType=TIMESTAMP}, #{evaluation,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.liwj.asem.model.Application">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into application
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="prizeId != null">
+        prize_id,
+      </if>
+      <if test="scholarshipId != null">
+        scholarship_id,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="fileStatus != null">
+        file_status,
+      </if>
+      <if test="prizeStatus != null">
+        prize_status,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="createDate != null">
+        create_date,
+      </if>
+      <if test="evaluation != null">
+        evaluation,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="prizeId != null">
+        #{prizeId,jdbcType=BIGINT},
+      </if>
+      <if test="scholarshipId != null">
+        #{scholarshipId,jdbcType=BIGINT},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="fileStatus != null">
+        #{fileStatus,jdbcType=INTEGER},
+      </if>
+      <if test="prizeStatus != null">
+        #{prizeStatus,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="evaluation != null">
+        #{evaluation,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.liwj.asem.model.ApplicationExample" resultType="java.lang.Long">
+    select count(*) from application
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update application
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.prizeId != null">
+        prize_id = #{record.prizeId,jdbcType=BIGINT},
+      </if>
+      <if test="record.scholarshipId != null">
+        scholarship_id = #{record.scholarshipId,jdbcType=BIGINT},
+      </if>
+      <if test="record.status != null">
+        status = #{record.status,jdbcType=INTEGER},
+      </if>
+      <if test="record.fileStatus != null">
+        file_status = #{record.fileStatus,jdbcType=INTEGER},
+      </if>
+      <if test="record.prizeStatus != null">
+        prize_status = #{record.prizeStatus,jdbcType=INTEGER},
+      </if>
+      <if test="record.userId != null">
+        user_id = #{record.userId,jdbcType=BIGINT},
+      </if>
+      <if test="record.createDate != null">
+        create_date = #{record.createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.evaluation != null">
+        evaluation = #{record.evaluation,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map">
+    update application
+    set id = #{record.id,jdbcType=BIGINT},
+      prize_id = #{record.prizeId,jdbcType=BIGINT},
+      scholarship_id = #{record.scholarshipId,jdbcType=BIGINT},
+      status = #{record.status,jdbcType=INTEGER},
+      file_status = #{record.fileStatus,jdbcType=INTEGER},
+      prize_status = #{record.prizeStatus,jdbcType=INTEGER},
+      user_id = #{record.userId,jdbcType=BIGINT},
+      create_date = #{record.createDate,jdbcType=TIMESTAMP},
+      evaluation = #{record.evaluation,jdbcType=LONGVARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update application
+    set id = #{record.id,jdbcType=BIGINT},
+      prize_id = #{record.prizeId,jdbcType=BIGINT},
+      scholarship_id = #{record.scholarshipId,jdbcType=BIGINT},
+      status = #{record.status,jdbcType=INTEGER},
+      file_status = #{record.fileStatus,jdbcType=INTEGER},
+      prize_status = #{record.prizeStatus,jdbcType=INTEGER},
+      user_id = #{record.userId,jdbcType=BIGINT},
+      create_date = #{record.createDate,jdbcType=TIMESTAMP}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.liwj.asem.model.Application">
+    update application
+    <set>
+      <if test="prizeId != null">
+        prize_id = #{prizeId,jdbcType=BIGINT},
+      </if>
+      <if test="scholarshipId != null">
+        scholarship_id = #{scholarshipId,jdbcType=BIGINT},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="fileStatus != null">
+        file_status = #{fileStatus,jdbcType=INTEGER},
+      </if>
+      <if test="prizeStatus != null">
+        prize_status = #{prizeStatus,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="createDate != null">
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="evaluation != null">
+        evaluation = #{evaluation,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.liwj.asem.model.Application">
+    update application
+    set prize_id = #{prizeId,jdbcType=BIGINT},
+      scholarship_id = #{scholarshipId,jdbcType=BIGINT},
+      status = #{status,jdbcType=INTEGER},
+      file_status = #{fileStatus,jdbcType=INTEGER},
+      prize_status = #{prizeStatus,jdbcType=INTEGER},
+      user_id = #{userId,jdbcType=BIGINT},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      evaluation = #{evaluation,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.liwj.asem.model.Application">
+    update application
+    set prize_id = #{prizeId,jdbcType=BIGINT},
+      scholarship_id = #{scholarshipId,jdbcType=BIGINT},
+      status = #{status,jdbcType=INTEGER},
+      file_status = #{fileStatus,jdbcType=INTEGER},
+      prize_status = #{prizeStatus,jdbcType=INTEGER},
+      user_id = #{userId,jdbcType=BIGINT},
+      create_date = #{createDate,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

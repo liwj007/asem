@@ -1,0 +1,389 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.liwj.asem.dao.PrizeMapper">
+  <resultMap id="BaseResultMap" type="com.liwj.asem.model.Prize">
+    <constructor>
+      <idArg column="id" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="money" javaType="java.lang.Double" jdbcType="DOUBLE" />
+      <arg column="number" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="scholarship_id" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="scholarship_type" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="prize_name" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="rest_number" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="allocation_rule" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="allocation_method" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="allocation_number_status" javaType="java.lang.Boolean" jdbcType="BIT" />
+      <arg column="allocation_time_status" javaType="java.lang.Boolean" jdbcType="BIT" />
+      <arg column="unit_id" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="parent_prize_id" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="is_root" javaType="java.lang.Boolean" jdbcType="BIT" />
+      <arg column="level_number" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="status" javaType="java.lang.Integer" jdbcType="INTEGER" />
+    </constructor>
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, money, number, scholarship_id, scholarship_type, prize_name, rest_number, allocation_rule, 
+    allocation_method, allocation_number_status, allocation_time_status, unit_id, parent_prize_id, 
+    is_root, level_number, status
+  </sql>
+  <select id="selectByExample" parameterType="com.liwj.asem.model.PrizeExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from prize
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from prize
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from prize
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.liwj.asem.model.PrizeExample">
+    delete from prize
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.liwj.asem.model.Prize">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into prize (money, number, scholarship_id, 
+      scholarship_type, prize_name, rest_number, 
+      allocation_rule, allocation_method, allocation_number_status, 
+      allocation_time_status, unit_id, parent_prize_id, 
+      is_root, level_number, status
+      )
+    values (#{money,jdbcType=DOUBLE}, #{number,jdbcType=INTEGER}, #{scholarshipId,jdbcType=BIGINT}, 
+      #{scholarshipType,jdbcType=INTEGER}, #{prizeName,jdbcType=VARCHAR}, #{restNumber,jdbcType=INTEGER}, 
+      #{allocationRule,jdbcType=INTEGER}, #{allocationMethod,jdbcType=INTEGER}, #{allocationNumberStatus,jdbcType=BIT}, 
+      #{allocationTimeStatus,jdbcType=BIT}, #{unitId,jdbcType=BIGINT}, #{parentPrizeId,jdbcType=BIGINT}, 
+      #{isRoot,jdbcType=BIT}, #{levelNumber,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.liwj.asem.model.Prize">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into prize
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="money != null">
+        money,
+      </if>
+      <if test="number != null">
+        number,
+      </if>
+      <if test="scholarshipId != null">
+        scholarship_id,
+      </if>
+      <if test="scholarshipType != null">
+        scholarship_type,
+      </if>
+      <if test="prizeName != null">
+        prize_name,
+      </if>
+      <if test="restNumber != null">
+        rest_number,
+      </if>
+      <if test="allocationRule != null">
+        allocation_rule,
+      </if>
+      <if test="allocationMethod != null">
+        allocation_method,
+      </if>
+      <if test="allocationNumberStatus != null">
+        allocation_number_status,
+      </if>
+      <if test="allocationTimeStatus != null">
+        allocation_time_status,
+      </if>
+      <if test="unitId != null">
+        unit_id,
+      </if>
+      <if test="parentPrizeId != null">
+        parent_prize_id,
+      </if>
+      <if test="isRoot != null">
+        is_root,
+      </if>
+      <if test="levelNumber != null">
+        level_number,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="money != null">
+        #{money,jdbcType=DOUBLE},
+      </if>
+      <if test="number != null">
+        #{number,jdbcType=INTEGER},
+      </if>
+      <if test="scholarshipId != null">
+        #{scholarshipId,jdbcType=BIGINT},
+      </if>
+      <if test="scholarshipType != null">
+        #{scholarshipType,jdbcType=INTEGER},
+      </if>
+      <if test="prizeName != null">
+        #{prizeName,jdbcType=VARCHAR},
+      </if>
+      <if test="restNumber != null">
+        #{restNumber,jdbcType=INTEGER},
+      </if>
+      <if test="allocationRule != null">
+        #{allocationRule,jdbcType=INTEGER},
+      </if>
+      <if test="allocationMethod != null">
+        #{allocationMethod,jdbcType=INTEGER},
+      </if>
+      <if test="allocationNumberStatus != null">
+        #{allocationNumberStatus,jdbcType=BIT},
+      </if>
+      <if test="allocationTimeStatus != null">
+        #{allocationTimeStatus,jdbcType=BIT},
+      </if>
+      <if test="unitId != null">
+        #{unitId,jdbcType=BIGINT},
+      </if>
+      <if test="parentPrizeId != null">
+        #{parentPrizeId,jdbcType=BIGINT},
+      </if>
+      <if test="isRoot != null">
+        #{isRoot,jdbcType=BIT},
+      </if>
+      <if test="levelNumber != null">
+        #{levelNumber,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.liwj.asem.model.PrizeExample" resultType="java.lang.Long">
+    select count(*) from prize
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update prize
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.money != null">
+        money = #{record.money,jdbcType=DOUBLE},
+      </if>
+      <if test="record.number != null">
+        number = #{record.number,jdbcType=INTEGER},
+      </if>
+      <if test="record.scholarshipId != null">
+        scholarship_id = #{record.scholarshipId,jdbcType=BIGINT},
+      </if>
+      <if test="record.scholarshipType != null">
+        scholarship_type = #{record.scholarshipType,jdbcType=INTEGER},
+      </if>
+      <if test="record.prizeName != null">
+        prize_name = #{record.prizeName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.restNumber != null">
+        rest_number = #{record.restNumber,jdbcType=INTEGER},
+      </if>
+      <if test="record.allocationRule != null">
+        allocation_rule = #{record.allocationRule,jdbcType=INTEGER},
+      </if>
+      <if test="record.allocationMethod != null">
+        allocation_method = #{record.allocationMethod,jdbcType=INTEGER},
+      </if>
+      <if test="record.allocationNumberStatus != null">
+        allocation_number_status = #{record.allocationNumberStatus,jdbcType=BIT},
+      </if>
+      <if test="record.allocationTimeStatus != null">
+        allocation_time_status = #{record.allocationTimeStatus,jdbcType=BIT},
+      </if>
+      <if test="record.unitId != null">
+        unit_id = #{record.unitId,jdbcType=BIGINT},
+      </if>
+      <if test="record.parentPrizeId != null">
+        parent_prize_id = #{record.parentPrizeId,jdbcType=BIGINT},
+      </if>
+      <if test="record.isRoot != null">
+        is_root = #{record.isRoot,jdbcType=BIT},
+      </if>
+      <if test="record.levelNumber != null">
+        level_number = #{record.levelNumber,jdbcType=INTEGER},
+      </if>
+      <if test="record.status != null">
+        status = #{record.status,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update prize
+    set id = #{record.id,jdbcType=BIGINT},
+      money = #{record.money,jdbcType=DOUBLE},
+      number = #{record.number,jdbcType=INTEGER},
+      scholarship_id = #{record.scholarshipId,jdbcType=BIGINT},
+      scholarship_type = #{record.scholarshipType,jdbcType=INTEGER},
+      prize_name = #{record.prizeName,jdbcType=VARCHAR},
+      rest_number = #{record.restNumber,jdbcType=INTEGER},
+      allocation_rule = #{record.allocationRule,jdbcType=INTEGER},
+      allocation_method = #{record.allocationMethod,jdbcType=INTEGER},
+      allocation_number_status = #{record.allocationNumberStatus,jdbcType=BIT},
+      allocation_time_status = #{record.allocationTimeStatus,jdbcType=BIT},
+      unit_id = #{record.unitId,jdbcType=BIGINT},
+      parent_prize_id = #{record.parentPrizeId,jdbcType=BIGINT},
+      is_root = #{record.isRoot,jdbcType=BIT},
+      level_number = #{record.levelNumber,jdbcType=INTEGER},
+      status = #{record.status,jdbcType=INTEGER}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.liwj.asem.model.Prize">
+    update prize
+    <set>
+      <if test="money != null">
+        money = #{money,jdbcType=DOUBLE},
+      </if>
+      <if test="number != null">
+        number = #{number,jdbcType=INTEGER},
+      </if>
+      <if test="scholarshipId != null">
+        scholarship_id = #{scholarshipId,jdbcType=BIGINT},
+      </if>
+      <if test="scholarshipType != null">
+        scholarship_type = #{scholarshipType,jdbcType=INTEGER},
+      </if>
+      <if test="prizeName != null">
+        prize_name = #{prizeName,jdbcType=VARCHAR},
+      </if>
+      <if test="restNumber != null">
+        rest_number = #{restNumber,jdbcType=INTEGER},
+      </if>
+      <if test="allocationRule != null">
+        allocation_rule = #{allocationRule,jdbcType=INTEGER},
+      </if>
+      <if test="allocationMethod != null">
+        allocation_method = #{allocationMethod,jdbcType=INTEGER},
+      </if>
+      <if test="allocationNumberStatus != null">
+        allocation_number_status = #{allocationNumberStatus,jdbcType=BIT},
+      </if>
+      <if test="allocationTimeStatus != null">
+        allocation_time_status = #{allocationTimeStatus,jdbcType=BIT},
+      </if>
+      <if test="unitId != null">
+        unit_id = #{unitId,jdbcType=BIGINT},
+      </if>
+      <if test="parentPrizeId != null">
+        parent_prize_id = #{parentPrizeId,jdbcType=BIGINT},
+      </if>
+      <if test="isRoot != null">
+        is_root = #{isRoot,jdbcType=BIT},
+      </if>
+      <if test="levelNumber != null">
+        level_number = #{levelNumber,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.liwj.asem.model.Prize">
+    update prize
+    set money = #{money,jdbcType=DOUBLE},
+      number = #{number,jdbcType=INTEGER},
+      scholarship_id = #{scholarshipId,jdbcType=BIGINT},
+      scholarship_type = #{scholarshipType,jdbcType=INTEGER},
+      prize_name = #{prizeName,jdbcType=VARCHAR},
+      rest_number = #{restNumber,jdbcType=INTEGER},
+      allocation_rule = #{allocationRule,jdbcType=INTEGER},
+      allocation_method = #{allocationMethod,jdbcType=INTEGER},
+      allocation_number_status = #{allocationNumberStatus,jdbcType=BIT},
+      allocation_time_status = #{allocationTimeStatus,jdbcType=BIT},
+      unit_id = #{unitId,jdbcType=BIGINT},
+      parent_prize_id = #{parentPrizeId,jdbcType=BIGINT},
+      is_root = #{isRoot,jdbcType=BIT},
+      level_number = #{levelNumber,jdbcType=INTEGER},
+      status = #{status,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>
