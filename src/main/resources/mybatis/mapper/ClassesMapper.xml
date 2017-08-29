@@ -5,9 +5,9 @@
     <constructor>
       <idArg column="id" javaType="java.lang.Long" jdbcType="BIGINT" />
       <arg column="name" javaType="java.lang.String" jdbcType="VARCHAR" />
-      <arg column="college_id" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="sn" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="secondary_teaching_institution" javaType="java.lang.Long" jdbcType="BIGINT" />
       <arg column="grade_id" javaType="java.lang.Long" jdbcType="BIGINT" />
-      <arg column="major_id" javaType="java.lang.Long" jdbcType="BIGINT" />
     </constructor>
   </resultMap>
   <sql id="Example_Where_Clause">
@@ -69,7 +69,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, name, college_id, grade_id, major_id
+    id, name, sn, secondary_teaching_institution, grade_id
   </sql>
   <select id="selectByExample" parameterType="com.liwj.asem.model.ClassesExample" resultMap="BaseResultMap">
     select
@@ -106,10 +106,10 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into classes (name, college_id, grade_id, 
-      major_id)
-    values (#{name,jdbcType=VARCHAR}, #{collegeId,jdbcType=BIGINT}, #{gradeId,jdbcType=BIGINT}, 
-      #{majorId,jdbcType=BIGINT})
+    insert into classes (name, sn, secondary_teaching_institution, 
+      grade_id)
+    values (#{name,jdbcType=VARCHAR}, #{sn,jdbcType=VARCHAR}, #{secondaryTeachingInstitution,jdbcType=BIGINT}, 
+      #{gradeId,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="com.liwj.asem.model.Classes">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -120,28 +120,28 @@
       <if test="name != null">
         name,
       </if>
-      <if test="collegeId != null">
-        college_id,
+      <if test="sn != null">
+        sn,
+      </if>
+      <if test="secondaryTeachingInstitution != null">
+        secondary_teaching_institution,
       </if>
       <if test="gradeId != null">
         grade_id,
-      </if>
-      <if test="majorId != null">
-        major_id,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="name != null">
         #{name,jdbcType=VARCHAR},
       </if>
-      <if test="collegeId != null">
-        #{collegeId,jdbcType=BIGINT},
+      <if test="sn != null">
+        #{sn,jdbcType=VARCHAR},
+      </if>
+      <if test="secondaryTeachingInstitution != null">
+        #{secondaryTeachingInstitution,jdbcType=BIGINT},
       </if>
       <if test="gradeId != null">
         #{gradeId,jdbcType=BIGINT},
-      </if>
-      <if test="majorId != null">
-        #{majorId,jdbcType=BIGINT},
       </if>
     </trim>
   </insert>
@@ -160,14 +160,14 @@
       <if test="record.name != null">
         name = #{record.name,jdbcType=VARCHAR},
       </if>
-      <if test="record.collegeId != null">
-        college_id = #{record.collegeId,jdbcType=BIGINT},
+      <if test="record.sn != null">
+        sn = #{record.sn,jdbcType=VARCHAR},
+      </if>
+      <if test="record.secondaryTeachingInstitution != null">
+        secondary_teaching_institution = #{record.secondaryTeachingInstitution,jdbcType=BIGINT},
       </if>
       <if test="record.gradeId != null">
         grade_id = #{record.gradeId,jdbcType=BIGINT},
-      </if>
-      <if test="record.majorId != null">
-        major_id = #{record.majorId,jdbcType=BIGINT},
       </if>
     </set>
     <if test="_parameter != null">
@@ -178,9 +178,9 @@
     update classes
     set id = #{record.id,jdbcType=BIGINT},
       name = #{record.name,jdbcType=VARCHAR},
-      college_id = #{record.collegeId,jdbcType=BIGINT},
-      grade_id = #{record.gradeId,jdbcType=BIGINT},
-      major_id = #{record.majorId,jdbcType=BIGINT}
+      sn = #{record.sn,jdbcType=VARCHAR},
+      secondary_teaching_institution = #{record.secondaryTeachingInstitution,jdbcType=BIGINT},
+      grade_id = #{record.gradeId,jdbcType=BIGINT}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -191,14 +191,14 @@
       <if test="name != null">
         name = #{name,jdbcType=VARCHAR},
       </if>
-      <if test="collegeId != null">
-        college_id = #{collegeId,jdbcType=BIGINT},
+      <if test="sn != null">
+        sn = #{sn,jdbcType=VARCHAR},
+      </if>
+      <if test="secondaryTeachingInstitution != null">
+        secondary_teaching_institution = #{secondaryTeachingInstitution,jdbcType=BIGINT},
       </if>
       <if test="gradeId != null">
         grade_id = #{gradeId,jdbcType=BIGINT},
-      </if>
-      <if test="majorId != null">
-        major_id = #{majorId,jdbcType=BIGINT},
       </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
@@ -206,9 +206,9 @@
   <update id="updateByPrimaryKey" parameterType="com.liwj.asem.model.Classes">
     update classes
     set name = #{name,jdbcType=VARCHAR},
-      college_id = #{collegeId,jdbcType=BIGINT},
-      grade_id = #{gradeId,jdbcType=BIGINT},
-      major_id = #{majorId,jdbcType=BIGINT}
+      sn = #{sn,jdbcType=VARCHAR},
+      secondary_teaching_institution = #{secondaryTeachingInstitution,jdbcType=BIGINT},
+      grade_id = #{gradeId,jdbcType=BIGINT}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

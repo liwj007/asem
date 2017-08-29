@@ -7,14 +7,11 @@ public class Grade implements Serializable {
 
     private String name;
 
-    private Integer number;
-
     private static final long serialVersionUID = 1L;
 
-    public Grade(Long id, String name, Integer number) {
+    public Grade(Long id, String name) {
         this.id = id;
         this.name = name;
-        this.number = number;
     }
 
     public Grade() {
@@ -37,14 +34,6 @@ public class Grade implements Serializable {
         this.name = name == null ? null : name.trim();
     }
 
-    public Integer getNumber() {
-        return number;
-    }
-
-    public void setNumber(Integer number) {
-        this.number = number;
-    }
-
     @Override
     public boolean equals(Object that) {
         if (this == that) {
@@ -58,8 +47,7 @@ public class Grade implements Serializable {
         }
         Grade other = (Grade) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-            && (this.getName() == null ? other.getName() == null : this.getName().equals(other.getName()))
-            && (this.getNumber() == null ? other.getNumber() == null : this.getNumber().equals(other.getNumber()));
+            && (this.getName() == null ? other.getName() == null : this.getName().equals(other.getName()));
     }
 
     @Override
@@ -68,7 +56,6 @@ public class Grade implements Serializable {
         int result = 1;
         result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
         result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
-        result = prime * result + ((getNumber() == null) ? 0 : getNumber().hashCode());
         return result;
     }
 }

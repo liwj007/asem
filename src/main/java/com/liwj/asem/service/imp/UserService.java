@@ -1,14 +1,14 @@
 package com.liwj.asem.service.imp;
 
-import com.liwj.asem.annotation.Rights;
 import com.liwj.asem.bo.UserBO;
-import com.liwj.asem.dao.UserMapper;
+import com.liwj.asem.dao.*;
 import com.liwj.asem.data.CommonVariable;
 import com.liwj.asem.data.ErrorInfo;
-import com.liwj.asem.enums.UserRightEnum;
+import com.liwj.asem.dto.UserDTO;
+import com.liwj.asem.enums.RoleTypeEnum;
+import com.liwj.asem.enums.UserTypeEnum;
 import com.liwj.asem.exception.WSPException;
-import com.liwj.asem.model.User;
-import com.liwj.asem.model.UserExample;
+import com.liwj.asem.model.*;
 import com.liwj.asem.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,54 +23,103 @@ public class UserService implements IUserService {
     @Autowired
     private UserMapper userMapper;
 
+    @Autowired
+    private UserRoleMapper userRoleMapper;
+
+    @Autowired
+    private RUserAndPrimaryTeachingInstitutionMapper rUserAndPrimaryTeachingInstitutionMapper;
+
+    @Autowired
+    private RUserAndGradeMapper rUserAndGradeMapper;
+
+    @Autowired
+    private PrimaryTeachingInstitutionMapper primaryTeachingInstitutionMapper;
+
+    @Autowired
+    private GradeMapper gradeMapper;
+
     private String generateToken(User user) {
-        String token = user.getUsername() + UUID.randomUUID().toString().replace("-", "");
+        String token = user.getName() + UUID.randomUUID().toString().replace("-", "");
         return token;
     }
 
     @Override
-    public User getUserByToken(String token) throws WSPException {
+    public User getUserById(Long id){
+        return userMapper.selectByPrimaryKey(id);
+    }
+
+    @Override
+    public User getUserBySN(String SN){
+        UserExample userExample = new UserExample();
+        userExample.createCriteria().andSnEqualTo(SN);
+        List<User> list = userMapper.selectByExample(userExample);
+        if (list.size()==1){
+            User user = list.get(0);
+            return user;
+        }
+        return null;
+    }
+
+    @Override
+    public UserDTO getUserByToken(String token) throws WSPException {
         UserExample example = new UserExample();
         example.createCriteria().andTokenEqualTo(token);
         List<User> res = userMapper.selectByExample(example);
-        if (res.size()!=1){
+        if (res.size() != 1) {
             throw new WSPException(ErrorInfo.NO_LOGIN);
         }
         User user = res.get(0);
-        return user;
-    }
 
-    @Override
-    public void createUser(User user) {
-        userMapper.insertSelective(user);
-    }
+        UserDTO userDTO = new UserDTO();
+        userDTO.setId(user.getId());
+        userDTO.setName(user.getName());
+        userDTO.setEmail(user.getEmail());
+        userDTO.setGender(user.getGender());
+        userDTO.setPhone(user.getPhone());
+        userDTO.setToken(user.getToken());
+        userDTO.setSn(user.getSn());
+        userDTO.setExpire(user.getExpire());
+        userDTO.setUserType(RoleTypeEnum.getByCode(user.getUserType()));
 
-    @Override
-    public List<UserBO> getAllUsers() {
-        List<User> list =  userMapper.selectByExample(new UserExample());
-        List<UserBO> res = new ArrayList<>();
-        for (User user: list){
-            UserBO bo = new UserBO();
-            bo.setName(user.getName());
-            bo.setUserName(user.getUsername());
-            bo.setUserTypeName(UserRightEnum.getNameByCode(user.getUserType()));
-            bo.setMobile(user.getMobile());
-            bo.setEmail(user.getEmail());
-            bo.setId(user.getId());
-            res.add(bo);
+        PrimaryTeachingInstitution institution = primaryTeachingInstitutionMapper.selectByPrimaryKey(user.getPrimaryTeachingInstitutionId());
+        userDTO.setPrimaryTeachingInstitution(institution);
+        Grade grade2 = gradeMapper.selectByPrimaryKey(user.getGradeId());
+        userDTO.setGrade(grade2);
+
+        UserRoleExample userRoleExample = new UserRoleExample();
+        userRoleExample.createCriteria().andUserIdEqualTo(user.getId());
+        List<UserRole> roles = userRoleMapper.selectByExample(userRoleExample);
+        for (UserRole role : roles) {
+            userDTO.getRoles().add(RoleTypeEnum.getByCode(role.getRoleType()));
         }
-        return res;
+
+        RUserAndPrimaryTeachingInstitutionExample rUserAndPrimaryTeachingInstitutionExample
+                = new RUserAndPrimaryTeachingInstitutionExample();
+        rUserAndPrimaryTeachingInstitutionExample.createCriteria().andUserIdEqualTo(user.getId());
+        List<RUserAndPrimaryTeachingInstitution> list1 = rUserAndPrimaryTeachingInstitutionMapper
+                .selectByExample(rUserAndPrimaryTeachingInstitutionExample);
+        for (RUserAndPrimaryTeachingInstitution item: list1){
+            PrimaryTeachingInstitution primaryTeachingInstitution = primaryTeachingInstitutionMapper.selectByPrimaryKey(item.getPrimaryTeachingInstitutionId());
+            userDTO.getManagePrimaryTeachingInstitutions().add(primaryTeachingInstitution);
+        }
+
+        RUserAndGradeExample rUserAndGradeExample=  new RUserAndGradeExample();
+        rUserAndGradeExample.createCriteria().andUserIdEqualTo(user.getId());
+        List<RUserAndGrade> list2 = rUserAndGradeMapper.selectByExample(rUserAndGradeExample);
+        for (RUserAndGrade item: list2){
+            Grade grade = gradeMapper.selectByPrimaryKey(item.getGradeId());
+            userDTO.getManageGrades().add(grade);
+        }
+
+        return userDTO;
     }
 
-    @Override
-    public void deleteUser(long id) {
-        userMapper.deleteByPrimaryKey(id);
-    }
+
 
     @Override
-    public User login(String nickName, String password) throws WSPException {
+    public UserDTO login(String nickName, String password) throws WSPException {
         UserExample example = new UserExample();
-        example.createCriteria().andUsernameEqualTo(nickName).andPasswordEqualTo(password);
+        example.createCriteria().andSnEqualTo(nickName).andPasswordEqualTo(password);
         List<User> users = userMapper.selectByExample(example);
         if (users.size() == 1) {
             User user = users.get(0);
@@ -78,20 +127,36 @@ public class UserService implements IUserService {
             user.setToken(generateToken(user));
             user.setExpire(date.getTime() + CommonVariable.tokenOutPeriod);
             userMapper.updateByPrimaryKeySelective(user);
-            return user;
+            return getUserByToken(user.getToken());
         } else {
             throw new WSPException(ErrorInfo.ERROR_USER_LOGIN);
         }
     }
 
     @Override
-    public Boolean isSchoolUser(User user){
-        return user.getUserType()== UserRightEnum.SCHOOL.code;
+    public List<User> getStudents(Long primaryTeachingInstitutionId, List<Long> grades){
+        UserExample userExample = new UserExample();
+        UserExample.Criteria criteria = userExample.createCriteria();
+        criteria.andPrimaryTeachingInstitutionIdEqualTo(primaryTeachingInstitutionId);
+        if (grades!=null && grades.size()>0){
+            criteria.andGradeIdIn(grades);
+        }
+        List<User> res = userMapper.selectByExample(userExample);
+        return res;
     }
 
     @Override
-    public Boolean isCollegeManger(User user){
-        return user.getUserType()==UserRightEnum.SPECIAL_INSTRUCTOR.code ||
-                user.getUserType()==UserRightEnum.COLLEGE_STUDENT.code;
+    public Boolean isSchoolUser(UserDTO user) {
+        return user.getRoles().contains(RoleTypeEnum.SCHOOL_USER);
+    }
+
+    @Override
+    public Boolean isCollegeManger(UserDTO user) {
+        return user.getRoles().contains(RoleTypeEnum.SPECIAL_ADVISER);
+    }
+
+    @Override
+    public Boolean isGradeManger(UserDTO user) {
+        return user.getRoles().contains(RoleTypeEnum.GRADE_ADVISER);
     }
 }

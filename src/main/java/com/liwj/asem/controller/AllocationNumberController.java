@@ -5,6 +5,7 @@ import com.liwj.asem.bo.EntireUnitPrizeForm;
 import com.liwj.asem.bo.PrizeForListBO;
 import com.liwj.asem.bo.SelectOfPrizeBO;
 import com.liwj.asem.data.ResponseData;
+import com.liwj.asem.dto.UserDTO;
 import com.liwj.asem.exception.WSPException;
 import com.liwj.asem.model.User;
 import com.liwj.asem.service.IPrizeService;
@@ -27,9 +28,10 @@ public class AllocationNumberController {
 
     //读取为安排过名额的奖项列表
     @RequestMapping(value = "/select_list_un_allocation_number", method = RequestMethod.GET)
-    public ResponseData getSelectOfUnAllocationNumber(@RequestParam(value = "token") String token) throws WSPException {
-        User user = userService.getUserByToken(token);
-        List<SelectOfPrizeBO> res = prizeService.getSelectOfUnAllocationNumberPrizes(user);
+    public ResponseData getSelectOfUnAllocationNumber(@RequestParam(value = "token") String token,
+                                            @RequestParam(value = "manageUnit", required = false) Long unitId) throws WSPException {
+        UserDTO user = userService.getUserByToken(token);
+        List<SelectOfPrizeBO> res = prizeService.getSelectOfUnAllocationNumberPrizes(user,unitId);
         ResponseData responseData = new ResponseData();
         responseData.setSuccessData(res);
         return responseData;
@@ -39,7 +41,7 @@ public class AllocationNumberController {
     @RequestMapping(value = "/allocation_number", method = RequestMethod.POST)
     public ResponseData allocationNumber(@RequestParam(value = "token") String token,
                                          @RequestBody EntireUnitPrizeForm entireUnitPrizeForm) throws WSPException {
-        User user = userService.getUserByToken(token);
+        UserDTO user = userService.getUserByToken(token);
         prizeService.allocationNumber(user, entireUnitPrizeForm);
         ResponseData responseData = new ResponseData();
         responseData.setSuccessData(null);
@@ -50,9 +52,10 @@ public class AllocationNumberController {
     @RequestMapping(value = "/allocated_number_list", method = RequestMethod.GET)
     public ResponseData getAwardsOfAllocatedNumber(@RequestParam(value = "token") String token,
                                                    @RequestParam(value = "pageSize") Integer pageSize,
-                                                   @RequestParam(value = "pageNum") Integer pageNum) throws WSPException {
-        User user = userService.getUserByToken(token);
-        PageInfo pageInfo = prizeService.getAllocatedNumberPrizes(user, pageNum, pageSize);
+                                                   @RequestParam(value = "pageNum") Integer pageNum,
+                                                   @RequestParam(value = "manageUnit", required = false) Long unitId) throws WSPException {
+        UserDTO user = userService.getUserByToken(token);
+        PageInfo pageInfo = prizeService.getAllocatedNumberPrizes(user, pageNum, pageSize,unitId);
         ResponseData responseData = new ResponseData();
         responseData.setSuccessData(pageInfo);
         return responseData;
@@ -62,7 +65,7 @@ public class AllocationNumberController {
     @RequestMapping(value = "/allocated_number_detail", method = RequestMethod.GET)
     public ResponseData getAwardDetailOfAllocatedNumber(@RequestParam(value = "token") String token,
                                                   @RequestParam(value = "prizeId") Long prizeId) throws WSPException {
-        User user = userService.getUserByToken(token);
+        UserDTO user = userService.getUserByToken(token);
         EntireUnitPrizeForm res = prizeService.getAwardDetailOfAllocatedNumber(user, prizeId);
         ResponseData responseData = new ResponseData();
         responseData.setSuccessData(res);
@@ -73,7 +76,7 @@ public class AllocationNumberController {
     @RequestMapping(value = "/update_allocation_number", method = RequestMethod.POST)
     public ResponseData updateAllocationCollegeAward(@RequestParam(value = "token") String token,
                                                      @RequestBody EntireUnitPrizeForm entireUnitPrizeForm) throws WSPException {
-        User user = userService.getUserByToken(token);
+        UserDTO user = userService.getUserByToken(token);
         prizeService.updateAllocationNumber(user, entireUnitPrizeForm);
         ResponseData responseData = new ResponseData();
         responseData.setSuccessData(null);

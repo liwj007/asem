@@ -3,11 +3,12 @@ package com.liwj.asem.service.imp;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.liwj.asem.bo.FeedbackBO;
-import com.liwj.asem.dao.CollegeMapper;
+import com.liwj.asem.dao.PrimaryTeachingInstitutionMapper;
 import com.liwj.asem.dao.PrizeMapper;
 import com.liwj.asem.dao.QuotaFeedbackMapper;
 import com.liwj.asem.dao.ScholarshipMapper;
 import com.liwj.asem.data.ErrorInfo;
+import com.liwj.asem.dto.UserDTO;
 import com.liwj.asem.enums.FeedbackStatusEnum;
 import com.liwj.asem.enums.FeedbackTypeEnum;
 import com.liwj.asem.exception.WSPException;
@@ -33,22 +34,24 @@ public class FeedbackService implements IFeedbackService {
     private PrizeMapper prizeMapper;
 
     @Autowired
-    private CollegeMapper collegeMapper;
+    private PrimaryTeachingInstitutionMapper primaryTeachingInstitutionMapper;
 
     @Override
     @Transactional
-    public void applyQuota(User user, List<FeedbackBO> feedbackBOList) {
+    public void applyQuota(UserDTO user, List<FeedbackBO> feedbackBOList) {
         for (FeedbackBO bo : feedbackBOList) {
             QuotaFeedback quotaFeedback = new QuotaFeedback();
             quotaFeedback.setApplyNumber(bo.getApplyNumber());
             quotaFeedback.setScholarshipId(bo.getScholarshipId());
             quotaFeedback.setPrizeId(bo.getPrizeId());
-            quotaFeedback.setUnitId(user.getManageCollegeId());
-            quotaFeedback.setUserId(user.getId());
+
+            Prize prize = prizeMapper.selectByPrimaryKey(bo.getPrizeId());
+            quotaFeedback.setPrimaryTeachingInstitutionId(prize.getPrimaryTeachingInstitutionId());
+            quotaFeedback.setApplyUserId(user.getId());
             quotaFeedback.setApplyDate(new Date());
             quotaFeedback.setApplyType(FeedbackTypeEnum.APPLY.code);
             quotaFeedback.setStatus(FeedbackStatusEnum.NEW.code);
-            Prize prize = prizeMapper.selectByPrimaryKey(bo.getPrizeId());
+
             quotaFeedback.setAllocationNumber(prize.getNumber());
 
             quotaFeedbackMapper.insertSelective(quotaFeedback);
@@ -56,18 +59,20 @@ public class FeedbackService implements IFeedbackService {
     }
 
     @Override
-    public void applyBack(User user, List<FeedbackBO> feedbackBOList) throws WSPException {
+    public void applyBack(UserDTO user, List<FeedbackBO> feedbackBOList) throws WSPException {
         for (FeedbackBO bo : feedbackBOList) {
             QuotaFeedback quotaFeedback = new QuotaFeedback();
             quotaFeedback.setApplyNumber(bo.getApplyNumber());
             quotaFeedback.setScholarshipId(bo.getScholarshipId());
             quotaFeedback.setPrizeId(bo.getPrizeId());
-            quotaFeedback.setUnitId(user.getManageCollegeId());
-            quotaFeedback.setUserId(user.getId());
+
+            Prize prize = prizeMapper.selectByPrimaryKey(bo.getPrizeId());
+            quotaFeedback.setPrimaryTeachingInstitutionId(prize.getPrimaryTeachingInstitutionId());
+            quotaFeedback.setApplyUserId(user.getId());
             quotaFeedback.setApplyDate(new Date());
             quotaFeedback.setApplyType(FeedbackTypeEnum.BACK.code);
             quotaFeedback.setStatus(FeedbackStatusEnum.PASS.code);
-            Prize prize = prizeMapper.selectByPrimaryKey(bo.getPrizeId());
+
             quotaFeedback.setAllocationNumber(prize.getNumber());
 
             quotaFeedbackMapper.insertSelective(quotaFeedback);
@@ -85,18 +90,18 @@ public class FeedbackService implements IFeedbackService {
 
 
     @Override
-    public PageInfo getQuotaList(User user, FeedbackTypeEnum feedbackType, Integer pageSize, Integer pageNum) {
+    public PageInfo getQuotaList(UserDTO user, FeedbackTypeEnum feedbackType, Integer pageSize, Integer pageNum) {
         List<FeedbackBO> res = new ArrayList<>();
         QuotaFeedbackExample quotaFeedbackExample = new QuotaFeedbackExample();
-        quotaFeedbackExample.createCriteria().andUnitIdEqualTo(user.getManageCollegeId())
+        quotaFeedbackExample.createCriteria().andPrimaryTeachingInstitutionIdIn(user.getManageCollegeId())
                 .andApplyTypeEqualTo(feedbackType.code);
-        PageHelper.startPage(pageNum,pageSize);
+        PageHelper.startPage(pageNum, pageSize);
         List<QuotaFeedback> list = quotaFeedbackMapper.selectByExample(quotaFeedbackExample);
         PageInfo pageInfo = new PageInfo(list);
         for (QuotaFeedback quotaFeedback : list) {
             FeedbackBO bo = new FeedbackBO();
             Scholarship scholarship = scholarshipMapper.selectByPrimaryKey(quotaFeedback.getScholarshipId());
-            bo.setScholarshipName(scholarship.getName());
+            bo.setScholarshipName(scholarship.getScholarshipName());
             Prize prize = prizeMapper.selectByPrimaryKey(quotaFeedback.getPrizeId());
             bo.setPrizeName(prize.getPrizeName());
             bo.setAllocationNumber(quotaFeedback.getAllocationNumber());
@@ -110,24 +115,24 @@ public class FeedbackService implements IFeedbackService {
     }
 
     @Override
-    public PageInfo getAllQuotaList(User user, FeedbackTypeEnum feedbackType, Integer pageSize, Integer pageNum) {
+    public PageInfo getAllQuotaList(UserDTO user, FeedbackTypeEnum feedbackType, Integer pageSize, Integer pageNum) {
         List<FeedbackBO> res = new ArrayList<>();
         QuotaFeedbackExample quotaFeedbackExample = new QuotaFeedbackExample();
         quotaFeedbackExample.createCriteria().andApplyTypeEqualTo(feedbackType.code);
-        PageHelper.startPage(pageNum,pageSize);
+        PageHelper.startPage(pageNum, pageSize);
         List<QuotaFeedback> list = quotaFeedbackMapper.selectByExample(quotaFeedbackExample);
         PageInfo pageInfo = new PageInfo(list);
         for (QuotaFeedback quotaFeedback : list) {
             FeedbackBO bo = new FeedbackBO();
             Scholarship scholarship = scholarshipMapper.selectByPrimaryKey(quotaFeedback.getScholarshipId());
-            bo.setScholarshipName(scholarship.getName());
+            bo.setScholarshipName(scholarship.getScholarshipName());
             Prize prize = prizeMapper.selectByPrimaryKey(quotaFeedback.getPrizeId());
             bo.setPrizeName(prize.getPrizeName());
             bo.setAllocationNumber(quotaFeedback.getAllocationNumber());
             bo.setApplyNumber(quotaFeedback.getApplyNumber());
             bo.setStatus(FeedbackStatusEnum.getNameByCode(quotaFeedback.getStatus()));
-            College college = collegeMapper.selectByPrimaryKey(quotaFeedback.getUnitId());
-            bo.setUnitName(college.getName());
+            PrimaryTeachingInstitution institution = primaryTeachingInstitutionMapper.selectByPrimaryKey(quotaFeedback.getPrimaryTeachingInstitutionId());
+            bo.setUnitName(institution.getName());
             bo.setId(quotaFeedback.getId());
 
             res.add(bo);

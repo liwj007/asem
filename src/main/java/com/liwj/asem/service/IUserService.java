@@ -1,23 +1,26 @@
 package com.liwj.asem.service;
 
 import com.liwj.asem.bo.UserBO;
+import com.liwj.asem.dto.UserDTO;
 import com.liwj.asem.exception.WSPException;
 import com.liwj.asem.model.User;
 
 import java.util.List;
 
 public interface IUserService {
-    User getUserByToken(String token) throws WSPException;
+    User getUserById(Long id);
 
-    void createUser(User user);
+    User getUserBySN(String SN);
 
-    List<UserBO> getAllUsers();
+    UserDTO getUserByToken(String token) throws WSPException;
 
-    void deleteUser(long id);
+    UserDTO login(String nickName, String password) throws WSPException;
 
-    User login(String nickName, String password) throws WSPException;
+    List<User> getStudents(Long primaryTeachingInstitutionId, List<Long> grades);
 
-    Boolean isSchoolUser(User user);
+    Boolean isSchoolUser(UserDTO user);
 
-    Boolean isCollegeManger(User user);
+    Boolean isCollegeManger(UserDTO user);
+
+    Boolean isGradeManger(UserDTO user);
 }

@@ -1,6 +1,8 @@
 package com.liwj.asem.bo;
 
 import com.liwj.asem.enums.LevelTypeEnum;
+import com.liwj.asem.enums.ScholarshipTypeEnum;
+import com.liwj.asem.model.Scholarship;
 
 import java.util.List;
 
@@ -13,8 +15,35 @@ public class EntireScholarshipForm {
     private String name;
     private String requirement;
     private Long templateId;
+    private Long primaryTeachingInstitutionId;
+    private String unitName;
     private List<NewPrizeItem> prizes;
     private String scholarshipTypeName;
+    private ScholarshipTypeEnum scholarshipType;
+
+    public ScholarshipTypeEnum getScholarshipType() {
+        return scholarshipType;
+    }
+
+    public void setScholarshipType(ScholarshipTypeEnum scholarshipType) {
+        this.scholarshipType = scholarshipType;
+    }
+
+    public Long getPrimaryTeachingInstitutionId() {
+        return primaryTeachingInstitutionId;
+    }
+
+    public void setPrimaryTeachingInstitutionId(Long primaryTeachingInstitutionId) {
+        this.primaryTeachingInstitutionId = primaryTeachingInstitutionId;
+    }
+
+    public String getUnitName() {
+        return unitName;
+    }
+
+    public void setUnitName(String unitName) {
+        this.unitName = unitName;
+    }
 
     public String getScholarshipTypeName() {
         return scholarshipTypeName;

@@ -165,63 +165,63 @@ public class ApplicationStepExample {
             return (Criteria) this;
         }
 
-        public Criteria andStepTemplateIdIsNull() {
-            addCriterion("step_template_id is null");
+        public Criteria andFlowTemplateStepIdIsNull() {
+            addCriterion("flow_template_step_id is null");
             return (Criteria) this;
         }
 
-        public Criteria andStepTemplateIdIsNotNull() {
-            addCriterion("step_template_id is not null");
+        public Criteria andFlowTemplateStepIdIsNotNull() {
+            addCriterion("flow_template_step_id is not null");
             return (Criteria) this;
         }
 
-        public Criteria andStepTemplateIdEqualTo(Long value) {
-            addCriterion("step_template_id =", value, "stepTemplateId");
+        public Criteria andFlowTemplateStepIdEqualTo(Long value) {
+            addCriterion("flow_template_step_id =", value, "flowTemplateStepId");
             return (Criteria) this;
         }
 
-        public Criteria andStepTemplateIdNotEqualTo(Long value) {
-            addCriterion("step_template_id <>", value, "stepTemplateId");
+        public Criteria andFlowTemplateStepIdNotEqualTo(Long value) {
+            addCriterion("flow_template_step_id <>", value, "flowTemplateStepId");
             return (Criteria) this;
         }
 
-        public Criteria andStepTemplateIdGreaterThan(Long value) {
-            addCriterion("step_template_id >", value, "stepTemplateId");
+        public Criteria andFlowTemplateStepIdGreaterThan(Long value) {
+            addCriterion("flow_template_step_id >", value, "flowTemplateStepId");
             return (Criteria) this;
         }
 
-        public Criteria andStepTemplateIdGreaterThanOrEqualTo(Long value) {
-            addCriterion("step_template_id >=", value, "stepTemplateId");
+        public Criteria andFlowTemplateStepIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("flow_template_step_id >=", value, "flowTemplateStepId");
             return (Criteria) this;
         }
 
-        public Criteria andStepTemplateIdLessThan(Long value) {
-            addCriterion("step_template_id <", value, "stepTemplateId");
+        public Criteria andFlowTemplateStepIdLessThan(Long value) {
+            addCriterion("flow_template_step_id <", value, "flowTemplateStepId");
             return (Criteria) this;
         }
 
-        public Criteria andStepTemplateIdLessThanOrEqualTo(Long value) {
-            addCriterion("step_template_id <=", value, "stepTemplateId");
+        public Criteria andFlowTemplateStepIdLessThanOrEqualTo(Long value) {
+            addCriterion("flow_template_step_id <=", value, "flowTemplateStepId");
             return (Criteria) this;
         }
 
-        public Criteria andStepTemplateIdIn(List<Long> values) {
-            addCriterion("step_template_id in", values, "stepTemplateId");
+        public Criteria andFlowTemplateStepIdIn(List<Long> values) {
+            addCriterion("flow_template_step_id in", values, "flowTemplateStepId");
             return (Criteria) this;
         }
 
-        public Criteria andStepTemplateIdNotIn(List<Long> values) {
-            addCriterion("step_template_id not in", values, "stepTemplateId");
+        public Criteria andFlowTemplateStepIdNotIn(List<Long> values) {
+            addCriterion("flow_template_step_id not in", values, "flowTemplateStepId");
             return (Criteria) this;
         }
 
-        public Criteria andStepTemplateIdBetween(Long value1, Long value2) {
-            addCriterion("step_template_id between", value1, value2, "stepTemplateId");
+        public Criteria andFlowTemplateStepIdBetween(Long value1, Long value2) {
+            addCriterion("flow_template_step_id between", value1, value2, "flowTemplateStepId");
             return (Criteria) this;
         }
 
-        public Criteria andStepTemplateIdNotBetween(Long value1, Long value2) {
-            addCriterion("step_template_id not between", value1, value2, "stepTemplateId");
+        public Criteria andFlowTemplateStepIdNotBetween(Long value1, Long value2) {
+            addCriterion("flow_template_step_id not between", value1, value2, "flowTemplateStepId");
             return (Criteria) this;
         }
 
@@ -465,63 +465,63 @@ public class ApplicationStepExample {
             return (Criteria) this;
         }
 
-        public Criteria andCollegeIdIsNull() {
-            addCriterion("college_id is null");
+        public Criteria andPrimaryTeachingInstitutionIdIsNull() {
+            addCriterion("primary_teaching_institution_id is null");
             return (Criteria) this;
         }
 
-        public Criteria andCollegeIdIsNotNull() {
-            addCriterion("college_id is not null");
+        public Criteria andPrimaryTeachingInstitutionIdIsNotNull() {
+            addCriterion("primary_teaching_institution_id is not null");
             return (Criteria) this;
         }
 
-        public Criteria andCollegeIdEqualTo(Long value) {
-            addCriterion("college_id =", value, "collegeId");
+        public Criteria andPrimaryTeachingInstitutionIdEqualTo(Long value) {
+            addCriterion("primary_teaching_institution_id =", value, "primaryTeachingInstitutionId");
             return (Criteria) this;
         }
 
-        public Criteria andCollegeIdNotEqualTo(Long value) {
-            addCriterion("college_id <>", value, "collegeId");
+        public Criteria andPrimaryTeachingInstitutionIdNotEqualTo(Long value) {
+            addCriterion("primary_teaching_institution_id <>", value, "primaryTeachingInstitutionId");
             return (Criteria) this;
         }
 
-        public Criteria andCollegeIdGreaterThan(Long value) {
-            addCriterion("college_id >", value, "collegeId");
+        public Criteria andPrimaryTeachingInstitutionIdGreaterThan(Long value) {
+            addCriterion("primary_teaching_institution_id >", value, "primaryTeachingInstitutionId");
             return (Criteria) this;
         }
 
-        public Criteria andCollegeIdGreaterThanOrEqualTo(Long value) {
-            addCriterion("college_id >=", value, "collegeId");
+        public Criteria andPrimaryTeachingInstitutionIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("primary_teaching_institution_id >=", value, "primaryTeachingInstitutionId");
             return (Criteria) this;
         }
 
-        public Criteria andCollegeIdLessThan(Long value) {
-            addCriterion("college_id <", value, "collegeId");
+        public Criteria andPrimaryTeachingInstitutionIdLessThan(Long value) {
+            addCriterion("primary_teaching_institution_id <", value, "primaryTeachingInstitutionId");
             return (Criteria) this;
         }
 
-        public Criteria andCollegeIdLessThanOrEqualTo(Long value) {
-            addCriterion("college_id <=", value, "collegeId");
+        public Criteria andPrimaryTeachingInstitutionIdLessThanOrEqualTo(Long value) {
+            addCriterion("primary_teaching_institution_id <=", value, "primaryTeachingInstitutionId");
             return (Criteria) this;
         }
 
-        public Criteria andCollegeIdIn(List<Long> values) {
-            addCriterion("college_id in", values, "collegeId");
+        public Criteria andPrimaryTeachingInstitutionIdIn(List<Long> values) {
+            addCriterion("primary_teaching_institution_id in", values, "primaryTeachingInstitutionId");
             return (Criteria) this;
         }
 
-        public Criteria andCollegeIdNotIn(List<Long> values) {
-            addCriterion("college_id not in", values, "collegeId");
+        public Criteria andPrimaryTeachingInstitutionIdNotIn(List<Long> values) {
+            addCriterion("primary_teaching_institution_id not in", values, "primaryTeachingInstitutionId");
             return (Criteria) this;
         }
 
-        public Criteria andCollegeIdBetween(Long value1, Long value2) {
-            addCriterion("college_id between", value1, value2, "collegeId");
+        public Criteria andPrimaryTeachingInstitutionIdBetween(Long value1, Long value2) {
+            addCriterion("primary_teaching_institution_id between", value1, value2, "primaryTeachingInstitutionId");
             return (Criteria) this;
         }
 
-        public Criteria andCollegeIdNotBetween(Long value1, Long value2) {
-            addCriterion("college_id not between", value1, value2, "collegeId");
+        public Criteria andPrimaryTeachingInstitutionIdNotBetween(Long value1, Long value2) {
+            addCriterion("primary_teaching_institution_id not between", value1, value2, "primaryTeachingInstitutionId");
             return (Criteria) this;
         }
 

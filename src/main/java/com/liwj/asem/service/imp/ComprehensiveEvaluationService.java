@@ -2,13 +2,16 @@ package com.liwj.asem.service.imp;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.liwj.asem.bo.AssessmentRecordBO;
 import com.liwj.asem.bo.FileBO;
-import com.liwj.asem.dao.ComprehensiveEvaluationMapper;
+import com.liwj.asem.dao.AssessmentRecordMapper;
 import com.liwj.asem.data.ErrorInfo;
 import com.liwj.asem.exception.WSPException;
-import com.liwj.asem.model.ComprehensiveEvaluation;
-import com.liwj.asem.model.ComprehensiveEvaluationExample;
+import com.liwj.asem.model.AssessmentRecord;
+import com.liwj.asem.model.AssessmentRecordExample;
+import com.liwj.asem.model.User;
 import com.liwj.asem.service.IComprehensiveEvaluationService;
+import com.liwj.asem.service.IUserService;
 import com.liwj.asem.utils.Common;
 import com.liwj.asem.utils.Util;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -24,13 +27,17 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class ComprehensiveEvaluationService implements IComprehensiveEvaluationService {
 
     @Autowired
-    private ComprehensiveEvaluationMapper comprehensiveEvaluationMapper;
+    private AssessmentRecordMapper assessmentRecordMapper;
+
+    @Autowired
+    private IUserService userService;
 
     @Override
     @Transactional
@@ -43,11 +50,26 @@ public class ComprehensiveEvaluationService implements IComprehensiveEvaluationS
     }
 
     @Override
-    public PageInfo getComprehensiveEvaluationList(Integer pageNum, Integer pageSize) {
-        ComprehensiveEvaluationExample example = new ComprehensiveEvaluationExample();
+    public PageInfo getAssessmentRecordList(Integer pageNum, Integer pageSize) {
+        AssessmentRecordExample example = new AssessmentRecordExample();
         PageHelper.startPage(pageNum, pageSize);
-        List<ComprehensiveEvaluation> list = comprehensiveEvaluationMapper.selectByExample(example);
+        List<AssessmentRecord> list = assessmentRecordMapper.selectByExample(example);
         PageInfo pageInfo = new PageInfo(list);
+        List<AssessmentRecordBO> res = new ArrayList<>();
+        for (AssessmentRecord record : list) {
+            AssessmentRecordBO bo = new AssessmentRecordBO();
+            bo.setSn(record.getSn());
+            bo.setIntellectualRank(record.getIntellectualRank());
+            bo.setIntellectualScore(record.getIntellectualScore());
+            bo.setOverallRank(record.getOverallRank());
+            bo.setOverallScore(record.getOverallScore());
+            bo.setMajorTotal(record.getMajorTotal());
+            User user = userService.getUserBySN(record.getSn());
+            if (user != null)
+                bo.setName(user.getName());
+            res.add(bo);
+        }
+        pageInfo.setList(res);
         return pageInfo;
     }
 
@@ -59,9 +81,9 @@ public class ComprehensiveEvaluationService implements IComprehensiveEvaluationS
             String postfix = Util.getPostfix(path);
             if (!Common.EMPTY.equals(postfix)) {
                 if (Common.OFFICE_EXCEL_2003_POSTFIX.equals(postfix)) {
-                     readXls(path);
+                    readXls(path);
                 } else if (Common.OFFICE_EXCEL_2010_POSTFIX.equals(postfix)) {
-                     readXlsx(path);
+                    readXlsx(path);
                 }
             } else {
                 throw new WSPException(ErrorInfo.PARAMS_ERROR);
@@ -77,22 +99,23 @@ public class ComprehensiveEvaluationService implements IComprehensiveEvaluationS
         for (int rowNum = 1; rowNum <= xssfSheet.getLastRowNum(); rowNum++) {
             XSSFRow xssfRow = xssfSheet.getRow(rowNum);
 
-            String academicYear = xssfRow.getCell(0).toString();
-            String collegeName = xssfRow.getCell(1).toString();
-            String majorName = xssfRow.getCell(2).toString();
-            String gradeName = xssfRow.getCell(3).toString();
-            String name = xssfRow.getCell(4).toString();
-            String no = xssfRow.getCell(5).toString();
-            Integer majorNumber = new Double(xssfRow.getCell(6).getNumericCellValue()).intValue();
-            Double compositeScore = xssfRow.getCell(7).getNumericCellValue();
-            Integer compositeRank = new Double(xssfRow.getCell(8).getNumericCellValue()).intValue();
-            Double intellectualScore = xssfRow.getCell(9).getNumericCellValue();
-            Integer intellectualRank = new Double(xssfRow.getCell(10).getNumericCellValue()).intValue();
+            Integer academicYear = new Double(xssfRow.getCell(0).getNumericCellValue()).intValue();
+            String Sn = xssfRow.getCell(1).toString();
+            Integer majorNumber = new Double(xssfRow.getCell(2).getNumericCellValue()).intValue();
+            Double compositeScore = xssfRow.getCell(3).getNumericCellValue();
+            Integer compositeRank = new Double(xssfRow.getCell(4).getNumericCellValue()).intValue();
+            Double intellectualScore = xssfRow.getCell(5).getNumericCellValue();
+            Integer intellectualRank = new Double(xssfRow.getCell(6).getNumericCellValue()).intValue();
 
-            ComprehensiveEvaluation comprehensiveEvaluation = new ComprehensiveEvaluation(null,name,no,majorNumber,
-                    compositeScore,compositeRank,intellectualScore,intellectualRank,academicYear,collegeName,
-                    majorName,gradeName);
-            comprehensiveEvaluationMapper.insertSelective(comprehensiveEvaluation);
+            AssessmentRecord record = new AssessmentRecord();
+            record.setYear(academicYear);
+            record.setSn(Sn);
+            record.setOverallScore(compositeScore);
+            record.setOverallRank(compositeRank);
+            record.setIntellectualScore(intellectualScore);
+            record.setIntellectualRank(intellectualRank);
+            record.setMajorTotal(majorNumber);
+            assessmentRecordMapper.insertSelective(record);
         }
     }
 
@@ -104,22 +127,23 @@ public class ComprehensiveEvaluationService implements IComprehensiveEvaluationS
         for (int rowNum = 1; rowNum <= hssfSheet.getLastRowNum(); rowNum++) {
             HSSFRow hssfRow = hssfSheet.getRow(rowNum);
 
-            String academicYear = hssfRow.getCell(0).toString();
-            String collegeName = hssfRow.getCell(1).toString();
-            String majorName = hssfRow.getCell(2).toString();
-            String gradeName = hssfRow.getCell(3).toString();
-            String name = hssfRow.getCell(4).toString();
-            String no = hssfRow.getCell(5).toString();
-            Integer majorNumber = new Double(hssfRow.getCell(6).getNumericCellValue()).intValue();
-            Double compositeScore = hssfRow.getCell(7).getNumericCellValue();
-            Integer compositeRank = new Double(hssfRow.getCell(8).getNumericCellValue()).intValue();
-            Double intellectualScore = hssfRow.getCell(9).getNumericCellValue();
-            Integer intellectualRank = new Double(hssfRow.getCell(10).getNumericCellValue()).intValue();
+            Integer academicYear = new Double(hssfRow.getCell(0).getNumericCellValue()).intValue();
+            String Sn = hssfRow.getCell(1).toString();
+            Integer majorNumber = new Double(hssfRow.getCell(2).getNumericCellValue()).intValue();
+            Double compositeScore = hssfRow.getCell(3).getNumericCellValue();
+            Integer compositeRank = new Double(hssfRow.getCell(4).getNumericCellValue()).intValue();
+            Double intellectualScore = hssfRow.getCell(5).getNumericCellValue();
+            Integer intellectualRank = new Double(hssfRow.getCell(6).getNumericCellValue()).intValue();
 
-            ComprehensiveEvaluation comprehensiveEvaluation = new ComprehensiveEvaluation(null,name,no,majorNumber,
-                    compositeScore,compositeRank,intellectualScore,intellectualRank,academicYear,collegeName,
-                    majorName,gradeName);
-            comprehensiveEvaluationMapper.insertSelective(comprehensiveEvaluation);
+            AssessmentRecord record = new AssessmentRecord();
+            record.setYear(academicYear);
+            record.setSn(Sn);
+            record.setOverallScore(compositeScore);
+            record.setOverallRank(compositeRank);
+            record.setIntellectualScore(intellectualScore);
+            record.setIntellectualRank(intellectualRank);
+            record.setMajorTotal(majorNumber);
+            assessmentRecordMapper.insertSelective(record);
         }
     }
 }

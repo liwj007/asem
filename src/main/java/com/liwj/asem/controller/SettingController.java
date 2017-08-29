@@ -1,11 +1,9 @@
 package com.liwj.asem.controller;
 
 import com.github.pagehelper.PageInfo;
-import com.liwj.asem.bo.ComprehensiveEvaluationBO;
 import com.liwj.asem.bo.FileBO;
 import com.liwj.asem.data.ResponseData;
 import com.liwj.asem.exception.WSPException;
-import com.liwj.asem.model.ComprehensiveEvaluation;
 import com.liwj.asem.service.IComprehensiveEvaluationService;
 import com.liwj.asem.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +35,7 @@ public class SettingController {
                                                        @RequestParam(value = "pageSize") Integer pageSize,
                                                        @RequestParam(value = "pageNum") Integer pageNum) throws WSPException {
         PageInfo pageInfo = comprehensiveEvaluationService
-                .getComprehensiveEvaluationList(pageNum, pageSize);
+                .getAssessmentRecordList(pageNum, pageSize);
         ResponseData responseData = new ResponseData();
         responseData.setSuccessData(pageInfo);
         return responseData;

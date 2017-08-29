@@ -7,7 +7,8 @@ public enum ApplicationFileStatusEnum {
     NO(0, " 未提交"),
     SUBMIT(1, "审核中"),
     PASS(2, "审核通过"),
-    REJECT(3, "审核不通过");
+    REJECT(3, "需修改"),
+    RESUBMIT(4, "重新提交");
 
     public final String desc;
     public final int code;

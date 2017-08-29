@@ -5,10 +5,10 @@
     <constructor>
       <idArg column="id" javaType="java.lang.Long" jdbcType="BIGINT" />
       <arg column="scholarship_id" javaType="java.lang.Long" jdbcType="BIGINT" />
-      <arg column="unit_id" javaType="java.lang.Long" jdbcType="BIGINT" />
-      <arg column="student_begin_date" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <arg column="primary_teaching_institution_id" javaType="java.lang.Long" jdbcType="BIGINT" />
       <arg column="student_end_date" javaType="java.util.Date" jdbcType="TIMESTAMP" />
       <arg column="grade_end_date" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <arg column="prize_id" javaType="java.lang.Long" jdbcType="BIGINT" />
     </constructor>
   </resultMap>
   <sql id="Example_Where_Clause">
@@ -70,7 +70,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, scholarship_id, unit_id, student_begin_date, student_end_date, grade_end_date
+    id, scholarship_id, primary_teaching_institution_id, student_end_date, grade_end_date, 
+    prize_id
   </sql>
   <select id="selectByExample" parameterType="com.liwj.asem.model.CollegeTimeLimitExample" resultMap="BaseResultMap">
     select
@@ -107,10 +108,12 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into college_time_limit (scholarship_id, unit_id, student_begin_date, 
-      student_end_date, grade_end_date)
-    values (#{scholarshipId,jdbcType=BIGINT}, #{unitId,jdbcType=BIGINT}, #{studentBeginDate,jdbcType=TIMESTAMP}, 
-      #{studentEndDate,jdbcType=TIMESTAMP}, #{gradeEndDate,jdbcType=TIMESTAMP})
+    insert into college_time_limit (scholarship_id, primary_teaching_institution_id, 
+      student_end_date, grade_end_date, prize_id
+      )
+    values (#{scholarshipId,jdbcType=BIGINT}, #{primaryTeachingInstitutionId,jdbcType=BIGINT}, 
+      #{studentEndDate,jdbcType=TIMESTAMP}, #{gradeEndDate,jdbcType=TIMESTAMP}, #{prizeId,jdbcType=BIGINT}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.liwj.asem.model.CollegeTimeLimit">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -121,11 +124,8 @@
       <if test="scholarshipId != null">
         scholarship_id,
       </if>
-      <if test="unitId != null">
-        unit_id,
-      </if>
-      <if test="studentBeginDate != null">
-        student_begin_date,
+      <if test="primaryTeachingInstitutionId != null">
+        primary_teaching_institution_id,
       </if>
       <if test="studentEndDate != null">
         student_end_date,
@@ -133,22 +133,25 @@
       <if test="gradeEndDate != null">
         grade_end_date,
       </if>
+      <if test="prizeId != null">
+        prize_id,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="scholarshipId != null">
         #{scholarshipId,jdbcType=BIGINT},
       </if>
-      <if test="unitId != null">
-        #{unitId,jdbcType=BIGINT},
-      </if>
-      <if test="studentBeginDate != null">
-        #{studentBeginDate,jdbcType=TIMESTAMP},
+      <if test="primaryTeachingInstitutionId != null">
+        #{primaryTeachingInstitutionId,jdbcType=BIGINT},
       </if>
       <if test="studentEndDate != null">
         #{studentEndDate,jdbcType=TIMESTAMP},
       </if>
       <if test="gradeEndDate != null">
         #{gradeEndDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="prizeId != null">
+        #{prizeId,jdbcType=BIGINT},
       </if>
     </trim>
   </insert>
@@ -167,17 +170,17 @@
       <if test="record.scholarshipId != null">
         scholarship_id = #{record.scholarshipId,jdbcType=BIGINT},
       </if>
-      <if test="record.unitId != null">
-        unit_id = #{record.unitId,jdbcType=BIGINT},
-      </if>
-      <if test="record.studentBeginDate != null">
-        student_begin_date = #{record.studentBeginDate,jdbcType=TIMESTAMP},
+      <if test="record.primaryTeachingInstitutionId != null">
+        primary_teaching_institution_id = #{record.primaryTeachingInstitutionId,jdbcType=BIGINT},
       </if>
       <if test="record.studentEndDate != null">
         student_end_date = #{record.studentEndDate,jdbcType=TIMESTAMP},
       </if>
       <if test="record.gradeEndDate != null">
         grade_end_date = #{record.gradeEndDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.prizeId != null">
+        prize_id = #{record.prizeId,jdbcType=BIGINT},
       </if>
     </set>
     <if test="_parameter != null">
@@ -188,10 +191,10 @@
     update college_time_limit
     set id = #{record.id,jdbcType=BIGINT},
       scholarship_id = #{record.scholarshipId,jdbcType=BIGINT},
-      unit_id = #{record.unitId,jdbcType=BIGINT},
-      student_begin_date = #{record.studentBeginDate,jdbcType=TIMESTAMP},
+      primary_teaching_institution_id = #{record.primaryTeachingInstitutionId,jdbcType=BIGINT},
       student_end_date = #{record.studentEndDate,jdbcType=TIMESTAMP},
-      grade_end_date = #{record.gradeEndDate,jdbcType=TIMESTAMP}
+      grade_end_date = #{record.gradeEndDate,jdbcType=TIMESTAMP},
+      prize_id = #{record.prizeId,jdbcType=BIGINT}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -202,11 +205,8 @@
       <if test="scholarshipId != null">
         scholarship_id = #{scholarshipId,jdbcType=BIGINT},
       </if>
-      <if test="unitId != null">
-        unit_id = #{unitId,jdbcType=BIGINT},
-      </if>
-      <if test="studentBeginDate != null">
-        student_begin_date = #{studentBeginDate,jdbcType=TIMESTAMP},
+      <if test="primaryTeachingInstitutionId != null">
+        primary_teaching_institution_id = #{primaryTeachingInstitutionId,jdbcType=BIGINT},
       </if>
       <if test="studentEndDate != null">
         student_end_date = #{studentEndDate,jdbcType=TIMESTAMP},
@@ -214,16 +214,19 @@
       <if test="gradeEndDate != null">
         grade_end_date = #{gradeEndDate,jdbcType=TIMESTAMP},
       </if>
+      <if test="prizeId != null">
+        prize_id = #{prizeId,jdbcType=BIGINT},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.liwj.asem.model.CollegeTimeLimit">
     update college_time_limit
     set scholarship_id = #{scholarshipId,jdbcType=BIGINT},
-      unit_id = #{unitId,jdbcType=BIGINT},
-      student_begin_date = #{studentBeginDate,jdbcType=TIMESTAMP},
+      primary_teaching_institution_id = #{primaryTeachingInstitutionId,jdbcType=BIGINT},
       student_end_date = #{studentEndDate,jdbcType=TIMESTAMP},
-      grade_end_date = #{gradeEndDate,jdbcType=TIMESTAMP}
+      grade_end_date = #{gradeEndDate,jdbcType=TIMESTAMP},
+      prize_id = #{prizeId,jdbcType=BIGINT}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

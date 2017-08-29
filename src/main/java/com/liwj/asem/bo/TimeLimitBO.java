@@ -17,6 +17,16 @@ public class TimeLimitBO {
     private Long id;
     private String scholarshipName;
 
+    private Long manageUnit;
+
+    public Long getManageUnit() {
+        return manageUnit;
+    }
+
+    public void setManageUnit(Long manageUnit) {
+        this.manageUnit = manageUnit;
+    }
+
     public Boolean getNeedGrade() {
         return needGrade;
     }

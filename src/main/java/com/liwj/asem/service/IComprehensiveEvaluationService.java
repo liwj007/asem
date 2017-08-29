@@ -10,5 +10,5 @@ import java.util.List;
 public interface IComprehensiveEvaluationService {
     void uploadFiles(List<FileBO> fileBOList) throws IOException, WSPException;
 
-    PageInfo getComprehensiveEvaluationList(Integer pageNum, Integer pageSize);
+    PageInfo getAssessmentRecordList(Integer pageNum, Integer pageSize);
 }

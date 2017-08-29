@@ -6,7 +6,7 @@ import java.util.Date;
 public class ApplicationStep implements Serializable {
     private Long id;
 
-    private Long stepTemplateId;
+    private Long flowTemplateStepId;
 
     private Long applicationId;
 
@@ -16,20 +16,20 @@ public class ApplicationStep implements Serializable {
 
     private Integer status;
 
-    private Long collegeId;
+    private Long primaryTeachingInstitutionId;
 
     private Long gradeId;
 
     private static final long serialVersionUID = 1L;
 
-    public ApplicationStep(Long id, Long stepTemplateId, Long applicationId, Long operatorId, Date operationDate, Integer status, Long collegeId, Long gradeId) {
+    public ApplicationStep(Long id, Long flowTemplateStepId, Long applicationId, Long operatorId, Date operationDate, Integer status, Long primaryTeachingInstitutionId, Long gradeId) {
         this.id = id;
-        this.stepTemplateId = stepTemplateId;
+        this.flowTemplateStepId = flowTemplateStepId;
         this.applicationId = applicationId;
         this.operatorId = operatorId;
         this.operationDate = operationDate;
         this.status = status;
-        this.collegeId = collegeId;
+        this.primaryTeachingInstitutionId = primaryTeachingInstitutionId;
         this.gradeId = gradeId;
     }
 
@@ -45,12 +45,12 @@ public class ApplicationStep implements Serializable {
         this.id = id;
     }
 
-    public Long getStepTemplateId() {
-        return stepTemplateId;
+    public Long getFlowTemplateStepId() {
+        return flowTemplateStepId;
     }
 
-    public void setStepTemplateId(Long stepTemplateId) {
-        this.stepTemplateId = stepTemplateId;
+    public void setFlowTemplateStepId(Long flowTemplateStepId) {
+        this.flowTemplateStepId = flowTemplateStepId;
     }
 
     public Long getApplicationId() {
@@ -85,12 +85,12 @@ public class ApplicationStep implements Serializable {
         this.status = status;
     }
 
-    public Long getCollegeId() {
-        return collegeId;
+    public Long getPrimaryTeachingInstitutionId() {
+        return primaryTeachingInstitutionId;
     }
 
-    public void setCollegeId(Long collegeId) {
-        this.collegeId = collegeId;
+    public void setPrimaryTeachingInstitutionId(Long primaryTeachingInstitutionId) {
+        this.primaryTeachingInstitutionId = primaryTeachingInstitutionId;
     }
 
     public Long getGradeId() {
@@ -114,12 +114,12 @@ public class ApplicationStep implements Serializable {
         }
         ApplicationStep other = (ApplicationStep) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-            && (this.getStepTemplateId() == null ? other.getStepTemplateId() == null : this.getStepTemplateId().equals(other.getStepTemplateId()))
+            && (this.getFlowTemplateStepId() == null ? other.getFlowTemplateStepId() == null : this.getFlowTemplateStepId().equals(other.getFlowTemplateStepId()))
             && (this.getApplicationId() == null ? other.getApplicationId() == null : this.getApplicationId().equals(other.getApplicationId()))
             && (this.getOperatorId() == null ? other.getOperatorId() == null : this.getOperatorId().equals(other.getOperatorId()))
             && (this.getOperationDate() == null ? other.getOperationDate() == null : this.getOperationDate().equals(other.getOperationDate()))
             && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()))
-            && (this.getCollegeId() == null ? other.getCollegeId() == null : this.getCollegeId().equals(other.getCollegeId()))
+            && (this.getPrimaryTeachingInstitutionId() == null ? other.getPrimaryTeachingInstitutionId() == null : this.getPrimaryTeachingInstitutionId().equals(other.getPrimaryTeachingInstitutionId()))
             && (this.getGradeId() == null ? other.getGradeId() == null : this.getGradeId().equals(other.getGradeId()));
     }
 
@@ -128,12 +128,12 @@ public class ApplicationStep implements Serializable {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
-        result = prime * result + ((getStepTemplateId() == null) ? 0 : getStepTemplateId().hashCode());
+        result = prime * result + ((getFlowTemplateStepId() == null) ? 0 : getFlowTemplateStepId().hashCode());
         result = prime * result + ((getApplicationId() == null) ? 0 : getApplicationId().hashCode());
         result = prime * result + ((getOperatorId() == null) ? 0 : getOperatorId().hashCode());
         result = prime * result + ((getOperationDate() == null) ? 0 : getOperationDate().hashCode());
         result = prime * result + ((getStatus() == null) ? 0 : getStatus().hashCode());
-        result = prime * result + ((getCollegeId() == null) ? 0 : getCollegeId().hashCode());
+        result = prime * result + ((getPrimaryTeachingInstitutionId() == null) ? 0 : getPrimaryTeachingInstitutionId().hashCode());
         result = prime * result + ((getGradeId() == null) ? 0 : getGradeId().hashCode());
         return result;
     }

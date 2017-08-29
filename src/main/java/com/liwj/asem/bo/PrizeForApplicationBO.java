@@ -15,6 +15,16 @@ public class PrizeForApplicationBO {
     private ApplicationFileStatusEnum fileStatus;
     private ApplicationPrizeStatusEnum prizeStatus;
 
+    private Long applicationId;
+
+    public Long getApplicationId() {
+        return applicationId;
+    }
+
+    public void setApplicationId(Long applicationId) {
+        this.applicationId = applicationId;
+    }
+
     public String getScholarshipName() {
         return scholarshipName;
     }

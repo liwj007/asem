@@ -59,7 +59,7 @@
         <!--</table>-->
 
         <table
-                tableName="application_step"
+                tableName="assessment_record"
                 enableCountByExample="true"
                 enableUpdateByExample="true"
                 enableDeleteByExample="true"

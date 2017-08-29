@@ -109,8 +109,6 @@
             <groupId>com.xdbigdata.jwtService</groupId>  <!--自定义-->
             <artifactId>jwtService</artifactId>
             <version>1.4.8</version>
-            <scope>system</scope>
-            <systemPath>${basedir}/lib/jwtService-1.4.8.jar</systemPath> <!--项目根目录下的lib文件夹下-->
         </dependency>
     </dependencies>
 

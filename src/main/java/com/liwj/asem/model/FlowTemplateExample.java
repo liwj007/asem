@@ -595,63 +595,423 @@ public class FlowTemplateExample {
             return (Criteria) this;
         }
 
-        public Criteria andUnitIdIsNull() {
-            addCriterion("unit_id is null");
+        public Criteria andPrimaryTeachingInstitutionIdIsNull() {
+            addCriterion("primary_teaching_institution_id is null");
             return (Criteria) this;
         }
 
-        public Criteria andUnitIdIsNotNull() {
-            addCriterion("unit_id is not null");
+        public Criteria andPrimaryTeachingInstitutionIdIsNotNull() {
+            addCriterion("primary_teaching_institution_id is not null");
             return (Criteria) this;
         }
 
-        public Criteria andUnitIdEqualTo(Long value) {
-            addCriterion("unit_id =", value, "unitId");
+        public Criteria andPrimaryTeachingInstitutionIdEqualTo(Long value) {
+            addCriterion("primary_teaching_institution_id =", value, "primaryTeachingInstitutionId");
             return (Criteria) this;
         }
 
-        public Criteria andUnitIdNotEqualTo(Long value) {
-            addCriterion("unit_id <>", value, "unitId");
+        public Criteria andPrimaryTeachingInstitutionIdNotEqualTo(Long value) {
+            addCriterion("primary_teaching_institution_id <>", value, "primaryTeachingInstitutionId");
             return (Criteria) this;
         }
 
-        public Criteria andUnitIdGreaterThan(Long value) {
-            addCriterion("unit_id >", value, "unitId");
+        public Criteria andPrimaryTeachingInstitutionIdGreaterThan(Long value) {
+            addCriterion("primary_teaching_institution_id >", value, "primaryTeachingInstitutionId");
             return (Criteria) this;
         }
 
-        public Criteria andUnitIdGreaterThanOrEqualTo(Long value) {
-            addCriterion("unit_id >=", value, "unitId");
+        public Criteria andPrimaryTeachingInstitutionIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("primary_teaching_institution_id >=", value, "primaryTeachingInstitutionId");
             return (Criteria) this;
         }
 
-        public Criteria andUnitIdLessThan(Long value) {
-            addCriterion("unit_id <", value, "unitId");
+        public Criteria andPrimaryTeachingInstitutionIdLessThan(Long value) {
+            addCriterion("primary_teaching_institution_id <", value, "primaryTeachingInstitutionId");
             return (Criteria) this;
         }
 
-        public Criteria andUnitIdLessThanOrEqualTo(Long value) {
-            addCriterion("unit_id <=", value, "unitId");
+        public Criteria andPrimaryTeachingInstitutionIdLessThanOrEqualTo(Long value) {
+            addCriterion("primary_teaching_institution_id <=", value, "primaryTeachingInstitutionId");
             return (Criteria) this;
         }
 
-        public Criteria andUnitIdIn(List<Long> values) {
-            addCriterion("unit_id in", values, "unitId");
+        public Criteria andPrimaryTeachingInstitutionIdIn(List<Long> values) {
+            addCriterion("primary_teaching_institution_id in", values, "primaryTeachingInstitutionId");
             return (Criteria) this;
         }
 
-        public Criteria andUnitIdNotIn(List<Long> values) {
-            addCriterion("unit_id not in", values, "unitId");
+        public Criteria andPrimaryTeachingInstitutionIdNotIn(List<Long> values) {
+            addCriterion("primary_teaching_institution_id not in", values, "primaryTeachingInstitutionId");
             return (Criteria) this;
         }
 
-        public Criteria andUnitIdBetween(Long value1, Long value2) {
-            addCriterion("unit_id between", value1, value2, "unitId");
+        public Criteria andPrimaryTeachingInstitutionIdBetween(Long value1, Long value2) {
+            addCriterion("primary_teaching_institution_id between", value1, value2, "primaryTeachingInstitutionId");
             return (Criteria) this;
         }
 
-        public Criteria andUnitIdNotBetween(Long value1, Long value2) {
-            addCriterion("unit_id not between", value1, value2, "unitId");
+        public Criteria andPrimaryTeachingInstitutionIdNotBetween(Long value1, Long value2) {
+            addCriterion("primary_teaching_institution_id not between", value1, value2, "primaryTeachingInstitutionId");
+            return (Criteria) this;
+        }
+
+        public Criteria andNeedGradeCheckIsNull() {
+            addCriterion("need_grade_check is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andNeedGradeCheckIsNotNull() {
+            addCriterion("need_grade_check is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andNeedGradeCheckEqualTo(Boolean value) {
+            addCriterion("need_grade_check =", value, "needGradeCheck");
+            return (Criteria) this;
+        }
+
+        public Criteria andNeedGradeCheckNotEqualTo(Boolean value) {
+            addCriterion("need_grade_check <>", value, "needGradeCheck");
+            return (Criteria) this;
+        }
+
+        public Criteria andNeedGradeCheckGreaterThan(Boolean value) {
+            addCriterion("need_grade_check >", value, "needGradeCheck");
+            return (Criteria) this;
+        }
+
+        public Criteria andNeedGradeCheckGreaterThanOrEqualTo(Boolean value) {
+            addCriterion("need_grade_check >=", value, "needGradeCheck");
+            return (Criteria) this;
+        }
+
+        public Criteria andNeedGradeCheckLessThan(Boolean value) {
+            addCriterion("need_grade_check <", value, "needGradeCheck");
+            return (Criteria) this;
+        }
+
+        public Criteria andNeedGradeCheckLessThanOrEqualTo(Boolean value) {
+            addCriterion("need_grade_check <=", value, "needGradeCheck");
+            return (Criteria) this;
+        }
+
+        public Criteria andNeedGradeCheckIn(List<Boolean> values) {
+            addCriterion("need_grade_check in", values, "needGradeCheck");
+            return (Criteria) this;
+        }
+
+        public Criteria andNeedGradeCheckNotIn(List<Boolean> values) {
+            addCriterion("need_grade_check not in", values, "needGradeCheck");
+            return (Criteria) this;
+        }
+
+        public Criteria andNeedGradeCheckBetween(Boolean value1, Boolean value2) {
+            addCriterion("need_grade_check between", value1, value2, "needGradeCheck");
+            return (Criteria) this;
+        }
+
+        public Criteria andNeedGradeCheckNotBetween(Boolean value1, Boolean value2) {
+            addCriterion("need_grade_check not between", value1, value2, "needGradeCheck");
+            return (Criteria) this;
+        }
+
+        public Criteria andGradeInstructorIsNull() {
+            addCriterion("grade_instructor is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andGradeInstructorIsNotNull() {
+            addCriterion("grade_instructor is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andGradeInstructorEqualTo(Boolean value) {
+            addCriterion("grade_instructor =", value, "gradeInstructor");
+            return (Criteria) this;
+        }
+
+        public Criteria andGradeInstructorNotEqualTo(Boolean value) {
+            addCriterion("grade_instructor <>", value, "gradeInstructor");
+            return (Criteria) this;
+        }
+
+        public Criteria andGradeInstructorGreaterThan(Boolean value) {
+            addCriterion("grade_instructor >", value, "gradeInstructor");
+            return (Criteria) this;
+        }
+
+        public Criteria andGradeInstructorGreaterThanOrEqualTo(Boolean value) {
+            addCriterion("grade_instructor >=", value, "gradeInstructor");
+            return (Criteria) this;
+        }
+
+        public Criteria andGradeInstructorLessThan(Boolean value) {
+            addCriterion("grade_instructor <", value, "gradeInstructor");
+            return (Criteria) this;
+        }
+
+        public Criteria andGradeInstructorLessThanOrEqualTo(Boolean value) {
+            addCriterion("grade_instructor <=", value, "gradeInstructor");
+            return (Criteria) this;
+        }
+
+        public Criteria andGradeInstructorIn(List<Boolean> values) {
+            addCriterion("grade_instructor in", values, "gradeInstructor");
+            return (Criteria) this;
+        }
+
+        public Criteria andGradeInstructorNotIn(List<Boolean> values) {
+            addCriterion("grade_instructor not in", values, "gradeInstructor");
+            return (Criteria) this;
+        }
+
+        public Criteria andGradeInstructorBetween(Boolean value1, Boolean value2) {
+            addCriterion("grade_instructor between", value1, value2, "gradeInstructor");
+            return (Criteria) this;
+        }
+
+        public Criteria andGradeInstructorNotBetween(Boolean value1, Boolean value2) {
+            addCriterion("grade_instructor not between", value1, value2, "gradeInstructor");
+            return (Criteria) this;
+        }
+
+        public Criteria andGradeStudentIsNull() {
+            addCriterion("grade_student is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andGradeStudentIsNotNull() {
+            addCriterion("grade_student is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andGradeStudentEqualTo(Boolean value) {
+            addCriterion("grade_student =", value, "gradeStudent");
+            return (Criteria) this;
+        }
+
+        public Criteria andGradeStudentNotEqualTo(Boolean value) {
+            addCriterion("grade_student <>", value, "gradeStudent");
+            return (Criteria) this;
+        }
+
+        public Criteria andGradeStudentGreaterThan(Boolean value) {
+            addCriterion("grade_student >", value, "gradeStudent");
+            return (Criteria) this;
+        }
+
+        public Criteria andGradeStudentGreaterThanOrEqualTo(Boolean value) {
+            addCriterion("grade_student >=", value, "gradeStudent");
+            return (Criteria) this;
+        }
+
+        public Criteria andGradeStudentLessThan(Boolean value) {
+            addCriterion("grade_student <", value, "gradeStudent");
+            return (Criteria) this;
+        }
+
+        public Criteria andGradeStudentLessThanOrEqualTo(Boolean value) {
+            addCriterion("grade_student <=", value, "gradeStudent");
+            return (Criteria) this;
+        }
+
+        public Criteria andGradeStudentIn(List<Boolean> values) {
+            addCriterion("grade_student in", values, "gradeStudent");
+            return (Criteria) this;
+        }
+
+        public Criteria andGradeStudentNotIn(List<Boolean> values) {
+            addCriterion("grade_student not in", values, "gradeStudent");
+            return (Criteria) this;
+        }
+
+        public Criteria andGradeStudentBetween(Boolean value1, Boolean value2) {
+            addCriterion("grade_student between", value1, value2, "gradeStudent");
+            return (Criteria) this;
+        }
+
+        public Criteria andGradeStudentNotBetween(Boolean value1, Boolean value2) {
+            addCriterion("grade_student not between", value1, value2, "gradeStudent");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpecialInstructorIsNull() {
+            addCriterion("special_instructor is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpecialInstructorIsNotNull() {
+            addCriterion("special_instructor is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpecialInstructorEqualTo(Boolean value) {
+            addCriterion("special_instructor =", value, "specialInstructor");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpecialInstructorNotEqualTo(Boolean value) {
+            addCriterion("special_instructor <>", value, "specialInstructor");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpecialInstructorGreaterThan(Boolean value) {
+            addCriterion("special_instructor >", value, "specialInstructor");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpecialInstructorGreaterThanOrEqualTo(Boolean value) {
+            addCriterion("special_instructor >=", value, "specialInstructor");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpecialInstructorLessThan(Boolean value) {
+            addCriterion("special_instructor <", value, "specialInstructor");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpecialInstructorLessThanOrEqualTo(Boolean value) {
+            addCriterion("special_instructor <=", value, "specialInstructor");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpecialInstructorIn(List<Boolean> values) {
+            addCriterion("special_instructor in", values, "specialInstructor");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpecialInstructorNotIn(List<Boolean> values) {
+            addCriterion("special_instructor not in", values, "specialInstructor");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpecialInstructorBetween(Boolean value1, Boolean value2) {
+            addCriterion("special_instructor between", value1, value2, "specialInstructor");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpecialInstructorNotBetween(Boolean value1, Boolean value2) {
+            addCriterion("special_instructor not between", value1, value2, "specialInstructor");
+            return (Criteria) this;
+        }
+
+        public Criteria andCollegeStudentIsNull() {
+            addCriterion("college_student is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCollegeStudentIsNotNull() {
+            addCriterion("college_student is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCollegeStudentEqualTo(Boolean value) {
+            addCriterion("college_student =", value, "collegeStudent");
+            return (Criteria) this;
+        }
+
+        public Criteria andCollegeStudentNotEqualTo(Boolean value) {
+            addCriterion("college_student <>", value, "collegeStudent");
+            return (Criteria) this;
+        }
+
+        public Criteria andCollegeStudentGreaterThan(Boolean value) {
+            addCriterion("college_student >", value, "collegeStudent");
+            return (Criteria) this;
+        }
+
+        public Criteria andCollegeStudentGreaterThanOrEqualTo(Boolean value) {
+            addCriterion("college_student >=", value, "collegeStudent");
+            return (Criteria) this;
+        }
+
+        public Criteria andCollegeStudentLessThan(Boolean value) {
+            addCriterion("college_student <", value, "collegeStudent");
+            return (Criteria) this;
+        }
+
+        public Criteria andCollegeStudentLessThanOrEqualTo(Boolean value) {
+            addCriterion("college_student <=", value, "collegeStudent");
+            return (Criteria) this;
+        }
+
+        public Criteria andCollegeStudentIn(List<Boolean> values) {
+            addCriterion("college_student in", values, "collegeStudent");
+            return (Criteria) this;
+        }
+
+        public Criteria andCollegeStudentNotIn(List<Boolean> values) {
+            addCriterion("college_student not in", values, "collegeStudent");
+            return (Criteria) this;
+        }
+
+        public Criteria andCollegeStudentBetween(Boolean value1, Boolean value2) {
+            addCriterion("college_student between", value1, value2, "collegeStudent");
+            return (Criteria) this;
+        }
+
+        public Criteria andCollegeStudentNotBetween(Boolean value1, Boolean value2) {
+            addCriterion("college_student not between", value1, value2, "collegeStudent");
+            return (Criteria) this;
+        }
+
+        public Criteria andSchoolUserIsNull() {
+            addCriterion("school_user is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSchoolUserIsNotNull() {
+            addCriterion("school_user is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSchoolUserEqualTo(Boolean value) {
+            addCriterion("school_user =", value, "schoolUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andSchoolUserNotEqualTo(Boolean value) {
+            addCriterion("school_user <>", value, "schoolUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andSchoolUserGreaterThan(Boolean value) {
+            addCriterion("school_user >", value, "schoolUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andSchoolUserGreaterThanOrEqualTo(Boolean value) {
+            addCriterion("school_user >=", value, "schoolUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andSchoolUserLessThan(Boolean value) {
+            addCriterion("school_user <", value, "schoolUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andSchoolUserLessThanOrEqualTo(Boolean value) {
+            addCriterion("school_user <=", value, "schoolUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andSchoolUserIn(List<Boolean> values) {
+            addCriterion("school_user in", values, "schoolUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andSchoolUserNotIn(List<Boolean> values) {
+            addCriterion("school_user not in", values, "schoolUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andSchoolUserBetween(Boolean value1, Boolean value2) {
+            addCriterion("school_user between", value1, value2, "schoolUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andSchoolUserNotBetween(Boolean value1, Boolean value2) {
+            addCriterion("school_user not between", value1, value2, "schoolUser");
             return (Criteria) this;
         }
 

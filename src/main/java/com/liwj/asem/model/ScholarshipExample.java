@@ -295,66 +295,6 @@ public class ScholarshipExample {
             return (Criteria) this;
         }
 
-        public Criteria andLevelTypeIsNull() {
-            addCriterion("level_type is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andLevelTypeIsNotNull() {
-            addCriterion("level_type is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andLevelTypeEqualTo(Integer value) {
-            addCriterion("level_type =", value, "levelType");
-            return (Criteria) this;
-        }
-
-        public Criteria andLevelTypeNotEqualTo(Integer value) {
-            addCriterion("level_type <>", value, "levelType");
-            return (Criteria) this;
-        }
-
-        public Criteria andLevelTypeGreaterThan(Integer value) {
-            addCriterion("level_type >", value, "levelType");
-            return (Criteria) this;
-        }
-
-        public Criteria andLevelTypeGreaterThanOrEqualTo(Integer value) {
-            addCriterion("level_type >=", value, "levelType");
-            return (Criteria) this;
-        }
-
-        public Criteria andLevelTypeLessThan(Integer value) {
-            addCriterion("level_type <", value, "levelType");
-            return (Criteria) this;
-        }
-
-        public Criteria andLevelTypeLessThanOrEqualTo(Integer value) {
-            addCriterion("level_type <=", value, "levelType");
-            return (Criteria) this;
-        }
-
-        public Criteria andLevelTypeIn(List<Integer> values) {
-            addCriterion("level_type in", values, "levelType");
-            return (Criteria) this;
-        }
-
-        public Criteria andLevelTypeNotIn(List<Integer> values) {
-            addCriterion("level_type not in", values, "levelType");
-            return (Criteria) this;
-        }
-
-        public Criteria andLevelTypeBetween(Integer value1, Integer value2) {
-            addCriterion("level_type between", value1, value2, "levelType");
-            return (Criteria) this;
-        }
-
-        public Criteria andLevelTypeNotBetween(Integer value1, Integer value2) {
-            addCriterion("level_type not between", value1, value2, "levelType");
-            return (Criteria) this;
-        }
-
         public Criteria andStatusIsNull() {
             addCriterion("status is null");
             return (Criteria) this;
@@ -475,133 +415,133 @@ public class ScholarshipExample {
             return (Criteria) this;
         }
 
-        public Criteria andUnitIdIsNull() {
-            addCriterion("unit_id is null");
+        public Criteria andPrimaryTeachingInstitutionIdIsNull() {
+            addCriterion("primary_teaching_institution_id is null");
             return (Criteria) this;
         }
 
-        public Criteria andUnitIdIsNotNull() {
-            addCriterion("unit_id is not null");
+        public Criteria andPrimaryTeachingInstitutionIdIsNotNull() {
+            addCriterion("primary_teaching_institution_id is not null");
             return (Criteria) this;
         }
 
-        public Criteria andUnitIdEqualTo(Long value) {
-            addCriterion("unit_id =", value, "unitId");
+        public Criteria andPrimaryTeachingInstitutionIdEqualTo(Long value) {
+            addCriterion("primary_teaching_institution_id =", value, "primaryTeachingInstitutionId");
             return (Criteria) this;
         }
 
-        public Criteria andUnitIdNotEqualTo(Long value) {
-            addCriterion("unit_id <>", value, "unitId");
+        public Criteria andPrimaryTeachingInstitutionIdNotEqualTo(Long value) {
+            addCriterion("primary_teaching_institution_id <>", value, "primaryTeachingInstitutionId");
             return (Criteria) this;
         }
 
-        public Criteria andUnitIdGreaterThan(Long value) {
-            addCriterion("unit_id >", value, "unitId");
+        public Criteria andPrimaryTeachingInstitutionIdGreaterThan(Long value) {
+            addCriterion("primary_teaching_institution_id >", value, "primaryTeachingInstitutionId");
             return (Criteria) this;
         }
 
-        public Criteria andUnitIdGreaterThanOrEqualTo(Long value) {
-            addCriterion("unit_id >=", value, "unitId");
+        public Criteria andPrimaryTeachingInstitutionIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("primary_teaching_institution_id >=", value, "primaryTeachingInstitutionId");
             return (Criteria) this;
         }
 
-        public Criteria andUnitIdLessThan(Long value) {
-            addCriterion("unit_id <", value, "unitId");
+        public Criteria andPrimaryTeachingInstitutionIdLessThan(Long value) {
+            addCriterion("primary_teaching_institution_id <", value, "primaryTeachingInstitutionId");
             return (Criteria) this;
         }
 
-        public Criteria andUnitIdLessThanOrEqualTo(Long value) {
-            addCriterion("unit_id <=", value, "unitId");
+        public Criteria andPrimaryTeachingInstitutionIdLessThanOrEqualTo(Long value) {
+            addCriterion("primary_teaching_institution_id <=", value, "primaryTeachingInstitutionId");
             return (Criteria) this;
         }
 
-        public Criteria andUnitIdIn(List<Long> values) {
-            addCriterion("unit_id in", values, "unitId");
+        public Criteria andPrimaryTeachingInstitutionIdIn(List<Long> values) {
+            addCriterion("primary_teaching_institution_id in", values, "primaryTeachingInstitutionId");
             return (Criteria) this;
         }
 
-        public Criteria andUnitIdNotIn(List<Long> values) {
-            addCriterion("unit_id not in", values, "unitId");
+        public Criteria andPrimaryTeachingInstitutionIdNotIn(List<Long> values) {
+            addCriterion("primary_teaching_institution_id not in", values, "primaryTeachingInstitutionId");
             return (Criteria) this;
         }
 
-        public Criteria andUnitIdBetween(Long value1, Long value2) {
-            addCriterion("unit_id between", value1, value2, "unitId");
+        public Criteria andPrimaryTeachingInstitutionIdBetween(Long value1, Long value2) {
+            addCriterion("primary_teaching_institution_id between", value1, value2, "primaryTeachingInstitutionId");
             return (Criteria) this;
         }
 
-        public Criteria andUnitIdNotBetween(Long value1, Long value2) {
-            addCriterion("unit_id not between", value1, value2, "unitId");
+        public Criteria andPrimaryTeachingInstitutionIdNotBetween(Long value1, Long value2) {
+            addCriterion("primary_teaching_institution_id not between", value1, value2, "primaryTeachingInstitutionId");
             return (Criteria) this;
         }
 
-        public Criteria andNameIsNull() {
-            addCriterion("name is null");
+        public Criteria andScholarshipNameIsNull() {
+            addCriterion("scholarship_name is null");
             return (Criteria) this;
         }
 
-        public Criteria andNameIsNotNull() {
-            addCriterion("name is not null");
+        public Criteria andScholarshipNameIsNotNull() {
+            addCriterion("scholarship_name is not null");
             return (Criteria) this;
         }
 
-        public Criteria andNameEqualTo(String value) {
-            addCriterion("name =", value, "name");
+        public Criteria andScholarshipNameEqualTo(String value) {
+            addCriterion("scholarship_name =", value, "scholarshipName");
             return (Criteria) this;
         }
 
-        public Criteria andNameNotEqualTo(String value) {
-            addCriterion("name <>", value, "name");
+        public Criteria andScholarshipNameNotEqualTo(String value) {
+            addCriterion("scholarship_name <>", value, "scholarshipName");
             return (Criteria) this;
         }
 
-        public Criteria andNameGreaterThan(String value) {
-            addCriterion("name >", value, "name");
+        public Criteria andScholarshipNameGreaterThan(String value) {
+            addCriterion("scholarship_name >", value, "scholarshipName");
             return (Criteria) this;
         }
 
-        public Criteria andNameGreaterThanOrEqualTo(String value) {
-            addCriterion("name >=", value, "name");
+        public Criteria andScholarshipNameGreaterThanOrEqualTo(String value) {
+            addCriterion("scholarship_name >=", value, "scholarshipName");
             return (Criteria) this;
         }
 
-        public Criteria andNameLessThan(String value) {
-            addCriterion("name <", value, "name");
+        public Criteria andScholarshipNameLessThan(String value) {
+            addCriterion("scholarship_name <", value, "scholarshipName");
             return (Criteria) this;
         }
 
-        public Criteria andNameLessThanOrEqualTo(String value) {
-            addCriterion("name <=", value, "name");
+        public Criteria andScholarshipNameLessThanOrEqualTo(String value) {
+            addCriterion("scholarship_name <=", value, "scholarshipName");
             return (Criteria) this;
         }
 
-        public Criteria andNameLike(String value) {
-            addCriterion("name like", value, "name");
+        public Criteria andScholarshipNameLike(String value) {
+            addCriterion("scholarship_name like", value, "scholarshipName");
             return (Criteria) this;
         }
 
-        public Criteria andNameNotLike(String value) {
-            addCriterion("name not like", value, "name");
+        public Criteria andScholarshipNameNotLike(String value) {
+            addCriterion("scholarship_name not like", value, "scholarshipName");
             return (Criteria) this;
         }
 
-        public Criteria andNameIn(List<String> values) {
-            addCriterion("name in", values, "name");
+        public Criteria andScholarshipNameIn(List<String> values) {
+            addCriterion("scholarship_name in", values, "scholarshipName");
             return (Criteria) this;
         }
 
-        public Criteria andNameNotIn(List<String> values) {
-            addCriterion("name not in", values, "name");
+        public Criteria andScholarshipNameNotIn(List<String> values) {
+            addCriterion("scholarship_name not in", values, "scholarshipName");
             return (Criteria) this;
         }
 
-        public Criteria andNameBetween(String value1, String value2) {
-            addCriterion("name between", value1, value2, "name");
+        public Criteria andScholarshipNameBetween(String value1, String value2) {
+            addCriterion("scholarship_name between", value1, value2, "scholarshipName");
             return (Criteria) this;
         }
 
-        public Criteria andNameNotBetween(String value1, String value2) {
-            addCriterion("name not between", value1, value2, "name");
+        public Criteria andScholarshipNameNotBetween(String value1, String value2) {
+            addCriterion("scholarship_name not between", value1, value2, "scholarshipName");
             return (Criteria) this;
         }
 
@@ -665,13 +605,313 @@ public class ScholarshipExample {
             return (Criteria) this;
         }
 
+        public Criteria andPrizeTypeIsNull() {
+            addCriterion("prize_type is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrizeTypeIsNotNull() {
+            addCriterion("prize_type is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrizeTypeEqualTo(Integer value) {
+            addCriterion("prize_type =", value, "prizeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrizeTypeNotEqualTo(Integer value) {
+            addCriterion("prize_type <>", value, "prizeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrizeTypeGreaterThan(Integer value) {
+            addCriterion("prize_type >", value, "prizeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrizeTypeGreaterThanOrEqualTo(Integer value) {
+            addCriterion("prize_type >=", value, "prizeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrizeTypeLessThan(Integer value) {
+            addCriterion("prize_type <", value, "prizeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrizeTypeLessThanOrEqualTo(Integer value) {
+            addCriterion("prize_type <=", value, "prizeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrizeTypeIn(List<Integer> values) {
+            addCriterion("prize_type in", values, "prizeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrizeTypeNotIn(List<Integer> values) {
+            addCriterion("prize_type not in", values, "prizeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrizeTypeBetween(Integer value1, Integer value2) {
+            addCriterion("prize_type between", value1, value2, "prizeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrizeTypeNotBetween(Integer value1, Integer value2) {
+            addCriterion("prize_type not between", value1, value2, "prizeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andAllocationTimeStatusIsNull() {
+            addCriterion("allocation_time_status is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAllocationTimeStatusIsNotNull() {
+            addCriterion("allocation_time_status is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAllocationTimeStatusEqualTo(Boolean value) {
+            addCriterion("allocation_time_status =", value, "allocationTimeStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andAllocationTimeStatusNotEqualTo(Boolean value) {
+            addCriterion("allocation_time_status <>", value, "allocationTimeStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andAllocationTimeStatusGreaterThan(Boolean value) {
+            addCriterion("allocation_time_status >", value, "allocationTimeStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andAllocationTimeStatusGreaterThanOrEqualTo(Boolean value) {
+            addCriterion("allocation_time_status >=", value, "allocationTimeStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andAllocationTimeStatusLessThan(Boolean value) {
+            addCriterion("allocation_time_status <", value, "allocationTimeStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andAllocationTimeStatusLessThanOrEqualTo(Boolean value) {
+            addCriterion("allocation_time_status <=", value, "allocationTimeStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andAllocationTimeStatusIn(List<Boolean> values) {
+            addCriterion("allocation_time_status in", values, "allocationTimeStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andAllocationTimeStatusNotIn(List<Boolean> values) {
+            addCriterion("allocation_time_status not in", values, "allocationTimeStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andAllocationTimeStatusBetween(Boolean value1, Boolean value2) {
+            addCriterion("allocation_time_status between", value1, value2, "allocationTimeStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andAllocationTimeStatusNotBetween(Boolean value1, Boolean value2) {
+            addCriterion("allocation_time_status not between", value1, value2, "allocationTimeStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andNeedGradeCheckIsNull() {
+            addCriterion("need_grade_check is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andNeedGradeCheckIsNotNull() {
+            addCriterion("need_grade_check is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andNeedGradeCheckEqualTo(Boolean value) {
+            addCriterion("need_grade_check =", value, "needGradeCheck");
+            return (Criteria) this;
+        }
+
+        public Criteria andNeedGradeCheckNotEqualTo(Boolean value) {
+            addCriterion("need_grade_check <>", value, "needGradeCheck");
+            return (Criteria) this;
+        }
+
+        public Criteria andNeedGradeCheckGreaterThan(Boolean value) {
+            addCriterion("need_grade_check >", value, "needGradeCheck");
+            return (Criteria) this;
+        }
+
+        public Criteria andNeedGradeCheckGreaterThanOrEqualTo(Boolean value) {
+            addCriterion("need_grade_check >=", value, "needGradeCheck");
+            return (Criteria) this;
+        }
+
+        public Criteria andNeedGradeCheckLessThan(Boolean value) {
+            addCriterion("need_grade_check <", value, "needGradeCheck");
+            return (Criteria) this;
+        }
+
+        public Criteria andNeedGradeCheckLessThanOrEqualTo(Boolean value) {
+            addCriterion("need_grade_check <=", value, "needGradeCheck");
+            return (Criteria) this;
+        }
+
+        public Criteria andNeedGradeCheckIn(List<Boolean> values) {
+            addCriterion("need_grade_check in", values, "needGradeCheck");
+            return (Criteria) this;
+        }
+
+        public Criteria andNeedGradeCheckNotIn(List<Boolean> values) {
+            addCriterion("need_grade_check not in", values, "needGradeCheck");
+            return (Criteria) this;
+        }
+
+        public Criteria andNeedGradeCheckBetween(Boolean value1, Boolean value2) {
+            addCriterion("need_grade_check between", value1, value2, "needGradeCheck");
+            return (Criteria) this;
+        }
+
+        public Criteria andNeedGradeCheckNotBetween(Boolean value1, Boolean value2) {
+            addCriterion("need_grade_check not between", value1, value2, "needGradeCheck");
+            return (Criteria) this;
+        }
+
+        public Criteria andStudentBeginDateIsNull() {
+            addCriterion("student_begin_date is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andStudentBeginDateIsNotNull() {
+            addCriterion("student_begin_date is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andStudentBeginDateEqualTo(Date value) {
+            addCriterion("student_begin_date =", value, "studentBeginDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andStudentBeginDateNotEqualTo(Date value) {
+            addCriterion("student_begin_date <>", value, "studentBeginDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andStudentBeginDateGreaterThan(Date value) {
+            addCriterion("student_begin_date >", value, "studentBeginDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andStudentBeginDateGreaterThanOrEqualTo(Date value) {
+            addCriterion("student_begin_date >=", value, "studentBeginDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andStudentBeginDateLessThan(Date value) {
+            addCriterion("student_begin_date <", value, "studentBeginDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andStudentBeginDateLessThanOrEqualTo(Date value) {
+            addCriterion("student_begin_date <=", value, "studentBeginDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andStudentBeginDateIn(List<Date> values) {
+            addCriterion("student_begin_date in", values, "studentBeginDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andStudentBeginDateNotIn(List<Date> values) {
+            addCriterion("student_begin_date not in", values, "studentBeginDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andStudentBeginDateBetween(Date value1, Date value2) {
+            addCriterion("student_begin_date between", value1, value2, "studentBeginDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andStudentBeginDateNotBetween(Date value1, Date value2) {
+            addCriterion("student_begin_date not between", value1, value2, "studentBeginDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCollegeEndDateIsNull() {
+            addCriterion("college_end_date is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCollegeEndDateIsNotNull() {
+            addCriterion("college_end_date is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCollegeEndDateEqualTo(Date value) {
+            addCriterion("college_end_date =", value, "collegeEndDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCollegeEndDateNotEqualTo(Date value) {
+            addCriterion("college_end_date <>", value, "collegeEndDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCollegeEndDateGreaterThan(Date value) {
+            addCriterion("college_end_date >", value, "collegeEndDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCollegeEndDateGreaterThanOrEqualTo(Date value) {
+            addCriterion("college_end_date >=", value, "collegeEndDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCollegeEndDateLessThan(Date value) {
+            addCriterion("college_end_date <", value, "collegeEndDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCollegeEndDateLessThanOrEqualTo(Date value) {
+            addCriterion("college_end_date <=", value, "collegeEndDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCollegeEndDateIn(List<Date> values) {
+            addCriterion("college_end_date in", values, "collegeEndDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCollegeEndDateNotIn(List<Date> values) {
+            addCriterion("college_end_date not in", values, "collegeEndDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCollegeEndDateBetween(Date value1, Date value2) {
+            addCriterion("college_end_date between", value1, value2, "collegeEndDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCollegeEndDateNotBetween(Date value1, Date value2) {
+            addCriterion("college_end_date not between", value1, value2, "collegeEndDate");
+            return (Criteria) this;
+        }
+
         public Criteria andRequirementLikeInsensitive(String value) {
             addCriterion("upper(requirement) like", value.toUpperCase(), "requirement");
             return (Criteria) this;
         }
 
-        public Criteria andNameLikeInsensitive(String value) {
-            addCriterion("upper(name) like", value.toUpperCase(), "name");
+        public Criteria andScholarshipNameLikeInsensitive(String value) {
+            addCriterion("upper(scholarship_name) like", value.toUpperCase(), "scholarshipName");
             return (Criteria) this;
         }
     }

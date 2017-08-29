@@ -4,6 +4,8 @@ package com.liwj.asem.filter;
 import com.liwj.asem.annotation.Rights;
 import com.liwj.asem.annotation.UserRight;
 import com.liwj.asem.data.ErrorInfo;
+import com.liwj.asem.dto.UserDTO;
+import com.liwj.asem.enums.RoleTypeEnum;
 import com.liwj.asem.exception.WSPException;
 import com.liwj.asem.model.User;
 import com.liwj.asem.service.IUserService;
@@ -15,14 +17,13 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Role;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by liwj0 on 2017/7/28.
@@ -56,7 +57,7 @@ public class AuthenticationAspect {
 
         if (token != null && !"".equals(token)) {
 
-            User user = userService.getUserByToken(token);
+            UserDTO user = userService.getUserByToken(token);
             if (user == null) {
                 throw new WSPException(ErrorInfo.NO_LOGIN);
             }
@@ -81,11 +82,16 @@ public class AuthenticationAspect {
                     }
 
 
-                    Integer role = user.getUserType();
+//                    Integer role = user.getUserType();
+                    List<RoleTypeEnum> roles = user.getRoles();
+                    Set<Integer> roleIds = new HashSet<>();
+                    for (RoleTypeEnum roleTypeEnum: roles){
+                        roleIds.add(roleTypeEnum.code);
+                    }
 
-
-                    if (role != null) {
-                        if (authSet.contains(role)) {
+                    if (roleIds != null && roleIds.size()>0) {
+                        roleIds.retainAll(authSet);
+                        if (roleIds.size()>0) {
                             return joinPoint.proceed();
                         }
                     }

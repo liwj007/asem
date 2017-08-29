@@ -6,9 +6,9 @@ import java.util.Date;
 public class QuotaFeedback implements Serializable {
     private Long id;
 
-    private Long unitId;
+    private Long primaryTeachingInstitutionId;
 
-    private Long userId;
+    private Long applyUserId;
 
     private Date applyDate;
 
@@ -26,10 +26,10 @@ public class QuotaFeedback implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public QuotaFeedback(Long id, Long unitId, Long userId, Date applyDate, Long scholarshipId, Long prizeId, Integer allocationNumber, Integer applyNumber, Integer status, Integer applyType) {
+    public QuotaFeedback(Long id, Long primaryTeachingInstitutionId, Long applyUserId, Date applyDate, Long scholarshipId, Long prizeId, Integer allocationNumber, Integer applyNumber, Integer status, Integer applyType) {
         this.id = id;
-        this.unitId = unitId;
-        this.userId = userId;
+        this.primaryTeachingInstitutionId = primaryTeachingInstitutionId;
+        this.applyUserId = applyUserId;
         this.applyDate = applyDate;
         this.scholarshipId = scholarshipId;
         this.prizeId = prizeId;
@@ -51,20 +51,20 @@ public class QuotaFeedback implements Serializable {
         this.id = id;
     }
 
-    public Long getUnitId() {
-        return unitId;
+    public Long getPrimaryTeachingInstitutionId() {
+        return primaryTeachingInstitutionId;
     }
 
-    public void setUnitId(Long unitId) {
-        this.unitId = unitId;
+    public void setPrimaryTeachingInstitutionId(Long primaryTeachingInstitutionId) {
+        this.primaryTeachingInstitutionId = primaryTeachingInstitutionId;
     }
 
-    public Long getUserId() {
-        return userId;
+    public Long getApplyUserId() {
+        return applyUserId;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setApplyUserId(Long applyUserId) {
+        this.applyUserId = applyUserId;
     }
 
     public Date getApplyDate() {
@@ -136,8 +136,8 @@ public class QuotaFeedback implements Serializable {
         }
         QuotaFeedback other = (QuotaFeedback) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-            && (this.getUnitId() == null ? other.getUnitId() == null : this.getUnitId().equals(other.getUnitId()))
-            && (this.getUserId() == null ? other.getUserId() == null : this.getUserId().equals(other.getUserId()))
+            && (this.getPrimaryTeachingInstitutionId() == null ? other.getPrimaryTeachingInstitutionId() == null : this.getPrimaryTeachingInstitutionId().equals(other.getPrimaryTeachingInstitutionId()))
+            && (this.getApplyUserId() == null ? other.getApplyUserId() == null : this.getApplyUserId().equals(other.getApplyUserId()))
             && (this.getApplyDate() == null ? other.getApplyDate() == null : this.getApplyDate().equals(other.getApplyDate()))
             && (this.getScholarshipId() == null ? other.getScholarshipId() == null : this.getScholarshipId().equals(other.getScholarshipId()))
             && (this.getPrizeId() == null ? other.getPrizeId() == null : this.getPrizeId().equals(other.getPrizeId()))
@@ -152,8 +152,8 @@ public class QuotaFeedback implements Serializable {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
-        result = prime * result + ((getUnitId() == null) ? 0 : getUnitId().hashCode());
-        result = prime * result + ((getUserId() == null) ? 0 : getUserId().hashCode());
+        result = prime * result + ((getPrimaryTeachingInstitutionId() == null) ? 0 : getPrimaryTeachingInstitutionId().hashCode());
+        result = prime * result + ((getApplyUserId() == null) ? 0 : getApplyUserId().hashCode());
         result = prime * result + ((getApplyDate() == null) ? 0 : getApplyDate().hashCode());
         result = prime * result + ((getScholarshipId() == null) ? 0 : getScholarshipId().hashCode());
         result = prime * result + ((getPrizeId() == null) ? 0 : getPrizeId().hashCode());

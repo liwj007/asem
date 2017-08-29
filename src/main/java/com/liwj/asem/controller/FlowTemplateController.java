@@ -5,6 +5,7 @@ import com.liwj.asem.bo.FlowTemplateBO;
 import com.liwj.asem.data.ResponseData;
 
 
+import com.liwj.asem.dto.UserDTO;
 import com.liwj.asem.enums.ScholarshipTypeEnum;
 import com.liwj.asem.exception.WSPException;
 import com.liwj.asem.model.FlowTemplate;
@@ -60,7 +61,7 @@ public class FlowTemplateController {
 
     @RequestMapping(value = "/all", method = RequestMethod.GET)
     public ResponseData getAllFlowTemplates(@RequestParam(value = "token") String token) throws WSPException {
-        User user = userService.getUserByToken(token);
+        UserDTO user = userService.getUserByToken(token);
         List<FlowTemplate> lists = flowTemplateService.getAllFlowTemplatesByUserType(user);
         ResponseData responseData = new ResponseData();
         responseData.setSuccessData(lists);

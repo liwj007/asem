@@ -7,20 +7,20 @@ public class Classes implements Serializable {
 
     private String name;
 
-    private Long collegeId;
+    private String sn;
+
+    private Long secondaryTeachingInstitution;
 
     private Long gradeId;
 
-    private Long majorId;
-
     private static final long serialVersionUID = 1L;
 
-    public Classes(Long id, String name, Long collegeId, Long gradeId, Long majorId) {
+    public Classes(Long id, String name, String sn, Long secondaryTeachingInstitution, Long gradeId) {
         this.id = id;
         this.name = name;
-        this.collegeId = collegeId;
+        this.sn = sn;
+        this.secondaryTeachingInstitution = secondaryTeachingInstitution;
         this.gradeId = gradeId;
-        this.majorId = majorId;
     }
 
     public Classes() {
@@ -43,12 +43,20 @@ public class Classes implements Serializable {
         this.name = name == null ? null : name.trim();
     }
 
-    public Long getCollegeId() {
-        return collegeId;
+    public String getSn() {
+        return sn;
     }
 
-    public void setCollegeId(Long collegeId) {
-        this.collegeId = collegeId;
+    public void setSn(String sn) {
+        this.sn = sn == null ? null : sn.trim();
+    }
+
+    public Long getSecondaryTeachingInstitution() {
+        return secondaryTeachingInstitution;
+    }
+
+    public void setSecondaryTeachingInstitution(Long secondaryTeachingInstitution) {
+        this.secondaryTeachingInstitution = secondaryTeachingInstitution;
     }
 
     public Long getGradeId() {
@@ -57,14 +65,6 @@ public class Classes implements Serializable {
 
     public void setGradeId(Long gradeId) {
         this.gradeId = gradeId;
-    }
-
-    public Long getMajorId() {
-        return majorId;
-    }
-
-    public void setMajorId(Long majorId) {
-        this.majorId = majorId;
     }
 
     @Override
@@ -81,9 +81,9 @@ public class Classes implements Serializable {
         Classes other = (Classes) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
             && (this.getName() == null ? other.getName() == null : this.getName().equals(other.getName()))
-            && (this.getCollegeId() == null ? other.getCollegeId() == null : this.getCollegeId().equals(other.getCollegeId()))
-            && (this.getGradeId() == null ? other.getGradeId() == null : this.getGradeId().equals(other.getGradeId()))
-            && (this.getMajorId() == null ? other.getMajorId() == null : this.getMajorId().equals(other.getMajorId()));
+            && (this.getSn() == null ? other.getSn() == null : this.getSn().equals(other.getSn()))
+            && (this.getSecondaryTeachingInstitution() == null ? other.getSecondaryTeachingInstitution() == null : this.getSecondaryTeachingInstitution().equals(other.getSecondaryTeachingInstitution()))
+            && (this.getGradeId() == null ? other.getGradeId() == null : this.getGradeId().equals(other.getGradeId()));
     }
 
     @Override
@@ -92,9 +92,9 @@ public class Classes implements Serializable {
         int result = 1;
         result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
         result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
-        result = prime * result + ((getCollegeId() == null) ? 0 : getCollegeId().hashCode());
+        result = prime * result + ((getSn() == null) ? 0 : getSn().hashCode());
+        result = prime * result + ((getSecondaryTeachingInstitution() == null) ? 0 : getSecondaryTeachingInstitution().hashCode());
         result = prime * result + ((getGradeId() == null) ? 0 : getGradeId().hashCode());
-        result = prime * result + ((getMajorId() == null) ? 0 : getMajorId().hashCode());
         return result;
     }
 }

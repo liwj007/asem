@@ -4,8 +4,8 @@
   <resultMap id="BaseResultMap" type="com.liwj.asem.model.QuotaFeedback">
     <constructor>
       <idArg column="id" javaType="java.lang.Long" jdbcType="BIGINT" />
-      <arg column="unit_id" javaType="java.lang.Long" jdbcType="BIGINT" />
-      <arg column="user_id" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="primary_teaching_institution_id" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="apply_user_id" javaType="java.lang.Long" jdbcType="BIGINT" />
       <arg column="apply_date" javaType="java.util.Date" jdbcType="TIMESTAMP" />
       <arg column="scholarship_id" javaType="java.lang.Long" jdbcType="BIGINT" />
       <arg column="prize_id" javaType="java.lang.Long" jdbcType="BIGINT" />
@@ -74,8 +74,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, unit_id, user_id, apply_date, scholarship_id, prize_id, allocation_number, apply_number, 
-    status, apply_type
+    id, primary_teaching_institution_id, apply_user_id, apply_date, scholarship_id, prize_id, 
+    allocation_number, apply_number, status, apply_type
   </sql>
   <select id="selectByExample" parameterType="com.liwj.asem.model.QuotaFeedbackExample" resultMap="BaseResultMap">
     select
@@ -112,14 +112,14 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into quota_feedback (unit_id, user_id, apply_date, 
-      scholarship_id, prize_id, allocation_number, 
-      apply_number, status, apply_type
-      )
-    values (#{unitId,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, #{applyDate,jdbcType=TIMESTAMP}, 
-      #{scholarshipId,jdbcType=BIGINT}, #{prizeId,jdbcType=BIGINT}, #{allocationNumber,jdbcType=INTEGER}, 
-      #{applyNumber,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, #{applyType,jdbcType=INTEGER}
-      )
+    insert into quota_feedback (primary_teaching_institution_id, apply_user_id, 
+      apply_date, scholarship_id, prize_id, 
+      allocation_number, apply_number, status, 
+      apply_type)
+    values (#{primaryTeachingInstitutionId,jdbcType=BIGINT}, #{applyUserId,jdbcType=BIGINT}, 
+      #{applyDate,jdbcType=TIMESTAMP}, #{scholarshipId,jdbcType=BIGINT}, #{prizeId,jdbcType=BIGINT}, 
+      #{allocationNumber,jdbcType=INTEGER}, #{applyNumber,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, 
+      #{applyType,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.liwj.asem.model.QuotaFeedback">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -127,11 +127,11 @@
     </selectKey>
     insert into quota_feedback
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="unitId != null">
-        unit_id,
+      <if test="primaryTeachingInstitutionId != null">
+        primary_teaching_institution_id,
       </if>
-      <if test="userId != null">
-        user_id,
+      <if test="applyUserId != null">
+        apply_user_id,
       </if>
       <if test="applyDate != null">
         apply_date,
@@ -156,11 +156,11 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="unitId != null">
-        #{unitId,jdbcType=BIGINT},
+      <if test="primaryTeachingInstitutionId != null">
+        #{primaryTeachingInstitutionId,jdbcType=BIGINT},
       </if>
-      <if test="userId != null">
-        #{userId,jdbcType=BIGINT},
+      <if test="applyUserId != null">
+        #{applyUserId,jdbcType=BIGINT},
       </if>
       <if test="applyDate != null">
         #{applyDate,jdbcType=TIMESTAMP},
@@ -197,11 +197,11 @@
       <if test="record.id != null">
         id = #{record.id,jdbcType=BIGINT},
       </if>
-      <if test="record.unitId != null">
-        unit_id = #{record.unitId,jdbcType=BIGINT},
+      <if test="record.primaryTeachingInstitutionId != null">
+        primary_teaching_institution_id = #{record.primaryTeachingInstitutionId,jdbcType=BIGINT},
       </if>
-      <if test="record.userId != null">
-        user_id = #{record.userId,jdbcType=BIGINT},
+      <if test="record.applyUserId != null">
+        apply_user_id = #{record.applyUserId,jdbcType=BIGINT},
       </if>
       <if test="record.applyDate != null">
         apply_date = #{record.applyDate,jdbcType=TIMESTAMP},
@@ -232,8 +232,8 @@
   <update id="updateByExample" parameterType="map">
     update quota_feedback
     set id = #{record.id,jdbcType=BIGINT},
-      unit_id = #{record.unitId,jdbcType=BIGINT},
-      user_id = #{record.userId,jdbcType=BIGINT},
+      primary_teaching_institution_id = #{record.primaryTeachingInstitutionId,jdbcType=BIGINT},
+      apply_user_id = #{record.applyUserId,jdbcType=BIGINT},
       apply_date = #{record.applyDate,jdbcType=TIMESTAMP},
       scholarship_id = #{record.scholarshipId,jdbcType=BIGINT},
       prize_id = #{record.prizeId,jdbcType=BIGINT},
@@ -248,11 +248,11 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.liwj.asem.model.QuotaFeedback">
     update quota_feedback
     <set>
-      <if test="unitId != null">
-        unit_id = #{unitId,jdbcType=BIGINT},
+      <if test="primaryTeachingInstitutionId != null">
+        primary_teaching_institution_id = #{primaryTeachingInstitutionId,jdbcType=BIGINT},
       </if>
-      <if test="userId != null">
-        user_id = #{userId,jdbcType=BIGINT},
+      <if test="applyUserId != null">
+        apply_user_id = #{applyUserId,jdbcType=BIGINT},
       </if>
       <if test="applyDate != null">
         apply_date = #{applyDate,jdbcType=TIMESTAMP},
@@ -280,8 +280,8 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.liwj.asem.model.QuotaFeedback">
     update quota_feedback
-    set unit_id = #{unitId,jdbcType=BIGINT},
-      user_id = #{userId,jdbcType=BIGINT},
+    set primary_teaching_institution_id = #{primaryTeachingInstitutionId,jdbcType=BIGINT},
+      apply_user_id = #{applyUserId,jdbcType=BIGINT},
       apply_date = #{applyDate,jdbcType=TIMESTAMP},
       scholarship_id = #{scholarshipId,jdbcType=BIGINT},
       prize_id = #{prizeId,jdbcType=BIGINT},

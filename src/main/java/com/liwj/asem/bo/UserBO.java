@@ -1,7 +1,11 @@
 package com.liwj.asem.bo;
 
+import com.liwj.asem.model.Grade;
+import com.liwj.asem.model.PrimaryTeachingInstitution;
+
+import java.util.List;
+
 public class UserBO {
-    private String userName;
     private String name;
     private String token;
     private String userType;
@@ -12,11 +16,29 @@ public class UserBO {
     private String email;
     private Long id;
 
+    private List<PrimaryTeachingInstitution> managePrimaryTeachingInstitutions;
+    private List<Grade> manageGrades;
+
+    public List<Grade> getManageGrades() {
+        return manageGrades;
+    }
+
+    public void setManageGrades(List<Grade> manageGrades) {
+        this.manageGrades = manageGrades;
+    }
+
+    public List<PrimaryTeachingInstitution> getManagePrimaryTeachingInstitutions() {
+        return managePrimaryTeachingInstitutions;
+    }
+
+    public void setManagePrimaryTeachingInstitutions(List<PrimaryTeachingInstitution> managePrimaryTeachingInstitutions) {
+        this.managePrimaryTeachingInstitutions = managePrimaryTeachingInstitutions;
+    }
+
     public UserBO() {
     }
 
-    public UserBO(String userName, String name, String token, String userTypeName) {
-        this.userName = userName;
+    public UserBO(String name, String token, String userTypeName) {
         this.name = name;
         this.token = token;
         this.userType=userTypeName;
@@ -60,14 +82,6 @@ public class UserBO {
 
     public void setUserType(String userType) {
         this.userType = userType;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
     }
 
     public String getName() {

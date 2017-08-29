@@ -11,7 +11,13 @@
       <arg column="modify_user_id" javaType="java.lang.Long" jdbcType="BIGINT" />
       <arg column="modify_date" javaType="java.util.Date" jdbcType="TIMESTAMP" />
       <arg column="version" javaType="java.lang.Integer" jdbcType="INTEGER" />
-      <arg column="unit_id" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="primary_teaching_institution_id" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="need_grade_check" javaType="java.lang.Boolean" jdbcType="BIT" />
+      <arg column="grade_instructor" javaType="java.lang.Boolean" jdbcType="BIT" />
+      <arg column="grade_student" javaType="java.lang.Boolean" jdbcType="BIT" />
+      <arg column="special_instructor" javaType="java.lang.Boolean" jdbcType="BIT" />
+      <arg column="college_student" javaType="java.lang.Boolean" jdbcType="BIT" />
+      <arg column="school_user" javaType="java.lang.Boolean" jdbcType="BIT" />
     </constructor>
   </resultMap>
   <sql id="Example_Where_Clause">
@@ -74,7 +80,8 @@
   </sql>
   <sql id="Base_Column_List">
     id, name, flow_type, create_user_id, create_date, modify_user_id, modify_date, version, 
-    unit_id
+    primary_teaching_institution_id, need_grade_check, grade_instructor, grade_student, 
+    special_instructor, college_student, school_user
   </sql>
   <select id="selectByExample" parameterType="com.liwj.asem.model.FlowTemplateExample" resultMap="BaseResultMap">
     select
@@ -113,10 +120,14 @@
     </selectKey>
     insert into flow_template (name, flow_type, create_user_id, 
       create_date, modify_user_id, modify_date, 
-      version, unit_id)
+      version, primary_teaching_institution_id, need_grade_check, 
+      grade_instructor, grade_student, special_instructor, 
+      college_student, school_user)
     values (#{name,jdbcType=VARCHAR}, #{flowType,jdbcType=INTEGER}, #{createUserId,jdbcType=BIGINT}, 
       #{createDate,jdbcType=TIMESTAMP}, #{modifyUserId,jdbcType=BIGINT}, #{modifyDate,jdbcType=TIMESTAMP}, 
-      #{version,jdbcType=INTEGER}, #{unitId,jdbcType=BIGINT})
+      #{version,jdbcType=INTEGER}, #{primaryTeachingInstitutionId,jdbcType=BIGINT}, #{needGradeCheck,jdbcType=BIT}, 
+      #{gradeInstructor,jdbcType=BIT}, #{gradeStudent,jdbcType=BIT}, #{specialInstructor,jdbcType=BIT}, 
+      #{collegeStudent,jdbcType=BIT}, #{schoolUser,jdbcType=BIT})
   </insert>
   <insert id="insertSelective" parameterType="com.liwj.asem.model.FlowTemplate">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -145,8 +156,26 @@
       <if test="version != null">
         version,
       </if>
-      <if test="unitId != null">
-        unit_id,
+      <if test="primaryTeachingInstitutionId != null">
+        primary_teaching_institution_id,
+      </if>
+      <if test="needGradeCheck != null">
+        need_grade_check,
+      </if>
+      <if test="gradeInstructor != null">
+        grade_instructor,
+      </if>
+      <if test="gradeStudent != null">
+        grade_student,
+      </if>
+      <if test="specialInstructor != null">
+        special_instructor,
+      </if>
+      <if test="collegeStudent != null">
+        college_student,
+      </if>
+      <if test="schoolUser != null">
+        school_user,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -171,8 +200,26 @@
       <if test="version != null">
         #{version,jdbcType=INTEGER},
       </if>
-      <if test="unitId != null">
-        #{unitId,jdbcType=BIGINT},
+      <if test="primaryTeachingInstitutionId != null">
+        #{primaryTeachingInstitutionId,jdbcType=BIGINT},
+      </if>
+      <if test="needGradeCheck != null">
+        #{needGradeCheck,jdbcType=BIT},
+      </if>
+      <if test="gradeInstructor != null">
+        #{gradeInstructor,jdbcType=BIT},
+      </if>
+      <if test="gradeStudent != null">
+        #{gradeStudent,jdbcType=BIT},
+      </if>
+      <if test="specialInstructor != null">
+        #{specialInstructor,jdbcType=BIT},
+      </if>
+      <if test="collegeStudent != null">
+        #{collegeStudent,jdbcType=BIT},
+      </if>
+      <if test="schoolUser != null">
+        #{schoolUser,jdbcType=BIT},
       </if>
     </trim>
   </insert>
@@ -209,8 +256,26 @@
       <if test="record.version != null">
         version = #{record.version,jdbcType=INTEGER},
       </if>
-      <if test="record.unitId != null">
-        unit_id = #{record.unitId,jdbcType=BIGINT},
+      <if test="record.primaryTeachingInstitutionId != null">
+        primary_teaching_institution_id = #{record.primaryTeachingInstitutionId,jdbcType=BIGINT},
+      </if>
+      <if test="record.needGradeCheck != null">
+        need_grade_check = #{record.needGradeCheck,jdbcType=BIT},
+      </if>
+      <if test="record.gradeInstructor != null">
+        grade_instructor = #{record.gradeInstructor,jdbcType=BIT},
+      </if>
+      <if test="record.gradeStudent != null">
+        grade_student = #{record.gradeStudent,jdbcType=BIT},
+      </if>
+      <if test="record.specialInstructor != null">
+        special_instructor = #{record.specialInstructor,jdbcType=BIT},
+      </if>
+      <if test="record.collegeStudent != null">
+        college_student = #{record.collegeStudent,jdbcType=BIT},
+      </if>
+      <if test="record.schoolUser != null">
+        school_user = #{record.schoolUser,jdbcType=BIT},
       </if>
     </set>
     <if test="_parameter != null">
@@ -227,7 +292,13 @@
       modify_user_id = #{record.modifyUserId,jdbcType=BIGINT},
       modify_date = #{record.modifyDate,jdbcType=TIMESTAMP},
       version = #{record.version,jdbcType=INTEGER},
-      unit_id = #{record.unitId,jdbcType=BIGINT}
+      primary_teaching_institution_id = #{record.primaryTeachingInstitutionId,jdbcType=BIGINT},
+      need_grade_check = #{record.needGradeCheck,jdbcType=BIT},
+      grade_instructor = #{record.gradeInstructor,jdbcType=BIT},
+      grade_student = #{record.gradeStudent,jdbcType=BIT},
+      special_instructor = #{record.specialInstructor,jdbcType=BIT},
+      college_student = #{record.collegeStudent,jdbcType=BIT},
+      school_user = #{record.schoolUser,jdbcType=BIT}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -256,8 +327,26 @@
       <if test="version != null">
         version = #{version,jdbcType=INTEGER},
       </if>
-      <if test="unitId != null">
-        unit_id = #{unitId,jdbcType=BIGINT},
+      <if test="primaryTeachingInstitutionId != null">
+        primary_teaching_institution_id = #{primaryTeachingInstitutionId,jdbcType=BIGINT},
+      </if>
+      <if test="needGradeCheck != null">
+        need_grade_check = #{needGradeCheck,jdbcType=BIT},
+      </if>
+      <if test="gradeInstructor != null">
+        grade_instructor = #{gradeInstructor,jdbcType=BIT},
+      </if>
+      <if test="gradeStudent != null">
+        grade_student = #{gradeStudent,jdbcType=BIT},
+      </if>
+      <if test="specialInstructor != null">
+        special_instructor = #{specialInstructor,jdbcType=BIT},
+      </if>
+      <if test="collegeStudent != null">
+        college_student = #{collegeStudent,jdbcType=BIT},
+      </if>
+      <if test="schoolUser != null">
+        school_user = #{schoolUser,jdbcType=BIT},
       </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
@@ -271,7 +360,13 @@
       modify_user_id = #{modifyUserId,jdbcType=BIGINT},
       modify_date = #{modifyDate,jdbcType=TIMESTAMP},
       version = #{version,jdbcType=INTEGER},
-      unit_id = #{unitId,jdbcType=BIGINT}
+      primary_teaching_institution_id = #{primaryTeachingInstitutionId,jdbcType=BIGINT},
+      need_grade_check = #{needGradeCheck,jdbcType=BIT},
+      grade_instructor = #{gradeInstructor,jdbcType=BIT},
+      grade_student = #{gradeStudent,jdbcType=BIT},
+      special_instructor = #{specialInstructor,jdbcType=BIT},
+      college_student = #{collegeStudent,jdbcType=BIT},
+      school_user = #{schoolUser,jdbcType=BIT}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>
