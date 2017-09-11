@@ -32,10 +32,14 @@ public class SettingController {
 
     @RequestMapping(value = "/comprehensive_evaluation_list", method = RequestMethod.GET)
     public ResponseData getComprehensiveEvaluationList(@RequestParam(value = "token") String token,
+                                                       @RequestParam(value = "year") Long year,
+                                                       @RequestParam(value = "college", required = false) Long college,
+                                                       @RequestParam(value = "major", required = false) Long major,
+                                                       @RequestParam(value = "grade", required = false) Long grade,
                                                        @RequestParam(value = "pageSize") Integer pageSize,
                                                        @RequestParam(value = "pageNum") Integer pageNum) throws WSPException {
         PageInfo pageInfo = comprehensiveEvaluationService
-                .getAssessmentRecordList(pageNum, pageSize);
+                .getAssessmentRecordList(year,college,major,grade,pageNum, pageSize);
         ResponseData responseData = new ResponseData();
         responseData.setSuccessData(pageInfo);
         return responseData;

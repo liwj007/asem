@@ -15,7 +15,18 @@ public class PrizeForApplicationBO {
     private ApplicationFileStatusEnum fileStatus;
     private ApplicationPrizeStatusEnum prizeStatus;
 
+    private Boolean applyStatus;
+
+
     private Long applicationId;
+
+    public Boolean getApplyStatus() {
+        return applyStatus;
+    }
+
+    public void setApplyStatus(Boolean applyStatus) {
+        this.applyStatus = applyStatus;
+    }
 
     public Long getApplicationId() {
         return applicationId;

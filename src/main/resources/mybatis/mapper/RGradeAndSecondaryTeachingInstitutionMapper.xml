@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.liwj.asem.dao.RGradeAndSecondaryTeachingInstitutionMapper">
+  <resultMap id="BaseResultMap" type="com.liwj.asem.model.RGradeAndSecondaryTeachingInstitution">
+    <constructor>
+      <idArg column="id" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="grade_id" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="secondary_teaching_institution_id" javaType="java.lang.Long" jdbcType="BIGINT" />
+    </constructor>
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, grade_id, secondary_teaching_institution_id
+  </sql>
+  <select id="selectByExample" parameterType="com.liwj.asem.model.RGradeAndSecondaryTeachingInstitutionExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from r_grade_and_secondary_teaching_institution
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from r_grade_and_secondary_teaching_institution
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from r_grade_and_secondary_teaching_institution
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.liwj.asem.model.RGradeAndSecondaryTeachingInstitutionExample">
+    delete from r_grade_and_secondary_teaching_institution
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.liwj.asem.model.RGradeAndSecondaryTeachingInstitution">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into r_grade_and_secondary_teaching_institution (grade_id, secondary_teaching_institution_id
+      )
+    values (#{gradeId,jdbcType=BIGINT}, #{secondaryTeachingInstitutionId,jdbcType=BIGINT}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.liwj.asem.model.RGradeAndSecondaryTeachingInstitution">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into r_grade_and_secondary_teaching_institution
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="gradeId != null">
+        grade_id,
+      </if>
+      <if test="secondaryTeachingInstitutionId != null">
+        secondary_teaching_institution_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="gradeId != null">
+        #{gradeId,jdbcType=BIGINT},
+      </if>
+      <if test="secondaryTeachingInstitutionId != null">
+        #{secondaryTeachingInstitutionId,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.liwj.asem.model.RGradeAndSecondaryTeachingInstitutionExample" resultType="java.lang.Long">
+    select count(*) from r_grade_and_secondary_teaching_institution
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update r_grade_and_secondary_teaching_institution
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.gradeId != null">
+        grade_id = #{record.gradeId,jdbcType=BIGINT},
+      </if>
+      <if test="record.secondaryTeachingInstitutionId != null">
+        secondary_teaching_institution_id = #{record.secondaryTeachingInstitutionId,jdbcType=BIGINT},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update r_grade_and_secondary_teaching_institution
+    set id = #{record.id,jdbcType=BIGINT},
+      grade_id = #{record.gradeId,jdbcType=BIGINT},
+      secondary_teaching_institution_id = #{record.secondaryTeachingInstitutionId,jdbcType=BIGINT}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.liwj.asem.model.RGradeAndSecondaryTeachingInstitution">
+    update r_grade_and_secondary_teaching_institution
+    <set>
+      <if test="gradeId != null">
+        grade_id = #{gradeId,jdbcType=BIGINT},
+      </if>
+      <if test="secondaryTeachingInstitutionId != null">
+        secondary_teaching_institution_id = #{secondaryTeachingInstitutionId,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.liwj.asem.model.RGradeAndSecondaryTeachingInstitution">
+    update r_grade_and_secondary_teaching_institution
+    set grade_id = #{gradeId,jdbcType=BIGINT},
+      secondary_teaching_institution_id = #{secondaryTeachingInstitutionId,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

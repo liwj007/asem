@@ -39,7 +39,7 @@ public class UserService implements IUserService {
     private GradeMapper gradeMapper;
 
     private String generateToken(User user) {
-        String token = user.getName() + UUID.randomUUID().toString().replace("-", "");
+        String token = UUID.randomUUID().toString().replace("-", "");
         return token;
     }
 
@@ -137,7 +137,25 @@ public class UserService implements IUserService {
     public List<User> getStudents(Long primaryTeachingInstitutionId, List<Long> grades){
         UserExample userExample = new UserExample();
         UserExample.Criteria criteria = userExample.createCriteria();
-        criteria.andPrimaryTeachingInstitutionIdEqualTo(primaryTeachingInstitutionId);
+        if (primaryTeachingInstitutionId!=null && primaryTeachingInstitutionId>0){
+            criteria.andPrimaryTeachingInstitutionIdEqualTo(primaryTeachingInstitutionId);
+        }
+
+        if (grades!=null && grades.size()>0){
+            criteria.andGradeIdIn(grades);
+        }
+        List<User> res = userMapper.selectByExample(userExample);
+        return res;
+    }
+
+    @Override
+    public List<User> getStudents(List<Long> primaryTeachingInstitutions, List<Long> grades){
+        UserExample userExample = new UserExample();
+        UserExample.Criteria criteria = userExample.createCriteria();
+        if (primaryTeachingInstitutions!=null && primaryTeachingInstitutions.size()>0){
+            criteria.andPrimaryTeachingInstitutionIdIn(primaryTeachingInstitutions);
+        }
+
         if (grades!=null && grades.size()>0){
             criteria.andGradeIdIn(grades);
         }

@@ -11,6 +11,11 @@
       <arg column="prize_status" javaType="java.lang.Integer" jdbcType="INTEGER" />
       <arg column="user_id" javaType="java.lang.Long" jdbcType="BIGINT" />
       <arg column="create_date" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <arg column="primary_teaching_institution_id" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="grade_id" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="prize_info_id" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="college_publicity" javaType="java.lang.Boolean" jdbcType="BIT" />
+      <arg column="school_publicity" javaType="java.lang.Boolean" jdbcType="BIT" />
     </constructor>
   </resultMap>
   <resultMap id="ResultMapWithBLOBs" type="com.liwj.asem.model.Application">
@@ -23,6 +28,11 @@
       <arg column="prize_status" javaType="java.lang.Integer" jdbcType="INTEGER" />
       <arg column="user_id" javaType="java.lang.Long" jdbcType="BIGINT" />
       <arg column="create_date" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <arg column="primary_teaching_institution_id" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="grade_id" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="prize_info_id" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="college_publicity" javaType="java.lang.Boolean" jdbcType="BIT" />
+      <arg column="school_publicity" javaType="java.lang.Boolean" jdbcType="BIT" />
       <arg column="evaluation" javaType="java.lang.String" jdbcType="LONGVARCHAR" />
     </constructor>
   </resultMap>
@@ -85,7 +95,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, prize_id, scholarship_id, status, file_status, prize_status, user_id, create_date
+    id, prize_id, scholarship_id, status, file_status, prize_status, user_id, create_date, 
+    primary_teaching_institution_id, grade_id, prize_info_id, college_publicity, school_publicity
   </sql>
   <sql id="Blob_Column_List">
     evaluation
@@ -146,10 +157,14 @@
     </selectKey>
     insert into application (prize_id, scholarship_id, status, 
       file_status, prize_status, user_id, 
-      create_date, evaluation)
+      create_date, primary_teaching_institution_id, 
+      grade_id, prize_info_id, college_publicity, 
+      school_publicity, evaluation)
     values (#{prizeId,jdbcType=BIGINT}, #{scholarshipId,jdbcType=BIGINT}, #{status,jdbcType=INTEGER}, 
       #{fileStatus,jdbcType=INTEGER}, #{prizeStatus,jdbcType=INTEGER}, #{userId,jdbcType=BIGINT}, 
-      #{createDate,jdbcType=TIMESTAMP}, #{evaluation,jdbcType=LONGVARCHAR})
+      #{createDate,jdbcType=TIMESTAMP}, #{primaryTeachingInstitutionId,jdbcType=BIGINT}, 
+      #{gradeId,jdbcType=BIGINT}, #{prizeInfoId,jdbcType=BIGINT}, #{collegePublicity,jdbcType=BIT}, 
+      #{schoolPublicity,jdbcType=BIT}, #{evaluation,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.liwj.asem.model.Application">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -178,6 +193,21 @@
       <if test="createDate != null">
         create_date,
       </if>
+      <if test="primaryTeachingInstitutionId != null">
+        primary_teaching_institution_id,
+      </if>
+      <if test="gradeId != null">
+        grade_id,
+      </if>
+      <if test="prizeInfoId != null">
+        prize_info_id,
+      </if>
+      <if test="collegePublicity != null">
+        college_publicity,
+      </if>
+      <if test="schoolPublicity != null">
+        school_publicity,
+      </if>
       <if test="evaluation != null">
         evaluation,
       </if>
@@ -203,6 +233,21 @@
       </if>
       <if test="createDate != null">
         #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="primaryTeachingInstitutionId != null">
+        #{primaryTeachingInstitutionId,jdbcType=BIGINT},
+      </if>
+      <if test="gradeId != null">
+        #{gradeId,jdbcType=BIGINT},
+      </if>
+      <if test="prizeInfoId != null">
+        #{prizeInfoId,jdbcType=BIGINT},
+      </if>
+      <if test="collegePublicity != null">
+        #{collegePublicity,jdbcType=BIT},
+      </if>
+      <if test="schoolPublicity != null">
+        #{schoolPublicity,jdbcType=BIT},
       </if>
       <if test="evaluation != null">
         #{evaluation,jdbcType=LONGVARCHAR},
@@ -242,6 +287,21 @@
       <if test="record.createDate != null">
         create_date = #{record.createDate,jdbcType=TIMESTAMP},
       </if>
+      <if test="record.primaryTeachingInstitutionId != null">
+        primary_teaching_institution_id = #{record.primaryTeachingInstitutionId,jdbcType=BIGINT},
+      </if>
+      <if test="record.gradeId != null">
+        grade_id = #{record.gradeId,jdbcType=BIGINT},
+      </if>
+      <if test="record.prizeInfoId != null">
+        prize_info_id = #{record.prizeInfoId,jdbcType=BIGINT},
+      </if>
+      <if test="record.collegePublicity != null">
+        college_publicity = #{record.collegePublicity,jdbcType=BIT},
+      </if>
+      <if test="record.schoolPublicity != null">
+        school_publicity = #{record.schoolPublicity,jdbcType=BIT},
+      </if>
       <if test="record.evaluation != null">
         evaluation = #{record.evaluation,jdbcType=LONGVARCHAR},
       </if>
@@ -260,6 +320,11 @@
       prize_status = #{record.prizeStatus,jdbcType=INTEGER},
       user_id = #{record.userId,jdbcType=BIGINT},
       create_date = #{record.createDate,jdbcType=TIMESTAMP},
+      primary_teaching_institution_id = #{record.primaryTeachingInstitutionId,jdbcType=BIGINT},
+      grade_id = #{record.gradeId,jdbcType=BIGINT},
+      prize_info_id = #{record.prizeInfoId,jdbcType=BIGINT},
+      college_publicity = #{record.collegePublicity,jdbcType=BIT},
+      school_publicity = #{record.schoolPublicity,jdbcType=BIT},
       evaluation = #{record.evaluation,jdbcType=LONGVARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -274,7 +339,12 @@
       file_status = #{record.fileStatus,jdbcType=INTEGER},
       prize_status = #{record.prizeStatus,jdbcType=INTEGER},
       user_id = #{record.userId,jdbcType=BIGINT},
-      create_date = #{record.createDate,jdbcType=TIMESTAMP}
+      create_date = #{record.createDate,jdbcType=TIMESTAMP},
+      primary_teaching_institution_id = #{record.primaryTeachingInstitutionId,jdbcType=BIGINT},
+      grade_id = #{record.gradeId,jdbcType=BIGINT},
+      prize_info_id = #{record.prizeInfoId,jdbcType=BIGINT},
+      college_publicity = #{record.collegePublicity,jdbcType=BIT},
+      school_publicity = #{record.schoolPublicity,jdbcType=BIT}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -303,6 +373,21 @@
       <if test="createDate != null">
         create_date = #{createDate,jdbcType=TIMESTAMP},
       </if>
+      <if test="primaryTeachingInstitutionId != null">
+        primary_teaching_institution_id = #{primaryTeachingInstitutionId,jdbcType=BIGINT},
+      </if>
+      <if test="gradeId != null">
+        grade_id = #{gradeId,jdbcType=BIGINT},
+      </if>
+      <if test="prizeInfoId != null">
+        prize_info_id = #{prizeInfoId,jdbcType=BIGINT},
+      </if>
+      <if test="collegePublicity != null">
+        college_publicity = #{collegePublicity,jdbcType=BIT},
+      </if>
+      <if test="schoolPublicity != null">
+        school_publicity = #{schoolPublicity,jdbcType=BIT},
+      </if>
       <if test="evaluation != null">
         evaluation = #{evaluation,jdbcType=LONGVARCHAR},
       </if>
@@ -318,6 +403,11 @@
       prize_status = #{prizeStatus,jdbcType=INTEGER},
       user_id = #{userId,jdbcType=BIGINT},
       create_date = #{createDate,jdbcType=TIMESTAMP},
+      primary_teaching_institution_id = #{primaryTeachingInstitutionId,jdbcType=BIGINT},
+      grade_id = #{gradeId,jdbcType=BIGINT},
+      prize_info_id = #{prizeInfoId,jdbcType=BIGINT},
+      college_publicity = #{collegePublicity,jdbcType=BIT},
+      school_publicity = #{schoolPublicity,jdbcType=BIT},
       evaluation = #{evaluation,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -329,7 +419,12 @@
       file_status = #{fileStatus,jdbcType=INTEGER},
       prize_status = #{prizeStatus,jdbcType=INTEGER},
       user_id = #{userId,jdbcType=BIGINT},
-      create_date = #{createDate,jdbcType=TIMESTAMP}
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      primary_teaching_institution_id = #{primaryTeachingInstitutionId,jdbcType=BIGINT},
+      grade_id = #{gradeId,jdbcType=BIGINT},
+      prize_info_id = #{prizeInfoId,jdbcType=BIGINT},
+      college_publicity = #{collegePublicity,jdbcType=BIT},
+      school_publicity = #{schoolPublicity,jdbcType=BIT}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

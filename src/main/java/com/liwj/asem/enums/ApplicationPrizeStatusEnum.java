@@ -5,9 +5,10 @@ import java.util.Map;
 
 public enum ApplicationPrizeStatusEnum {
     NO(0, " 未提交"),
-    SUBMIT(1, "审核中"),
-    PASS(2, "审核通过"),
-    REJECT(3, "审核不通过");
+    WAIT_PASS(1, "等待"),
+    SUBMIT(2, "审核中"),
+    PASS(3, "审核通过"),
+    REJECT(4, "审核不通过");
 
     public final String desc;
     public final int code;

@@ -5,11 +5,15 @@ import com.github.pagehelper.PageInfo;
 import com.liwj.asem.bo.AssessmentRecordBO;
 import com.liwj.asem.bo.FileBO;
 import com.liwj.asem.dao.AssessmentRecordMapper;
+import com.liwj.asem.dao.UserMapper;
 import com.liwj.asem.data.ErrorInfo;
+import com.liwj.asem.enums.RoleTypeEnum;
+import com.liwj.asem.enums.UserTypeEnum;
 import com.liwj.asem.exception.WSPException;
 import com.liwj.asem.model.AssessmentRecord;
 import com.liwj.asem.model.AssessmentRecordExample;
 import com.liwj.asem.model.User;
+import com.liwj.asem.model.UserExample;
 import com.liwj.asem.service.IComprehensiveEvaluationService;
 import com.liwj.asem.service.IUserService;
 import com.liwj.asem.utils.Common;
@@ -39,6 +43,9 @@ public class ComprehensiveEvaluationService implements IComprehensiveEvaluationS
     @Autowired
     private IUserService userService;
 
+    @Autowired
+    private UserMapper userMapper;
+
     @Override
     @Transactional
     public void uploadFiles(List<FileBO> fileBOList) throws IOException, WSPException {
@@ -50,8 +57,43 @@ public class ComprehensiveEvaluationService implements IComprehensiveEvaluationS
     }
 
     @Override
-    public PageInfo getAssessmentRecordList(Integer pageNum, Integer pageSize) {
+    public PageInfo getAssessmentRecordList(Long year, Long college, Long major, Long grade,
+                                            Integer pageNum, Integer pageSize) {
+        UserExample userExample = new UserExample();
+        UserExample.Criteria criteria = userExample.createCriteria();
+        boolean flag = false;
+        if (college != null && college != 0) {
+            criteria.andPrimaryTeachingInstitutionIdEqualTo(college);
+            flag = true;
+        }
+        if (major != null && major != 0) {
+            criteria.andSecondaryTeachingInstitutionIdEqualTo(major);
+            flag = true;
+        }
+        if (grade != null && grade != 0) {
+            criteria.andGradeIdEqualTo(grade);
+            flag = true;
+        }
+
+        List<String> userSns = new ArrayList<>();
+        if (flag) {
+            criteria.andUserTypeEqualTo(RoleTypeEnum.STUDENT.code);
+            List<User> users = userMapper.selectByExample(userExample);
+            if (users.size()==0){
+                return new PageInfo();
+            }
+            for (User user : users) {
+                if (user.getSn() != null && !"".equals(user.getSn()))
+                    userSns.add(user.getSn());
+            }
+        }
+
         AssessmentRecordExample example = new AssessmentRecordExample();
+        AssessmentRecordExample.Criteria criteria1 = example.createCriteria();
+        criteria1.andYearEqualTo(year.intValue());
+        if (userSns.size() > 0) {
+            criteria1.andSnIn(userSns);
+        }
         PageHelper.startPage(pageNum, pageSize);
         List<AssessmentRecord> list = assessmentRecordMapper.selectByExample(example);
         PageInfo pageInfo = new PageInfo(list);

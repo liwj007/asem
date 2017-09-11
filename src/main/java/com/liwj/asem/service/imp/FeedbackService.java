@@ -3,10 +3,7 @@ package com.liwj.asem.service.imp;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.liwj.asem.bo.FeedbackBO;
-import com.liwj.asem.dao.PrimaryTeachingInstitutionMapper;
-import com.liwj.asem.dao.PrizeMapper;
-import com.liwj.asem.dao.QuotaFeedbackMapper;
-import com.liwj.asem.dao.ScholarshipMapper;
+import com.liwj.asem.dao.*;
 import com.liwj.asem.data.ErrorInfo;
 import com.liwj.asem.dto.UserDTO;
 import com.liwj.asem.enums.FeedbackStatusEnum;
@@ -31,10 +28,13 @@ public class FeedbackService implements IFeedbackService {
     private ScholarshipMapper scholarshipMapper;
 
     @Autowired
-    private PrizeMapper prizeMapper;
+    private CollegePrizeMapper collegePrizeMapper;
 
     @Autowired
     private PrimaryTeachingInstitutionMapper primaryTeachingInstitutionMapper;
+
+    @Autowired
+    private PrizeInfoMapper prizeInfoMapper;
 
     @Override
     @Transactional
@@ -45,7 +45,7 @@ public class FeedbackService implements IFeedbackService {
             quotaFeedback.setScholarshipId(bo.getScholarshipId());
             quotaFeedback.setPrizeId(bo.getPrizeId());
 
-            Prize prize = prizeMapper.selectByPrimaryKey(bo.getPrizeId());
+            CollegePrize prize = collegePrizeMapper.selectByPrimaryKey(bo.getPrizeId());
             quotaFeedback.setPrimaryTeachingInstitutionId(prize.getPrimaryTeachingInstitutionId());
             quotaFeedback.setApplyUserId(user.getId());
             quotaFeedback.setApplyDate(new Date());
@@ -66,24 +66,24 @@ public class FeedbackService implements IFeedbackService {
             quotaFeedback.setScholarshipId(bo.getScholarshipId());
             quotaFeedback.setPrizeId(bo.getPrizeId());
 
-            Prize prize = prizeMapper.selectByPrimaryKey(bo.getPrizeId());
-            quotaFeedback.setPrimaryTeachingInstitutionId(prize.getPrimaryTeachingInstitutionId());
+            CollegePrize collegePrize = collegePrizeMapper.selectByPrimaryKey(bo.getPrizeId());
+            quotaFeedback.setPrimaryTeachingInstitutionId(collegePrize.getPrimaryTeachingInstitutionId());
             quotaFeedback.setApplyUserId(user.getId());
             quotaFeedback.setApplyDate(new Date());
             quotaFeedback.setApplyType(FeedbackTypeEnum.BACK.code);
             quotaFeedback.setStatus(FeedbackStatusEnum.PASS.code);
 
-            quotaFeedback.setAllocationNumber(prize.getNumber());
+            quotaFeedback.setAllocationNumber(collegePrize.getNumber());
 
             quotaFeedbackMapper.insertSelective(quotaFeedback);
 
-            int newNumber = prize.getNumber() - bo.getApplyNumber();
+            int newNumber = collegePrize.getNumber() - bo.getApplyNumber();
             if (newNumber >= 0) {
-                prize.setNumber(newNumber);
+                collegePrize.setNumber(newNumber);
             } else {
                 throw new WSPException(ErrorInfo.PARAMS_ERROR);
             }
-            prizeMapper.updateByPrimaryKeySelective(prize);
+            collegePrizeMapper.updateByPrimaryKeySelective(collegePrize);
 
         }
     }
@@ -102,8 +102,9 @@ public class FeedbackService implements IFeedbackService {
             FeedbackBO bo = new FeedbackBO();
             Scholarship scholarship = scholarshipMapper.selectByPrimaryKey(quotaFeedback.getScholarshipId());
             bo.setScholarshipName(scholarship.getScholarshipName());
-            Prize prize = prizeMapper.selectByPrimaryKey(quotaFeedback.getPrizeId());
-            bo.setPrizeName(prize.getPrizeName());
+            CollegePrize collegePrize = collegePrizeMapper.selectByPrimaryKey(quotaFeedback.getPrizeId());
+            PrizeInfo prizeInfo = prizeInfoMapper.selectByPrimaryKey(collegePrize.getPrizeInfoId());
+            bo.setPrizeName(prizeInfo.getPrizeName());
             bo.setAllocationNumber(quotaFeedback.getAllocationNumber());
             bo.setApplyNumber(quotaFeedback.getApplyNumber());
             bo.setStatus(FeedbackStatusEnum.getNameByCode(quotaFeedback.getStatus()));
@@ -126,8 +127,9 @@ public class FeedbackService implements IFeedbackService {
             FeedbackBO bo = new FeedbackBO();
             Scholarship scholarship = scholarshipMapper.selectByPrimaryKey(quotaFeedback.getScholarshipId());
             bo.setScholarshipName(scholarship.getScholarshipName());
-            Prize prize = prizeMapper.selectByPrimaryKey(quotaFeedback.getPrizeId());
-            bo.setPrizeName(prize.getPrizeName());
+            CollegePrize collegePrize = collegePrizeMapper.selectByPrimaryKey(quotaFeedback.getPrizeId());
+            PrizeInfo prizeInfo = prizeInfoMapper.selectByPrimaryKey(collegePrize.getPrizeInfoId());
+            bo.setPrizeName(prizeInfo.getPrizeName());
             bo.setAllocationNumber(quotaFeedback.getAllocationNumber());
             bo.setApplyNumber(quotaFeedback.getApplyNumber());
             bo.setStatus(FeedbackStatusEnum.getNameByCode(quotaFeedback.getStatus()));
@@ -150,9 +152,9 @@ public class FeedbackService implements IFeedbackService {
             quotaFeedbackMapper.updateByPrimaryKeySelective(quotaFeedback);
 
             if (result == FeedbackStatusEnum.PASS) {
-                Prize prize = prizeMapper.selectByPrimaryKey(quotaFeedback.getPrizeId());
-                prize.setNumber(prize.getNumber() + quotaFeedback.getApplyNumber());
-                prizeMapper.updateByPrimaryKeySelective(prize);
+                CollegePrize collegePrize = collegePrizeMapper.selectByPrimaryKey(quotaFeedback.getPrizeId());
+                collegePrize.setNumber(collegePrize.getNumber() + quotaFeedback.getApplyNumber());
+                collegePrizeMapper.updateByPrimaryKeySelective(collegePrize);
             }
         }
     }

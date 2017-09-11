@@ -7,6 +7,7 @@
     <artifactId>asem</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
+    <!--<packaging>war</packaging>-->
 
     <name>asem</name>
     <description>Demo project for Spring Boot</description>
@@ -109,6 +110,13 @@
             <groupId>com.xdbigdata.jwtService</groupId>  <!--自定义-->
             <artifactId>jwtService</artifactId>
             <version>1.4.8</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-tomcat</artifactId>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

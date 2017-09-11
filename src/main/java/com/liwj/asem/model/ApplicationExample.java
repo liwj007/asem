@@ -584,6 +584,306 @@ public class ApplicationExample {
             addCriterion("create_date not between", value1, value2, "createDate");
             return (Criteria) this;
         }
+
+        public Criteria andPrimaryTeachingInstitutionIdIsNull() {
+            addCriterion("primary_teaching_institution_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrimaryTeachingInstitutionIdIsNotNull() {
+            addCriterion("primary_teaching_institution_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrimaryTeachingInstitutionIdEqualTo(Long value) {
+            addCriterion("primary_teaching_institution_id =", value, "primaryTeachingInstitutionId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrimaryTeachingInstitutionIdNotEqualTo(Long value) {
+            addCriterion("primary_teaching_institution_id <>", value, "primaryTeachingInstitutionId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrimaryTeachingInstitutionIdGreaterThan(Long value) {
+            addCriterion("primary_teaching_institution_id >", value, "primaryTeachingInstitutionId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrimaryTeachingInstitutionIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("primary_teaching_institution_id >=", value, "primaryTeachingInstitutionId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrimaryTeachingInstitutionIdLessThan(Long value) {
+            addCriterion("primary_teaching_institution_id <", value, "primaryTeachingInstitutionId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrimaryTeachingInstitutionIdLessThanOrEqualTo(Long value) {
+            addCriterion("primary_teaching_institution_id <=", value, "primaryTeachingInstitutionId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrimaryTeachingInstitutionIdIn(List<Long> values) {
+            addCriterion("primary_teaching_institution_id in", values, "primaryTeachingInstitutionId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrimaryTeachingInstitutionIdNotIn(List<Long> values) {
+            addCriterion("primary_teaching_institution_id not in", values, "primaryTeachingInstitutionId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrimaryTeachingInstitutionIdBetween(Long value1, Long value2) {
+            addCriterion("primary_teaching_institution_id between", value1, value2, "primaryTeachingInstitutionId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrimaryTeachingInstitutionIdNotBetween(Long value1, Long value2) {
+            addCriterion("primary_teaching_institution_id not between", value1, value2, "primaryTeachingInstitutionId");
+            return (Criteria) this;
+        }
+
+        public Criteria andGradeIdIsNull() {
+            addCriterion("grade_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andGradeIdIsNotNull() {
+            addCriterion("grade_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andGradeIdEqualTo(Long value) {
+            addCriterion("grade_id =", value, "gradeId");
+            return (Criteria) this;
+        }
+
+        public Criteria andGradeIdNotEqualTo(Long value) {
+            addCriterion("grade_id <>", value, "gradeId");
+            return (Criteria) this;
+        }
+
+        public Criteria andGradeIdGreaterThan(Long value) {
+            addCriterion("grade_id >", value, "gradeId");
+            return (Criteria) this;
+        }
+
+        public Criteria andGradeIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("grade_id >=", value, "gradeId");
+            return (Criteria) this;
+        }
+
+        public Criteria andGradeIdLessThan(Long value) {
+            addCriterion("grade_id <", value, "gradeId");
+            return (Criteria) this;
+        }
+
+        public Criteria andGradeIdLessThanOrEqualTo(Long value) {
+            addCriterion("grade_id <=", value, "gradeId");
+            return (Criteria) this;
+        }
+
+        public Criteria andGradeIdIn(List<Long> values) {
+            addCriterion("grade_id in", values, "gradeId");
+            return (Criteria) this;
+        }
+
+        public Criteria andGradeIdNotIn(List<Long> values) {
+            addCriterion("grade_id not in", values, "gradeId");
+            return (Criteria) this;
+        }
+
+        public Criteria andGradeIdBetween(Long value1, Long value2) {
+            addCriterion("grade_id between", value1, value2, "gradeId");
+            return (Criteria) this;
+        }
+
+        public Criteria andGradeIdNotBetween(Long value1, Long value2) {
+            addCriterion("grade_id not between", value1, value2, "gradeId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrizeInfoIdIsNull() {
+            addCriterion("prize_info_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrizeInfoIdIsNotNull() {
+            addCriterion("prize_info_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrizeInfoIdEqualTo(Long value) {
+            addCriterion("prize_info_id =", value, "prizeInfoId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrizeInfoIdNotEqualTo(Long value) {
+            addCriterion("prize_info_id <>", value, "prizeInfoId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrizeInfoIdGreaterThan(Long value) {
+            addCriterion("prize_info_id >", value, "prizeInfoId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrizeInfoIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("prize_info_id >=", value, "prizeInfoId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrizeInfoIdLessThan(Long value) {
+            addCriterion("prize_info_id <", value, "prizeInfoId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrizeInfoIdLessThanOrEqualTo(Long value) {
+            addCriterion("prize_info_id <=", value, "prizeInfoId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrizeInfoIdIn(List<Long> values) {
+            addCriterion("prize_info_id in", values, "prizeInfoId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrizeInfoIdNotIn(List<Long> values) {
+            addCriterion("prize_info_id not in", values, "prizeInfoId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrizeInfoIdBetween(Long value1, Long value2) {
+            addCriterion("prize_info_id between", value1, value2, "prizeInfoId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrizeInfoIdNotBetween(Long value1, Long value2) {
+            addCriterion("prize_info_id not between", value1, value2, "prizeInfoId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCollegePublicityIsNull() {
+            addCriterion("college_publicity is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCollegePublicityIsNotNull() {
+            addCriterion("college_publicity is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCollegePublicityEqualTo(Boolean value) {
+            addCriterion("college_publicity =", value, "collegePublicity");
+            return (Criteria) this;
+        }
+
+        public Criteria andCollegePublicityNotEqualTo(Boolean value) {
+            addCriterion("college_publicity <>", value, "collegePublicity");
+            return (Criteria) this;
+        }
+
+        public Criteria andCollegePublicityGreaterThan(Boolean value) {
+            addCriterion("college_publicity >", value, "collegePublicity");
+            return (Criteria) this;
+        }
+
+        public Criteria andCollegePublicityGreaterThanOrEqualTo(Boolean value) {
+            addCriterion("college_publicity >=", value, "collegePublicity");
+            return (Criteria) this;
+        }
+
+        public Criteria andCollegePublicityLessThan(Boolean value) {
+            addCriterion("college_publicity <", value, "collegePublicity");
+            return (Criteria) this;
+        }
+
+        public Criteria andCollegePublicityLessThanOrEqualTo(Boolean value) {
+            addCriterion("college_publicity <=", value, "collegePublicity");
+            return (Criteria) this;
+        }
+
+        public Criteria andCollegePublicityIn(List<Boolean> values) {
+            addCriterion("college_publicity in", values, "collegePublicity");
+            return (Criteria) this;
+        }
+
+        public Criteria andCollegePublicityNotIn(List<Boolean> values) {
+            addCriterion("college_publicity not in", values, "collegePublicity");
+            return (Criteria) this;
+        }
+
+        public Criteria andCollegePublicityBetween(Boolean value1, Boolean value2) {
+            addCriterion("college_publicity between", value1, value2, "collegePublicity");
+            return (Criteria) this;
+        }
+
+        public Criteria andCollegePublicityNotBetween(Boolean value1, Boolean value2) {
+            addCriterion("college_publicity not between", value1, value2, "collegePublicity");
+            return (Criteria) this;
+        }
+
+        public Criteria andSchoolPublicityIsNull() {
+            addCriterion("school_publicity is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSchoolPublicityIsNotNull() {
+            addCriterion("school_publicity is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSchoolPublicityEqualTo(Boolean value) {
+            addCriterion("school_publicity =", value, "schoolPublicity");
+            return (Criteria) this;
+        }
+
+        public Criteria andSchoolPublicityNotEqualTo(Boolean value) {
+            addCriterion("school_publicity <>", value, "schoolPublicity");
+            return (Criteria) this;
+        }
+
+        public Criteria andSchoolPublicityGreaterThan(Boolean value) {
+            addCriterion("school_publicity >", value, "schoolPublicity");
+            return (Criteria) this;
+        }
+
+        public Criteria andSchoolPublicityGreaterThanOrEqualTo(Boolean value) {
+            addCriterion("school_publicity >=", value, "schoolPublicity");
+            return (Criteria) this;
+        }
+
+        public Criteria andSchoolPublicityLessThan(Boolean value) {
+            addCriterion("school_publicity <", value, "schoolPublicity");
+            return (Criteria) this;
+        }
+
+        public Criteria andSchoolPublicityLessThanOrEqualTo(Boolean value) {
+            addCriterion("school_publicity <=", value, "schoolPublicity");
+            return (Criteria) this;
+        }
+
+        public Criteria andSchoolPublicityIn(List<Boolean> values) {
+            addCriterion("school_publicity in", values, "schoolPublicity");
+            return (Criteria) this;
+        }
+
+        public Criteria andSchoolPublicityNotIn(List<Boolean> values) {
+            addCriterion("school_publicity not in", values, "schoolPublicity");
+            return (Criteria) this;
+        }
+
+        public Criteria andSchoolPublicityBetween(Boolean value1, Boolean value2) {
+            addCriterion("school_publicity between", value1, value2, "schoolPublicity");
+            return (Criteria) this;
+        }
+
+        public Criteria andSchoolPublicityNotBetween(Boolean value1, Boolean value2) {
+            addCriterion("school_publicity not between", value1, value2, "schoolPublicity");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

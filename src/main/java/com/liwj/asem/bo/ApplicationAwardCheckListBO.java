@@ -1,5 +1,7 @@
 package com.liwj.asem.bo;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
+
 import java.util.Date;
 
 public class ApplicationAwardCheckListBO {
@@ -8,9 +10,48 @@ public class ApplicationAwardCheckListBO {
     private Long prizeId;
 
     private Long applyNumber;
-    private Long avaibleNumber;
+    private Long availableNumber;
     private Long usedNumber;
     private Date endDate;
+
+    private Long prizeInfoId;
+
+    private String unitName;
+
+    private Boolean submitStatus;
+    private Boolean applyStatus;
+
+    public Boolean getSubmitStatus() {
+        return submitStatus;
+    }
+
+    public void setSubmitStatus(Boolean submitStatus) {
+        this.submitStatus = submitStatus;
+    }
+
+    public Boolean getApplyStatus() {
+        return applyStatus;
+    }
+
+    public void setApplyStatus(Boolean applyStatus) {
+        this.applyStatus = applyStatus;
+    }
+
+    public String getUnitName() {
+        return unitName;
+    }
+
+    public void setUnitName(String unitName) {
+        this.unitName = unitName;
+    }
+
+    public Long getPrizeInfoId() {
+        return prizeInfoId;
+    }
+
+    public void setPrizeInfoId(Long prizeInfoId) {
+        this.prizeInfoId = prizeInfoId;
+    }
 
     public String getScholarshipName() {
         return scholarshipName;
@@ -44,12 +85,12 @@ public class ApplicationAwardCheckListBO {
         this.applyNumber = applyNumber;
     }
 
-    public Long getAvaibleNumber() {
-        return avaibleNumber;
+    public Long getAvailableNumber() {
+        return availableNumber;
     }
 
-    public void setAvaibleNumber(Long avaibleNumber) {
-        this.avaibleNumber = avaibleNumber;
+    public void setAvailableNumber(Long availableNumber) {
+        this.availableNumber = availableNumber;
     }
 
     public Long getUsedNumber() {

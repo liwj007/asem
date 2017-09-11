@@ -18,6 +18,8 @@ public interface IUserService {
 
     List<User> getStudents(Long primaryTeachingInstitutionId, List<Long> grades);
 
+    List<User> getStudents(List<Long> primaryTeachingInstitutions, List<Long> grades);
+
     Boolean isSchoolUser(UserDTO user);
 
     Boolean isCollegeManger(UserDTO user);

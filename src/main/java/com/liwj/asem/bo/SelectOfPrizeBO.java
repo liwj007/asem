@@ -8,6 +8,15 @@ public class SelectOfPrizeBO {
     private Integer number;
     private Double money;
     private Long scholarshipId;
+    private Long prizeId;
+
+    public Long getPrizeId() {
+        return prizeId;
+    }
+
+    public void setPrizeId(Long prizeId) {
+        this.prizeId = prizeId;
+    }
 
     public Long getScholarshipId() {
         return scholarshipId;

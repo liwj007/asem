@@ -77,4 +77,14 @@ public class ApplicationController {
     }
 
 
+    @RequestMapping(value = "/student_winning_record", method = RequestMethod.GET)
+    public ResponseData getStudentWinningRecord(@RequestParam(value = "token") String token,
+                                                @RequestParam(value = "pageSize") Integer pageSize,
+                                                @RequestParam(value = "pageNum") Integer pageNum) throws WSPException {
+        UserDTO user = userService.getUserByToken(token);
+        PageInfo pageInfo = applicationService.getStudentWinningRecord(user,pageNum,pageSize);
+        ResponseData responseData = new ResponseData();
+        responseData.setSuccessData(pageInfo);
+        return responseData;
+    }
 }

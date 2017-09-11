@@ -20,11 +20,21 @@ public class Application implements Serializable {
 
     private Date createDate;
 
+    private Long primaryTeachingInstitutionId;
+
+    private Long gradeId;
+
+    private Long prizeInfoId;
+
+    private Boolean collegePublicity;
+
+    private Boolean schoolPublicity;
+
     private String evaluation;
 
     private static final long serialVersionUID = 1L;
 
-    public Application(Long id, Long prizeId, Long scholarshipId, Integer status, Integer fileStatus, Integer prizeStatus, Long userId, Date createDate, String evaluation) {
+    public Application(Long id, Long prizeId, Long scholarshipId, Integer status, Integer fileStatus, Integer prizeStatus, Long userId, Date createDate, Long primaryTeachingInstitutionId, Long gradeId, Long prizeInfoId, Boolean collegePublicity, Boolean schoolPublicity, String evaluation) {
         this.id = id;
         this.prizeId = prizeId;
         this.scholarshipId = scholarshipId;
@@ -33,6 +43,11 @@ public class Application implements Serializable {
         this.prizeStatus = prizeStatus;
         this.userId = userId;
         this.createDate = createDate;
+        this.primaryTeachingInstitutionId = primaryTeachingInstitutionId;
+        this.gradeId = gradeId;
+        this.prizeInfoId = prizeInfoId;
+        this.collegePublicity = collegePublicity;
+        this.schoolPublicity = schoolPublicity;
         this.evaluation = evaluation;
     }
 
@@ -104,6 +119,46 @@ public class Application implements Serializable {
         this.createDate = createDate;
     }
 
+    public Long getPrimaryTeachingInstitutionId() {
+        return primaryTeachingInstitutionId;
+    }
+
+    public void setPrimaryTeachingInstitutionId(Long primaryTeachingInstitutionId) {
+        this.primaryTeachingInstitutionId = primaryTeachingInstitutionId;
+    }
+
+    public Long getGradeId() {
+        return gradeId;
+    }
+
+    public void setGradeId(Long gradeId) {
+        this.gradeId = gradeId;
+    }
+
+    public Long getPrizeInfoId() {
+        return prizeInfoId;
+    }
+
+    public void setPrizeInfoId(Long prizeInfoId) {
+        this.prizeInfoId = prizeInfoId;
+    }
+
+    public Boolean getCollegePublicity() {
+        return collegePublicity;
+    }
+
+    public void setCollegePublicity(Boolean collegePublicity) {
+        this.collegePublicity = collegePublicity;
+    }
+
+    public Boolean getSchoolPublicity() {
+        return schoolPublicity;
+    }
+
+    public void setSchoolPublicity(Boolean schoolPublicity) {
+        this.schoolPublicity = schoolPublicity;
+    }
+
     public String getEvaluation() {
         return evaluation;
     }
@@ -132,6 +187,11 @@ public class Application implements Serializable {
             && (this.getPrizeStatus() == null ? other.getPrizeStatus() == null : this.getPrizeStatus().equals(other.getPrizeStatus()))
             && (this.getUserId() == null ? other.getUserId() == null : this.getUserId().equals(other.getUserId()))
             && (this.getCreateDate() == null ? other.getCreateDate() == null : this.getCreateDate().equals(other.getCreateDate()))
+            && (this.getPrimaryTeachingInstitutionId() == null ? other.getPrimaryTeachingInstitutionId() == null : this.getPrimaryTeachingInstitutionId().equals(other.getPrimaryTeachingInstitutionId()))
+            && (this.getGradeId() == null ? other.getGradeId() == null : this.getGradeId().equals(other.getGradeId()))
+            && (this.getPrizeInfoId() == null ? other.getPrizeInfoId() == null : this.getPrizeInfoId().equals(other.getPrizeInfoId()))
+            && (this.getCollegePublicity() == null ? other.getCollegePublicity() == null : this.getCollegePublicity().equals(other.getCollegePublicity()))
+            && (this.getSchoolPublicity() == null ? other.getSchoolPublicity() == null : this.getSchoolPublicity().equals(other.getSchoolPublicity()))
             && (this.getEvaluation() == null ? other.getEvaluation() == null : this.getEvaluation().equals(other.getEvaluation()));
     }
 
@@ -147,6 +207,11 @@ public class Application implements Serializable {
         result = prime * result + ((getPrizeStatus() == null) ? 0 : getPrizeStatus().hashCode());
         result = prime * result + ((getUserId() == null) ? 0 : getUserId().hashCode());
         result = prime * result + ((getCreateDate() == null) ? 0 : getCreateDate().hashCode());
+        result = prime * result + ((getPrimaryTeachingInstitutionId() == null) ? 0 : getPrimaryTeachingInstitutionId().hashCode());
+        result = prime * result + ((getGradeId() == null) ? 0 : getGradeId().hashCode());
+        result = prime * result + ((getPrizeInfoId() == null) ? 0 : getPrizeInfoId().hashCode());
+        result = prime * result + ((getCollegePublicity() == null) ? 0 : getCollegePublicity().hashCode());
+        result = prime * result + ((getSchoolPublicity() == null) ? 0 : getSchoolPublicity().hashCode());
         result = prime * result + ((getEvaluation() == null) ? 0 : getEvaluation().hashCode());
         return result;
     }

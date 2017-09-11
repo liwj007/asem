@@ -5,6 +5,15 @@ public class NewPrizeItem {
     private String prizeName;
     private Double money;
     private Integer number;
+    private Integer level;
+
+    public Integer getLevel() {
+        return level;
+    }
+
+    public void setLevel(Integer level) {
+        this.level = level;
+    }
 
     public Long getId() {
         return id;

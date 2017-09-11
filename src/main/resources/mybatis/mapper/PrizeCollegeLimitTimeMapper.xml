@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.liwj.asem.dao.CollegeTimeLimitMapper">
-  <resultMap id="BaseResultMap" type="com.liwj.asem.model.CollegeTimeLimit">
+<mapper namespace="com.liwj.asem.dao.PrizeCollegeLimitTimeMapper">
+  <resultMap id="BaseResultMap" type="com.liwj.asem.model.PrizeCollegeLimitTime">
     <constructor>
       <idArg column="id" javaType="java.lang.Long" jdbcType="BIGINT" />
-      <arg column="scholarship_id" javaType="java.lang.Long" jdbcType="BIGINT" />
-      <arg column="primary_teaching_institution_id" javaType="java.lang.Long" jdbcType="BIGINT" />
       <arg column="student_end_date" javaType="java.util.Date" jdbcType="TIMESTAMP" />
       <arg column="grade_end_date" javaType="java.util.Date" jdbcType="TIMESTAMP" />
-      <arg column="prize_id" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="primary_teaching_institution_id" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="scholarship_id" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="allocation_time_status" javaType="java.lang.Boolean" jdbcType="BIT" />
     </constructor>
   </resultMap>
   <sql id="Example_Where_Clause">
@@ -70,17 +70,17 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, scholarship_id, primary_teaching_institution_id, student_end_date, grade_end_date, 
-    prize_id
+    id, student_end_date, grade_end_date, primary_teaching_institution_id, scholarship_id, 
+    allocation_time_status
   </sql>
-  <select id="selectByExample" parameterType="com.liwj.asem.model.CollegeTimeLimitExample" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="com.liwj.asem.model.PrizeCollegeLimitTimeExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
     </if>
     'true' as QUERYID,
     <include refid="Base_Column_List" />
-    from college_time_limit
+    from prize_college_limit_time
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
@@ -91,87 +91,81 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from college_time_limit
+    from prize_college_limit_time
     where id = #{id,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from college_time_limit
+    delete from prize_college_limit_time
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByExample" parameterType="com.liwj.asem.model.CollegeTimeLimitExample">
-    delete from college_time_limit
+  <delete id="deleteByExample" parameterType="com.liwj.asem.model.PrizeCollegeLimitTimeExample">
+    delete from prize_college_limit_time
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.liwj.asem.model.CollegeTimeLimit">
+  <insert id="insert" parameterType="com.liwj.asem.model.PrizeCollegeLimitTime">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into college_time_limit (scholarship_id, primary_teaching_institution_id, 
-      student_end_date, grade_end_date, prize_id
-      )
-    values (#{scholarshipId,jdbcType=BIGINT}, #{primaryTeachingInstitutionId,jdbcType=BIGINT}, 
-      #{studentEndDate,jdbcType=TIMESTAMP}, #{gradeEndDate,jdbcType=TIMESTAMP}, #{prizeId,jdbcType=BIGINT}
-      )
+    insert into prize_college_limit_time (student_end_date, grade_end_date, 
+      primary_teaching_institution_id, scholarship_id, 
+      allocation_time_status)
+    values (#{studentEndDate,jdbcType=TIMESTAMP}, #{gradeEndDate,jdbcType=TIMESTAMP}, 
+      #{primaryTeachingInstitutionId,jdbcType=BIGINT}, #{scholarshipId,jdbcType=BIGINT}, 
+      #{allocationTimeStatus,jdbcType=BIT})
   </insert>
-  <insert id="insertSelective" parameterType="com.liwj.asem.model.CollegeTimeLimit">
+  <insert id="insertSelective" parameterType="com.liwj.asem.model.PrizeCollegeLimitTime">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into college_time_limit
+    insert into prize_college_limit_time
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="scholarshipId != null">
-        scholarship_id,
-      </if>
-      <if test="primaryTeachingInstitutionId != null">
-        primary_teaching_institution_id,
-      </if>
       <if test="studentEndDate != null">
         student_end_date,
       </if>
       <if test="gradeEndDate != null">
         grade_end_date,
       </if>
-      <if test="prizeId != null">
-        prize_id,
+      <if test="primaryTeachingInstitutionId != null">
+        primary_teaching_institution_id,
+      </if>
+      <if test="scholarshipId != null">
+        scholarship_id,
+      </if>
+      <if test="allocationTimeStatus != null">
+        allocation_time_status,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="scholarshipId != null">
-        #{scholarshipId,jdbcType=BIGINT},
-      </if>
-      <if test="primaryTeachingInstitutionId != null">
-        #{primaryTeachingInstitutionId,jdbcType=BIGINT},
-      </if>
       <if test="studentEndDate != null">
         #{studentEndDate,jdbcType=TIMESTAMP},
       </if>
       <if test="gradeEndDate != null">
         #{gradeEndDate,jdbcType=TIMESTAMP},
       </if>
-      <if test="prizeId != null">
-        #{prizeId,jdbcType=BIGINT},
+      <if test="primaryTeachingInstitutionId != null">
+        #{primaryTeachingInstitutionId,jdbcType=BIGINT},
+      </if>
+      <if test="scholarshipId != null">
+        #{scholarshipId,jdbcType=BIGINT},
+      </if>
+      <if test="allocationTimeStatus != null">
+        #{allocationTimeStatus,jdbcType=BIT},
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.liwj.asem.model.CollegeTimeLimitExample" resultType="java.lang.Long">
-    select count(*) from college_time_limit
+  <select id="countByExample" parameterType="com.liwj.asem.model.PrizeCollegeLimitTimeExample" resultType="java.lang.Long">
+    select count(*) from prize_college_limit_time
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map">
-    update college_time_limit
+    update prize_college_limit_time
     <set>
       <if test="record.id != null">
         id = #{record.id,jdbcType=BIGINT},
-      </if>
-      <if test="record.scholarshipId != null">
-        scholarship_id = #{record.scholarshipId,jdbcType=BIGINT},
-      </if>
-      <if test="record.primaryTeachingInstitutionId != null">
-        primary_teaching_institution_id = #{record.primaryTeachingInstitutionId,jdbcType=BIGINT},
       </if>
       <if test="record.studentEndDate != null">
         student_end_date = #{record.studentEndDate,jdbcType=TIMESTAMP},
@@ -179,8 +173,14 @@
       <if test="record.gradeEndDate != null">
         grade_end_date = #{record.gradeEndDate,jdbcType=TIMESTAMP},
       </if>
-      <if test="record.prizeId != null">
-        prize_id = #{record.prizeId,jdbcType=BIGINT},
+      <if test="record.primaryTeachingInstitutionId != null">
+        primary_teaching_institution_id = #{record.primaryTeachingInstitutionId,jdbcType=BIGINT},
+      </if>
+      <if test="record.scholarshipId != null">
+        scholarship_id = #{record.scholarshipId,jdbcType=BIGINT},
+      </if>
+      <if test="record.allocationTimeStatus != null">
+        allocation_time_status = #{record.allocationTimeStatus,jdbcType=BIT},
       </if>
     </set>
     <if test="_parameter != null">
@@ -188,45 +188,45 @@
     </if>
   </update>
   <update id="updateByExample" parameterType="map">
-    update college_time_limit
+    update prize_college_limit_time
     set id = #{record.id,jdbcType=BIGINT},
-      scholarship_id = #{record.scholarshipId,jdbcType=BIGINT},
-      primary_teaching_institution_id = #{record.primaryTeachingInstitutionId,jdbcType=BIGINT},
       student_end_date = #{record.studentEndDate,jdbcType=TIMESTAMP},
       grade_end_date = #{record.gradeEndDate,jdbcType=TIMESTAMP},
-      prize_id = #{record.prizeId,jdbcType=BIGINT}
+      primary_teaching_institution_id = #{record.primaryTeachingInstitutionId,jdbcType=BIGINT},
+      scholarship_id = #{record.scholarshipId,jdbcType=BIGINT},
+      allocation_time_status = #{record.allocationTimeStatus,jdbcType=BIT}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.liwj.asem.model.CollegeTimeLimit">
-    update college_time_limit
+  <update id="updateByPrimaryKeySelective" parameterType="com.liwj.asem.model.PrizeCollegeLimitTime">
+    update prize_college_limit_time
     <set>
-      <if test="scholarshipId != null">
-        scholarship_id = #{scholarshipId,jdbcType=BIGINT},
-      </if>
-      <if test="primaryTeachingInstitutionId != null">
-        primary_teaching_institution_id = #{primaryTeachingInstitutionId,jdbcType=BIGINT},
-      </if>
       <if test="studentEndDate != null">
         student_end_date = #{studentEndDate,jdbcType=TIMESTAMP},
       </if>
       <if test="gradeEndDate != null">
         grade_end_date = #{gradeEndDate,jdbcType=TIMESTAMP},
       </if>
-      <if test="prizeId != null">
-        prize_id = #{prizeId,jdbcType=BIGINT},
+      <if test="primaryTeachingInstitutionId != null">
+        primary_teaching_institution_id = #{primaryTeachingInstitutionId,jdbcType=BIGINT},
+      </if>
+      <if test="scholarshipId != null">
+        scholarship_id = #{scholarshipId,jdbcType=BIGINT},
+      </if>
+      <if test="allocationTimeStatus != null">
+        allocation_time_status = #{allocationTimeStatus,jdbcType=BIT},
       </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.liwj.asem.model.CollegeTimeLimit">
-    update college_time_limit
-    set scholarship_id = #{scholarshipId,jdbcType=BIGINT},
-      primary_teaching_institution_id = #{primaryTeachingInstitutionId,jdbcType=BIGINT},
-      student_end_date = #{studentEndDate,jdbcType=TIMESTAMP},
+  <update id="updateByPrimaryKey" parameterType="com.liwj.asem.model.PrizeCollegeLimitTime">
+    update prize_college_limit_time
+    set student_end_date = #{studentEndDate,jdbcType=TIMESTAMP},
       grade_end_date = #{gradeEndDate,jdbcType=TIMESTAMP},
-      prize_id = #{prizeId,jdbcType=BIGINT}
+      primary_teaching_institution_id = #{primaryTeachingInstitutionId,jdbcType=BIGINT},
+      scholarship_id = #{scholarshipId,jdbcType=BIGINT},
+      allocation_time_status = #{allocationTimeStatus,jdbcType=BIT}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

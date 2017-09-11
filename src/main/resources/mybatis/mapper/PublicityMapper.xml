@@ -1,0 +1,404 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.liwj.asem.dao.PublicityMapper">
+  <resultMap id="BaseResultMap" type="com.liwj.asem.model.Publicity">
+    <constructor>
+      <idArg column="id" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="scholarship_id" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="scholarship_type" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="scholarship_name" javaType="java.lang.Boolean" jdbcType="BIT" />
+      <arg column="prize_name" javaType="java.lang.Boolean" jdbcType="BIT" />
+      <arg column="need_name" javaType="java.lang.Boolean" jdbcType="BIT" />
+      <arg column="need_sn" javaType="java.lang.Boolean" jdbcType="BIT" />
+      <arg column="need_classes" javaType="java.lang.Boolean" jdbcType="BIT" />
+      <arg column="need_grade" javaType="java.lang.Boolean" jdbcType="BIT" />
+      <arg column="need_major" javaType="java.lang.Boolean" jdbcType="BIT" />
+      <arg column="need_college" javaType="java.lang.Boolean" jdbcType="BIT" />
+      <arg column="need_prize_number" javaType="java.lang.Boolean" jdbcType="BIT" />
+      <arg column="need_files" javaType="java.lang.Boolean" jdbcType="BIT" />
+      <arg column="begin_date" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <arg column="end_date" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <arg column="primary_teaching_institution_id" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="status" javaType="java.lang.Integer" jdbcType="INTEGER" />
+    </constructor>
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, scholarship_id, scholarship_type, scholarship_name, prize_name, need_name, need_sn, 
+    need_classes, need_grade, need_major, need_college, need_prize_number, need_files, 
+    begin_date, end_date, primary_teaching_institution_id, status
+  </sql>
+  <select id="selectByExample" parameterType="com.liwj.asem.model.PublicityExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from publicity
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from publicity
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from publicity
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.liwj.asem.model.PublicityExample">
+    delete from publicity
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.liwj.asem.model.Publicity">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into publicity (scholarship_id, scholarship_type, scholarship_name, 
+      prize_name, need_name, need_sn, need_classes, 
+      need_grade, need_major, need_college, 
+      need_prize_number, need_files, begin_date, 
+      end_date, primary_teaching_institution_id, 
+      status)
+    values (#{scholarshipId,jdbcType=BIGINT}, #{scholarshipType,jdbcType=INTEGER}, #{scholarshipName,jdbcType=BIT}, 
+      #{prizeName,jdbcType=BIT}, #{needName,jdbcType=BIT}, #{needSn,jdbcType=BIT}, #{needClasses,jdbcType=BIT}, 
+      #{needGrade,jdbcType=BIT}, #{needMajor,jdbcType=BIT}, #{needCollege,jdbcType=BIT}, 
+      #{needPrizeNumber,jdbcType=BIT}, #{needFiles,jdbcType=BIT}, #{beginDate,jdbcType=TIMESTAMP}, 
+      #{endDate,jdbcType=TIMESTAMP}, #{primaryTeachingInstitutionId,jdbcType=BIGINT}, 
+      #{status,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.liwj.asem.model.Publicity">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into publicity
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="scholarshipId != null">
+        scholarship_id,
+      </if>
+      <if test="scholarshipType != null">
+        scholarship_type,
+      </if>
+      <if test="scholarshipName != null">
+        scholarship_name,
+      </if>
+      <if test="prizeName != null">
+        prize_name,
+      </if>
+      <if test="needName != null">
+        need_name,
+      </if>
+      <if test="needSn != null">
+        need_sn,
+      </if>
+      <if test="needClasses != null">
+        need_classes,
+      </if>
+      <if test="needGrade != null">
+        need_grade,
+      </if>
+      <if test="needMajor != null">
+        need_major,
+      </if>
+      <if test="needCollege != null">
+        need_college,
+      </if>
+      <if test="needPrizeNumber != null">
+        need_prize_number,
+      </if>
+      <if test="needFiles != null">
+        need_files,
+      </if>
+      <if test="beginDate != null">
+        begin_date,
+      </if>
+      <if test="endDate != null">
+        end_date,
+      </if>
+      <if test="primaryTeachingInstitutionId != null">
+        primary_teaching_institution_id,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="scholarshipId != null">
+        #{scholarshipId,jdbcType=BIGINT},
+      </if>
+      <if test="scholarshipType != null">
+        #{scholarshipType,jdbcType=INTEGER},
+      </if>
+      <if test="scholarshipName != null">
+        #{scholarshipName,jdbcType=BIT},
+      </if>
+      <if test="prizeName != null">
+        #{prizeName,jdbcType=BIT},
+      </if>
+      <if test="needName != null">
+        #{needName,jdbcType=BIT},
+      </if>
+      <if test="needSn != null">
+        #{needSn,jdbcType=BIT},
+      </if>
+      <if test="needClasses != null">
+        #{needClasses,jdbcType=BIT},
+      </if>
+      <if test="needGrade != null">
+        #{needGrade,jdbcType=BIT},
+      </if>
+      <if test="needMajor != null">
+        #{needMajor,jdbcType=BIT},
+      </if>
+      <if test="needCollege != null">
+        #{needCollege,jdbcType=BIT},
+      </if>
+      <if test="needPrizeNumber != null">
+        #{needPrizeNumber,jdbcType=BIT},
+      </if>
+      <if test="needFiles != null">
+        #{needFiles,jdbcType=BIT},
+      </if>
+      <if test="beginDate != null">
+        #{beginDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endDate != null">
+        #{endDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="primaryTeachingInstitutionId != null">
+        #{primaryTeachingInstitutionId,jdbcType=BIGINT},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.liwj.asem.model.PublicityExample" resultType="java.lang.Long">
+    select count(*) from publicity
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update publicity
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.scholarshipId != null">
+        scholarship_id = #{record.scholarshipId,jdbcType=BIGINT},
+      </if>
+      <if test="record.scholarshipType != null">
+        scholarship_type = #{record.scholarshipType,jdbcType=INTEGER},
+      </if>
+      <if test="record.scholarshipName != null">
+        scholarship_name = #{record.scholarshipName,jdbcType=BIT},
+      </if>
+      <if test="record.prizeName != null">
+        prize_name = #{record.prizeName,jdbcType=BIT},
+      </if>
+      <if test="record.needName != null">
+        need_name = #{record.needName,jdbcType=BIT},
+      </if>
+      <if test="record.needSn != null">
+        need_sn = #{record.needSn,jdbcType=BIT},
+      </if>
+      <if test="record.needClasses != null">
+        need_classes = #{record.needClasses,jdbcType=BIT},
+      </if>
+      <if test="record.needGrade != null">
+        need_grade = #{record.needGrade,jdbcType=BIT},
+      </if>
+      <if test="record.needMajor != null">
+        need_major = #{record.needMajor,jdbcType=BIT},
+      </if>
+      <if test="record.needCollege != null">
+        need_college = #{record.needCollege,jdbcType=BIT},
+      </if>
+      <if test="record.needPrizeNumber != null">
+        need_prize_number = #{record.needPrizeNumber,jdbcType=BIT},
+      </if>
+      <if test="record.needFiles != null">
+        need_files = #{record.needFiles,jdbcType=BIT},
+      </if>
+      <if test="record.beginDate != null">
+        begin_date = #{record.beginDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.endDate != null">
+        end_date = #{record.endDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.primaryTeachingInstitutionId != null">
+        primary_teaching_institution_id = #{record.primaryTeachingInstitutionId,jdbcType=BIGINT},
+      </if>
+      <if test="record.status != null">
+        status = #{record.status,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update publicity
+    set id = #{record.id,jdbcType=BIGINT},
+      scholarship_id = #{record.scholarshipId,jdbcType=BIGINT},
+      scholarship_type = #{record.scholarshipType,jdbcType=INTEGER},
+      scholarship_name = #{record.scholarshipName,jdbcType=BIT},
+      prize_name = #{record.prizeName,jdbcType=BIT},
+      need_name = #{record.needName,jdbcType=BIT},
+      need_sn = #{record.needSn,jdbcType=BIT},
+      need_classes = #{record.needClasses,jdbcType=BIT},
+      need_grade = #{record.needGrade,jdbcType=BIT},
+      need_major = #{record.needMajor,jdbcType=BIT},
+      need_college = #{record.needCollege,jdbcType=BIT},
+      need_prize_number = #{record.needPrizeNumber,jdbcType=BIT},
+      need_files = #{record.needFiles,jdbcType=BIT},
+      begin_date = #{record.beginDate,jdbcType=TIMESTAMP},
+      end_date = #{record.endDate,jdbcType=TIMESTAMP},
+      primary_teaching_institution_id = #{record.primaryTeachingInstitutionId,jdbcType=BIGINT},
+      status = #{record.status,jdbcType=INTEGER}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.liwj.asem.model.Publicity">
+    update publicity
+    <set>
+      <if test="scholarshipId != null">
+        scholarship_id = #{scholarshipId,jdbcType=BIGINT},
+      </if>
+      <if test="scholarshipType != null">
+        scholarship_type = #{scholarshipType,jdbcType=INTEGER},
+      </if>
+      <if test="scholarshipName != null">
+        scholarship_name = #{scholarshipName,jdbcType=BIT},
+      </if>
+      <if test="prizeName != null">
+        prize_name = #{prizeName,jdbcType=BIT},
+      </if>
+      <if test="needName != null">
+        need_name = #{needName,jdbcType=BIT},
+      </if>
+      <if test="needSn != null">
+        need_sn = #{needSn,jdbcType=BIT},
+      </if>
+      <if test="needClasses != null">
+        need_classes = #{needClasses,jdbcType=BIT},
+      </if>
+      <if test="needGrade != null">
+        need_grade = #{needGrade,jdbcType=BIT},
+      </if>
+      <if test="needMajor != null">
+        need_major = #{needMajor,jdbcType=BIT},
+      </if>
+      <if test="needCollege != null">
+        need_college = #{needCollege,jdbcType=BIT},
+      </if>
+      <if test="needPrizeNumber != null">
+        need_prize_number = #{needPrizeNumber,jdbcType=BIT},
+      </if>
+      <if test="needFiles != null">
+        need_files = #{needFiles,jdbcType=BIT},
+      </if>
+      <if test="beginDate != null">
+        begin_date = #{beginDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endDate != null">
+        end_date = #{endDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="primaryTeachingInstitutionId != null">
+        primary_teaching_institution_id = #{primaryTeachingInstitutionId,jdbcType=BIGINT},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.liwj.asem.model.Publicity">
+    update publicity
+    set scholarship_id = #{scholarshipId,jdbcType=BIGINT},
+      scholarship_type = #{scholarshipType,jdbcType=INTEGER},
+      scholarship_name = #{scholarshipName,jdbcType=BIT},
+      prize_name = #{prizeName,jdbcType=BIT},
+      need_name = #{needName,jdbcType=BIT},
+      need_sn = #{needSn,jdbcType=BIT},
+      need_classes = #{needClasses,jdbcType=BIT},
+      need_grade = #{needGrade,jdbcType=BIT},
+      need_major = #{needMajor,jdbcType=BIT},
+      need_college = #{needCollege,jdbcType=BIT},
+      need_prize_number = #{needPrizeNumber,jdbcType=BIT},
+      need_files = #{needFiles,jdbcType=BIT},
+      begin_date = #{beginDate,jdbcType=TIMESTAMP},
+      end_date = #{endDate,jdbcType=TIMESTAMP},
+      primary_teaching_institution_id = #{primaryTeachingInstitutionId,jdbcType=BIGINT},
+      status = #{status,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

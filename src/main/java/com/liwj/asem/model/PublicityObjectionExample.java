@@ -1,16 +1,17 @@
 package com.liwj.asem.model;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-public class RGradeAndSecondaryTeachingInstituionExample {
+public class PublicityObjectionExample {
     protected String orderByClause;
 
     protected boolean distinct;
 
     protected List<Criteria> oredCriteria;
 
-    public RGradeAndSecondaryTeachingInstituionExample() {
+    public PublicityObjectionExample() {
         oredCriteria = new ArrayList<Criteria>();
     }
 
@@ -164,123 +165,243 @@ public class RGradeAndSecondaryTeachingInstituionExample {
             return (Criteria) this;
         }
 
-        public Criteria andGradeIdIsNull() {
-            addCriterion("grade_id is null");
+        public Criteria andUserIdIsNull() {
+            addCriterion("user_id is null");
             return (Criteria) this;
         }
 
-        public Criteria andGradeIdIsNotNull() {
-            addCriterion("grade_id is not null");
+        public Criteria andUserIdIsNotNull() {
+            addCriterion("user_id is not null");
             return (Criteria) this;
         }
 
-        public Criteria andGradeIdEqualTo(Long value) {
-            addCriterion("grade_id =", value, "gradeId");
+        public Criteria andUserIdEqualTo(Long value) {
+            addCriterion("user_id =", value, "userId");
             return (Criteria) this;
         }
 
-        public Criteria andGradeIdNotEqualTo(Long value) {
-            addCriterion("grade_id <>", value, "gradeId");
+        public Criteria andUserIdNotEqualTo(Long value) {
+            addCriterion("user_id <>", value, "userId");
             return (Criteria) this;
         }
 
-        public Criteria andGradeIdGreaterThan(Long value) {
-            addCriterion("grade_id >", value, "gradeId");
+        public Criteria andUserIdGreaterThan(Long value) {
+            addCriterion("user_id >", value, "userId");
             return (Criteria) this;
         }
 
-        public Criteria andGradeIdGreaterThanOrEqualTo(Long value) {
-            addCriterion("grade_id >=", value, "gradeId");
+        public Criteria andUserIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("user_id >=", value, "userId");
             return (Criteria) this;
         }
 
-        public Criteria andGradeIdLessThan(Long value) {
-            addCriterion("grade_id <", value, "gradeId");
+        public Criteria andUserIdLessThan(Long value) {
+            addCriterion("user_id <", value, "userId");
             return (Criteria) this;
         }
 
-        public Criteria andGradeIdLessThanOrEqualTo(Long value) {
-            addCriterion("grade_id <=", value, "gradeId");
+        public Criteria andUserIdLessThanOrEqualTo(Long value) {
+            addCriterion("user_id <=", value, "userId");
             return (Criteria) this;
         }
 
-        public Criteria andGradeIdIn(List<Long> values) {
-            addCriterion("grade_id in", values, "gradeId");
+        public Criteria andUserIdIn(List<Long> values) {
+            addCriterion("user_id in", values, "userId");
             return (Criteria) this;
         }
 
-        public Criteria andGradeIdNotIn(List<Long> values) {
-            addCriterion("grade_id not in", values, "gradeId");
+        public Criteria andUserIdNotIn(List<Long> values) {
+            addCriterion("user_id not in", values, "userId");
             return (Criteria) this;
         }
 
-        public Criteria andGradeIdBetween(Long value1, Long value2) {
-            addCriterion("grade_id between", value1, value2, "gradeId");
+        public Criteria andUserIdBetween(Long value1, Long value2) {
+            addCriterion("user_id between", value1, value2, "userId");
             return (Criteria) this;
         }
 
-        public Criteria andGradeIdNotBetween(Long value1, Long value2) {
-            addCriterion("grade_id not between", value1, value2, "gradeId");
+        public Criteria andUserIdNotBetween(Long value1, Long value2) {
+            addCriterion("user_id not between", value1, value2, "userId");
             return (Criteria) this;
         }
 
-        public Criteria andSecondaryTeachingInstitutionIdIsNull() {
-            addCriterion("secondary_teaching_institution_id is null");
+        public Criteria andCreateTimeIsNull() {
+            addCriterion("create_time is null");
             return (Criteria) this;
         }
 
-        public Criteria andSecondaryTeachingInstitutionIdIsNotNull() {
-            addCriterion("secondary_teaching_institution_id is not null");
+        public Criteria andCreateTimeIsNotNull() {
+            addCriterion("create_time is not null");
             return (Criteria) this;
         }
 
-        public Criteria andSecondaryTeachingInstitutionIdEqualTo(Long value) {
-            addCriterion("secondary_teaching_institution_id =", value, "secondaryTeachingInstitutionId");
+        public Criteria andCreateTimeEqualTo(Date value) {
+            addCriterion("create_time =", value, "createTime");
             return (Criteria) this;
         }
 
-        public Criteria andSecondaryTeachingInstitutionIdNotEqualTo(Long value) {
-            addCriterion("secondary_teaching_institution_id <>", value, "secondaryTeachingInstitutionId");
+        public Criteria andCreateTimeNotEqualTo(Date value) {
+            addCriterion("create_time <>", value, "createTime");
             return (Criteria) this;
         }
 
-        public Criteria andSecondaryTeachingInstitutionIdGreaterThan(Long value) {
-            addCriterion("secondary_teaching_institution_id >", value, "secondaryTeachingInstitutionId");
+        public Criteria andCreateTimeGreaterThan(Date value) {
+            addCriterion("create_time >", value, "createTime");
             return (Criteria) this;
         }
 
-        public Criteria andSecondaryTeachingInstitutionIdGreaterThanOrEqualTo(Long value) {
-            addCriterion("secondary_teaching_institution_id >=", value, "secondaryTeachingInstitutionId");
+        public Criteria andCreateTimeGreaterThanOrEqualTo(Date value) {
+            addCriterion("create_time >=", value, "createTime");
             return (Criteria) this;
         }
 
-        public Criteria andSecondaryTeachingInstitutionIdLessThan(Long value) {
-            addCriterion("secondary_teaching_institution_id <", value, "secondaryTeachingInstitutionId");
+        public Criteria andCreateTimeLessThan(Date value) {
+            addCriterion("create_time <", value, "createTime");
             return (Criteria) this;
         }
 
-        public Criteria andSecondaryTeachingInstitutionIdLessThanOrEqualTo(Long value) {
-            addCriterion("secondary_teaching_institution_id <=", value, "secondaryTeachingInstitutionId");
+        public Criteria andCreateTimeLessThanOrEqualTo(Date value) {
+            addCriterion("create_time <=", value, "createTime");
             return (Criteria) this;
         }
 
-        public Criteria andSecondaryTeachingInstitutionIdIn(List<Long> values) {
-            addCriterion("secondary_teaching_institution_id in", values, "secondaryTeachingInstitutionId");
+        public Criteria andCreateTimeIn(List<Date> values) {
+            addCriterion("create_time in", values, "createTime");
             return (Criteria) this;
         }
 
-        public Criteria andSecondaryTeachingInstitutionIdNotIn(List<Long> values) {
-            addCriterion("secondary_teaching_institution_id not in", values, "secondaryTeachingInstitutionId");
+        public Criteria andCreateTimeNotIn(List<Date> values) {
+            addCriterion("create_time not in", values, "createTime");
             return (Criteria) this;
         }
 
-        public Criteria andSecondaryTeachingInstitutionIdBetween(Long value1, Long value2) {
-            addCriterion("secondary_teaching_institution_id between", value1, value2, "secondaryTeachingInstitutionId");
+        public Criteria andCreateTimeBetween(Date value1, Date value2) {
+            addCriterion("create_time between", value1, value2, "createTime");
             return (Criteria) this;
         }
 
-        public Criteria andSecondaryTeachingInstitutionIdNotBetween(Long value1, Long value2) {
-            addCriterion("secondary_teaching_institution_id not between", value1, value2, "secondaryTeachingInstitutionId");
+        public Criteria andCreateTimeNotBetween(Date value1, Date value2) {
+            addCriterion("create_time not between", value1, value2, "createTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeedbackTimeIsNull() {
+            addCriterion("feedback_time is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeedbackTimeIsNotNull() {
+            addCriterion("feedback_time is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeedbackTimeEqualTo(Date value) {
+            addCriterion("feedback_time =", value, "feedbackTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeedbackTimeNotEqualTo(Date value) {
+            addCriterion("feedback_time <>", value, "feedbackTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeedbackTimeGreaterThan(Date value) {
+            addCriterion("feedback_time >", value, "feedbackTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeedbackTimeGreaterThanOrEqualTo(Date value) {
+            addCriterion("feedback_time >=", value, "feedbackTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeedbackTimeLessThan(Date value) {
+            addCriterion("feedback_time <", value, "feedbackTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeedbackTimeLessThanOrEqualTo(Date value) {
+            addCriterion("feedback_time <=", value, "feedbackTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeedbackTimeIn(List<Date> values) {
+            addCriterion("feedback_time in", values, "feedbackTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeedbackTimeNotIn(List<Date> values) {
+            addCriterion("feedback_time not in", values, "feedbackTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeedbackTimeBetween(Date value1, Date value2) {
+            addCriterion("feedback_time between", value1, value2, "feedbackTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeedbackTimeNotBetween(Date value1, Date value2) {
+            addCriterion("feedback_time not between", value1, value2, "feedbackTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andPublicityIdIsNull() {
+            addCriterion("publicity_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPublicityIdIsNotNull() {
+            addCriterion("publicity_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPublicityIdEqualTo(Long value) {
+            addCriterion("publicity_id =", value, "publicityId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPublicityIdNotEqualTo(Long value) {
+            addCriterion("publicity_id <>", value, "publicityId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPublicityIdGreaterThan(Long value) {
+            addCriterion("publicity_id >", value, "publicityId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPublicityIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("publicity_id >=", value, "publicityId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPublicityIdLessThan(Long value) {
+            addCriterion("publicity_id <", value, "publicityId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPublicityIdLessThanOrEqualTo(Long value) {
+            addCriterion("publicity_id <=", value, "publicityId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPublicityIdIn(List<Long> values) {
+            addCriterion("publicity_id in", values, "publicityId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPublicityIdNotIn(List<Long> values) {
+            addCriterion("publicity_id not in", values, "publicityId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPublicityIdBetween(Long value1, Long value2) {
+            addCriterion("publicity_id between", value1, value2, "publicityId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPublicityIdNotBetween(Long value1, Long value2) {
+            addCriterion("publicity_id not between", value1, value2, "publicityId");
             return (Criteria) this;
         }
     }

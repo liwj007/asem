@@ -2,7 +2,7 @@ package com.liwj.asem.model;
 
 import java.io.Serializable;
 
-public class RGradeAndSecondaryTeachingInstituion implements Serializable {
+public class RGradeAndSecondaryTeachingInstitution implements Serializable {
     private Long id;
 
     private Long gradeId;
@@ -11,13 +11,13 @@ public class RGradeAndSecondaryTeachingInstituion implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public RGradeAndSecondaryTeachingInstituion(Long id, Long gradeId, Long secondaryTeachingInstitutionId) {
+    public RGradeAndSecondaryTeachingInstitution(Long id, Long gradeId, Long secondaryTeachingInstitutionId) {
         this.id = id;
         this.gradeId = gradeId;
         this.secondaryTeachingInstitutionId = secondaryTeachingInstitutionId;
     }
 
-    public RGradeAndSecondaryTeachingInstituion() {
+    public RGradeAndSecondaryTeachingInstitution() {
         super();
     }
 
@@ -56,7 +56,7 @@ public class RGradeAndSecondaryTeachingInstituion implements Serializable {
         if (getClass() != that.getClass()) {
             return false;
         }
-        RGradeAndSecondaryTeachingInstituion other = (RGradeAndSecondaryTeachingInstituion) that;
+        RGradeAndSecondaryTeachingInstitution other = (RGradeAndSecondaryTeachingInstitution) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
             && (this.getGradeId() == null ? other.getGradeId() == null : this.getGradeId().equals(other.getGradeId()))
             && (this.getSecondaryTeachingInstitutionId() == null ? other.getSecondaryTeachingInstitutionId() == null : this.getSecondaryTeachingInstitutionId().equals(other.getSecondaryTeachingInstitutionId()));

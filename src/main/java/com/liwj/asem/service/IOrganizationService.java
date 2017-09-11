@@ -1,5 +1,6 @@
 package com.liwj.asem.service;
 
+import com.liwj.asem.bo.SelectionBO;
 import com.liwj.asem.bo.UnitBO;
 import com.liwj.asem.dto.UserDTO;
 import com.liwj.asem.model.*;
@@ -14,4 +15,12 @@ public interface IOrganizationService {
     Integer getNumberOfGrade(Long id);
 
     List<UnitBO> getUnitsForAllocation(UserDTO user, String type);
+
+    List<SelectionBO> getYears(UserDTO user);
+
+    List<SelectionBO> getColleges(UserDTO user);
+
+    List<SelectionBO> getMajors(UserDTO user);
+
+    List<SelectionBO> getGrades(UserDTO user);
 }

@@ -10,7 +10,7 @@ import com.liwj.asem.exception.WSPException;
 import java.util.List;
 
 public interface IPrizeService {
-    PageInfo getManagePrizeLists(UserDTO user, Integer pageNum, Integer pageSize, Long unitId);
+    PageInfo getManagePrizeLists(UserDTO user, Integer pageNum, Integer pageSize, Long unitId) throws WSPException;
 
     List<SelectOfPrizeBO> getSelectOfUnAllocationNumberPrizes(UserDTO user, Long unitId);
 

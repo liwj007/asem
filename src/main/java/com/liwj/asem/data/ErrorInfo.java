@@ -12,7 +12,8 @@ public enum ErrorInfo {
     NO_LOGIN(10002, "该账号未登录，请从电子科技大学智慧校园平台重新登录"),
     PARAMS_ERROR(10003, "输入数据错误"),
     ERROR_USER_LOGIN(20001,"错误的用户名和密码"),
-    CAN_NOT_DELETE_OR_UPDATE(30001,"该奖学金已经分配名额或评定时间，无法编辑或删除" );
+    CAN_NOT_DELETE_OR_UPDATE(30001,"该奖学金已经分配名额或评定时间，无法编辑或删除" ),
+    CLOSE_COLLEGE_SUBMIT(40001, "该奖学金已被学院锁定进行审核，无法再提交新的学生名单");
 
     public final String desc;
     public final int code;
