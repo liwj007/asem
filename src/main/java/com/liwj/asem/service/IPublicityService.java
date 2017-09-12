@@ -33,4 +33,14 @@ public interface IPublicityService {
     void feedbackObjection(UserDTO user, Long publicityId, String content);
 
     PageInfo getCollegeObjections(UserDTO user, Long unitId, Integer pageSize, Integer pageNum);
+
+    PageInfo getSchoolPublicityList(UserDTO user, Integer pageNum, Integer pageSize);
+
+    List<SelectOfScholarshipBO> getSchoolPublicityScholarshipList(UserDTO user);
+
+    void schoolPublicity(UserDTO user, PublicityApplyBO publicityApplyBO);
+
+    PageInfo getSchoolMangePublicityList(UserDTO user, Integer pageSize, Integer pageNum);
+
+    PageInfo getSchoolObjections(UserDTO user, Integer pageSize, Integer pageNum);
 }

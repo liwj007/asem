@@ -13,6 +13,16 @@ public class UnitPrizeBO {
 
     private Integer unitNumber;
 
+    private Integer max;
+
+    public Integer getMax() {
+        return max;
+    }
+
+    public void setMax(Integer max) {
+        this.max = max;
+    }
+
     public Integer getUnitNumber() {
         return unitNumber;
     }

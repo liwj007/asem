@@ -165,16 +165,19 @@ public class UserService implements IUserService {
 
     @Override
     public Boolean isSchoolUser(UserDTO user) {
-        return user.getRoles().contains(RoleTypeEnum.SCHOOL_USER);
+        return  user.getUserType()==RoleTypeEnum.SCHOOL_USER;
+//        return user.getRoles().contains(RoleTypeEnum.SCHOOL_USER);
     }
 
     @Override
     public Boolean isCollegeManger(UserDTO user) {
-        return user.getRoles().contains(RoleTypeEnum.SPECIAL_ADVISER);
+        return  user.getUserType()==RoleTypeEnum.SPECIAL_ADVISER;
+//        return user.getRoles().contains(RoleTypeEnum.SPECIAL_ADVISER);
     }
 
     @Override
     public Boolean isGradeManger(UserDTO user) {
-        return user.getRoles().contains(RoleTypeEnum.GRADE_ADVISER);
+        return  user.getUserType()==RoleTypeEnum.GRADE_ADVISER;
+//        return user.getRoles().contains(RoleTypeEnum.SPECIAL_ADVISER);
     }
 }

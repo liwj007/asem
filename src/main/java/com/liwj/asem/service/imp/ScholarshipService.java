@@ -54,7 +54,7 @@ public class ScholarshipService implements IScholarshipService {
 
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor=Exception.class)
     public void createNewScholarship(UserDTO user, EntireScholarshipForm scholarshipBO) {
         String name = scholarshipBO.getName();
         String requirement = scholarshipBO.getRequirement();
@@ -180,7 +180,7 @@ public class ScholarshipService implements IScholarshipService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor=Exception.class)
     public EntireScholarshipForm getScholarshipDetailInfo(UserDTO user, Long id, Long unitId) throws WSPException {
         Scholarship scholarship = scholarshipMapper.selectByPrimaryKey(id);
         if (scholarship == null) {
@@ -257,7 +257,7 @@ public class ScholarshipService implements IScholarshipService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor=Exception.class)
     public void deleteScholarship(Long id) throws WSPException {
         Scholarship scholarship = scholarshipMapper.selectByPrimaryKey(id);
         if (scholarship.getScholarshipType() == ScholarshipTypeEnum.SCHOOL.code) {
@@ -301,7 +301,7 @@ public class ScholarshipService implements IScholarshipService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor=Exception.class)
     public void updateScholarship(UserDTO user, EntireScholarshipForm scholarshipBO) throws WSPException {
         Long scholarshipId = scholarshipBO.getId();
         this.deleteScholarship(scholarshipId);
@@ -309,7 +309,7 @@ public class ScholarshipService implements IScholarshipService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor=Exception.class)
     public void openToStudent(UserDTO user, Long scholarshipId) {
         Scholarship scholarship = scholarshipMapper.selectByPrimaryKey(scholarshipId);
 

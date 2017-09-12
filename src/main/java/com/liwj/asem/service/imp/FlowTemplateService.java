@@ -61,7 +61,7 @@ public class FlowTemplateService implements IFlowTemplateService {
 
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor=Exception.class)
     public void createNewFlowTemplateBySchoolUser(String name, ScholarshipTypeEnum type, Boolean needGradeCheck,
                                                   Boolean gradeStudent, Boolean collegeStudent) {
 

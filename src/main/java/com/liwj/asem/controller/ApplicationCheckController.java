@@ -138,6 +138,26 @@ public class ApplicationCheckController {
         return responseData;
     }
 
+    @RequestMapping(value = "/school_publicity_list", method = RequestMethod.GET)
+    public ResponseData getSchoolPublicityList(@RequestParam(value = "token") String token,
+                                                @RequestParam(value = "pageSize") Integer pageSize,
+                                                @RequestParam(value = "pageNum") Integer pageNum) throws WSPException {
+        UserDTO user = userService.getUserByToken(token);
+        PageInfo pageInfo = publicityService.getSchoolPublicityList(user, pageNum, pageSize);
+        ResponseData responseData = new ResponseData();
+        responseData.setSuccessData(pageInfo);
+        return responseData;
+    }
+
+    @RequestMapping(value = "/school_publicity_scholarship_list", method = RequestMethod.GET)
+    public ResponseData getSchoolPublicityScholarshipList(@RequestParam(value = "token") String token) throws WSPException {
+        UserDTO user = userService.getUserByToken(token);
+        List<SelectOfScholarshipBO> res = publicityService.getSchoolPublicityScholarshipList(user);
+        ResponseData responseData = new ResponseData();
+        responseData.setSuccessData(res);
+        return responseData;
+    }
+
     @RequestMapping(value = "/college_publicity_scholarship_list", method = RequestMethod.GET)
     public ResponseData getCollegePublicityScholarshipList(@RequestParam(value = "token") String token,
                                                            @RequestParam(value = "manageUnit", required = false) Long unitId) throws WSPException {
@@ -158,6 +178,16 @@ public class ApplicationCheckController {
         return responseData;
     }
 
+    @RequestMapping(value = "/school_publicity", method = RequestMethod.POST)
+    public ResponseData schoolPublicity(@RequestParam(value = "token") String token,
+                                         @RequestBody PublicityApplyBO publicityApplyBO) throws WSPException {
+        UserDTO user = userService.getUserByToken(token);
+        publicityService.schoolPublicity(user, publicityApplyBO);
+        ResponseData responseData = new ResponseData();
+        responseData.setSuccessData(null);
+        return responseData;
+    }
+
     @RequestMapping(value = "/college_manage_publicity_list", method = RequestMethod.GET)
     public ResponseData getCollegeMangePublicityList(@RequestParam(value = "token") String token,
                                                      @RequestParam(value = "pageSize") Integer pageSize,
@@ -165,6 +195,17 @@ public class ApplicationCheckController {
                                                      @RequestParam(value = "manageUnit", required = false) Long unitId) throws WSPException {
         UserDTO user = userService.getUserByToken(token);
         PageInfo pageInfo = publicityService.getCollegeMangePublicityList(user, unitId, pageSize, pageNum);
+        ResponseData responseData = new ResponseData();
+        responseData.setSuccessData(pageInfo);
+        return responseData;
+    }
+
+    @RequestMapping(value = "/school_manage_publicity_list", method = RequestMethod.GET)
+    public ResponseData getSchoolMangePublicityList(@RequestParam(value = "token") String token,
+                                                     @RequestParam(value = "pageSize") Integer pageSize,
+                                                     @RequestParam(value = "pageNum") Integer pageNum) throws WSPException {
+        UserDTO user = userService.getUserByToken(token);
+        PageInfo pageInfo = publicityService.getSchoolMangePublicityList(user, pageSize, pageNum);
         ResponseData responseData = new ResponseData();
         responseData.setSuccessData(pageInfo);
         return responseData;
@@ -242,6 +283,17 @@ public class ApplicationCheckController {
                                              @RequestParam(value = "manageUnit", required = false) Long unitId) throws WSPException {
         UserDTO user = userService.getUserByToken(token);
         PageInfo pageInfo = publicityService.getCollegeObjections(user,unitId,pageSize,pageNum);
+        ResponseData responseData = new ResponseData();
+        responseData.setSuccessData(pageInfo);
+        return responseData;
+    }
+
+    @RequestMapping(value = "/school_objection", method = RequestMethod.GET)
+    public ResponseData getSchoolObjections(@RequestParam(value = "token") String token,
+                                             @RequestParam(value = "pageSize") Integer pageSize,
+                                             @RequestParam(value = "pageNum") Integer pageNum) throws WSPException {
+        UserDTO user = userService.getUserByToken(token);
+        PageInfo pageInfo = publicityService.getSchoolObjections(user,pageSize,pageNum);
         ResponseData responseData = new ResponseData();
         responseData.setSuccessData(pageInfo);
         return responseData;

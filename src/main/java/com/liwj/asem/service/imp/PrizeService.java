@@ -126,7 +126,7 @@ public class PrizeService implements IPrizeService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor=Exception.class)
     public void allocationNumber(UserDTO user, EntireUnitPrizeForm entireUnitPrizeForm) {
         List<UnitPrizeBO> unitPrizeBOList = entireUnitPrizeForm.getList();
         if (userService.isSchoolUser(user)) {
@@ -231,6 +231,7 @@ public class PrizeService implements IPrizeService {
                 UnitPrizeBO bo = new UnitPrizeBO();
                 bo.setId(child.getId());
                 bo.setNumber(child.getNumber());
+                bo.setMax(schoolPrize.getNumber()-schoolPrize.getRestNumber());
                 PrimaryTeachingInstitution college = primaryTeachingInstitutionMapper
                         .selectByPrimaryKey(child.getPrimaryTeachingInstitutionId());
                 bo.setUnitName(college.getName());
@@ -260,6 +261,7 @@ public class PrizeService implements IPrizeService {
             for (GradePrize child : gradePrizes) {
                 UnitPrizeBO bo = new UnitPrizeBO();
                 bo.setId(child.getId());
+                bo.setMax(collegePrize.getNumber()-collegePrize.getRestNumber());
                 bo.setNumber(child.getNumber());
                 Grade grade = gradeMapper.selectByPrimaryKey(child.getGradeId());
                 bo.setUnitName(grade.getName());
@@ -272,7 +274,7 @@ public class PrizeService implements IPrizeService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor=Exception.class)
     public void updateAllocationNumber(UserDTO user, EntireUnitPrizeForm entireUnitPrizeForm) {
         if (userService.isSchoolUser(user)) {
             SchoolPrize schoolPrize = schoolPrizeMapper.selectByPrimaryKey(entireUnitPrizeForm.getId());
@@ -361,7 +363,7 @@ public class PrizeService implements IPrizeService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor=Exception.class)
     public void allocationTime(UserDTO user, List<TimeLimitBO> list) throws WSPException {
         if (userService.isSchoolUser(user)) {
             for (TimeLimitBO bo : list) {
@@ -495,7 +497,7 @@ public class PrizeService implements IPrizeService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor=Exception.class)
     public void updateAllocationTime(UserDTO user, TimeLimitBO timeLimitBO) {
         Scholarship scholarship = scholarshipMapper.selectByPrimaryKey(timeLimitBO.getScholarshipId());
         if (userService.isSchoolUser(user)) {
@@ -518,7 +520,7 @@ public class PrizeService implements IPrizeService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor=Exception.class)
     public void releaseToCollege(List<Long> prizeList) {
         for (Long id : prizeList) {
             SchoolPrize schoolPrize = schoolPrizeMapper.selectByPrimaryKey(id);

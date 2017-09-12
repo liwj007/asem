@@ -31,20 +31,21 @@ public class ScheduleTask {
     @Autowired
     private IApplicationService applicationService;
 
+
     @Scheduled(cron = "0 0/30 * * * ?")
     public void executeUploadTask() {
-
+        System.out.println("test schedule");
         ScholarshipExample scholarshipExample = new ScholarshipExample();
-        scholarshipExample.createCriteria().andStatusEqualTo(StatusEnum.OPEN.code);
+        scholarshipExample.createCriteria().andStatusEqualTo(StatusEnum.NEW.code);
         List<Scholarship> scholarships = scholarshipMapper.selectByExample(scholarshipExample);
 
         for (Scholarship scholarship : scholarships) {
             Date now = new Date();
-            if (now.getTime() >= scholarship.getStudentBeginDate().getTime()) {
+            if (scholarship.getStudentBeginDate()!=null && now.getTime() >= scholarship.getStudentBeginDate().getTime()) {
                 scholarshipService.openToStudent(null, scholarship.getId());
             }
 
-            if (now.getTime()>=scholarship.getCollegeEndDate().getTime()) {
+            if (scholarship.getCollegeEndDate()!=null && now.getTime()>=scholarship.getCollegeEndDate().getTime()) {
                 applicationService.closeCollegeSubmitForSchedule(scholarship.getId());
             }
 
@@ -53,11 +54,11 @@ public class ScheduleTask {
                     .andAllocationTimeStatusEqualTo(true);
             List<PrizeCollegeLimitTime> prizeCollegeLimitTimes = prizeCollegeLimitTimeMapper.selectByExample(limitTimeExample);
             for (PrizeCollegeLimitTime limitTime : prizeCollegeLimitTimes) {
-                if (now.getTime()>=limitTime.getGradeEndDate().getTime()) {
+                if (limitTime.getGradeEndDate() != null && now.getTime()>=limitTime.getGradeEndDate().getTime()) {
                     applicationService.closeGradeSubmitForSchedule(scholarship.getId(), limitTime.getPrimaryTeachingInstitutionId());
                 }
 
-                if (now.getTime()>=limitTime.getStudentEndDate().getTime()){
+                if (limitTime.getStudentEndDate()!= null && now.getTime()>=limitTime.getStudentEndDate().getTime()){
                     applicationService.closeApplyForSchedule(scholarship.getId(), limitTime.getPrimaryTeachingInstitutionId());
                 }
             }

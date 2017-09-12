@@ -47,7 +47,7 @@ public class ComprehensiveEvaluationService implements IComprehensiveEvaluationS
     private UserMapper userMapper;
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor=Exception.class)
     public void uploadFiles(List<FileBO> fileBOList) throws IOException, WSPException {
         for (FileBO bo : fileBOList) {
             String fileName = bo.getName();
@@ -79,7 +79,7 @@ public class ComprehensiveEvaluationService implements IComprehensiveEvaluationS
         if (flag) {
             criteria.andUserTypeEqualTo(RoleTypeEnum.STUDENT.code);
             List<User> users = userMapper.selectByExample(userExample);
-            if (users.size()==0){
+            if (users.size() == 0) {
                 return new PageInfo();
             }
             for (User user : users) {
@@ -90,7 +90,8 @@ public class ComprehensiveEvaluationService implements IComprehensiveEvaluationS
 
         AssessmentRecordExample example = new AssessmentRecordExample();
         AssessmentRecordExample.Criteria criteria1 = example.createCriteria();
-        criteria1.andYearEqualTo(year.intValue());
+        if (year != null)
+            criteria1.andYearEqualTo(year.intValue());
         if (userSns.size() > 0) {
             criteria1.andSnIn(userSns);
         }

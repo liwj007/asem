@@ -82,7 +82,7 @@ public class ApplicationService implements IApplicationService {
 
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor=Exception.class)
     public void createApplication(UserDTO user, EntireApplicationForm applicationForm) throws WSPException {
         for (Long prizeId : applicationForm.getPrizeIds()) {
             CollegePrize collegePrize = collegePrizeMapper.selectByPrimaryKey(prizeId);
@@ -132,7 +132,7 @@ public class ApplicationService implements IApplicationService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor=Exception.class)
     public void updateApplication(UserDTO user, EntireApplicationForm applicationForm) {
         Long applicationId = applicationForm.getId();
         Application application = applicationMapper.selectByPrimaryKey(applicationId);
@@ -482,6 +482,9 @@ public class ApplicationService implements IApplicationService {
                 for (CollegePrize collegePrize : collegePrizes) {
                     collegePrizeIds.add(collegePrize.getId());
                 }
+                if (collegePrizeIds.size()==0){
+                    continue;
+                }
 
                 ApplicationExample applicationExample = new ApplicationExample();
                 applicationExample.createCriteria().andPrizeIdIn(collegePrizeIds);
@@ -643,7 +646,7 @@ public class ApplicationService implements IApplicationService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor=Exception.class)
     public void checkApplicationFile(UserDTO user, List<Long> ids, ApplicationFileStatusEnum result) {
         Application application = new Application();
         application.setFileStatus(result.code);
@@ -718,14 +721,9 @@ public class ApplicationService implements IApplicationService {
             RFlowTemplateStepAndUserRole role = rFlowTemplateStepAndUserRoles.get(0);
 
             ApplicationStepExample applicationStepExample = new ApplicationStepExample();
-            if (!userService.isSchoolUser(user)) {
-                applicationStepExample.createCriteria().andFlowTemplateStepIdEqualTo(role.getFlowTemplateStepId())
-                        .andPrimaryTeachingInstitutionIdEqualTo(collegePrize.getPrimaryTeachingInstitutionId())
-                        .andApplicationIdIn(applicationIds);
-            } else {
-                applicationStepExample.createCriteria().andFlowTemplateStepIdEqualTo(role.getFlowTemplateStepId())
-                        .andApplicationIdIn(applicationIds);
-            }
+            applicationStepExample.createCriteria().andFlowTemplateStepIdEqualTo(role.getFlowTemplateStepId())
+                    .andPrimaryTeachingInstitutionIdEqualTo(collegePrize.getPrimaryTeachingInstitutionId())
+                    .andApplicationIdIn(applicationIds);
             PageHelper.startPage(pageNum, pageSize);
             List<ApplicationStep> applicationSteps = applicationStepMapper.selectByExample(applicationStepExample);
             PageInfo pageInfo = new PageInfo(applicationSteps);
@@ -785,7 +783,7 @@ public class ApplicationService implements IApplicationService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor=Exception.class)
     public void checkApplicationPrize(UserDTO user, List<Long> ids, ApplicationPrizeStatusEnum result) throws WSPException {
         if (result == ApplicationPrizeStatusEnum.REJECT) {
             for (Long id : ids) {
@@ -839,6 +837,64 @@ public class ApplicationService implements IApplicationService {
                 FlowTemplateStep nextStep = flowTemplateService.findTheNextStep(flowTemplateStep.getFlowTemplateId(),
                         flowTemplateStep.getId());
 
+                Application application = applicationMapper.selectByPrimaryKey(step.getApplicationId());
+                if (userService.isGradeManger(user)) {
+                    GradePrizeExample gradePrizeExample = new GradePrizeExample();
+                    gradePrizeExample.createCriteria().andPrizeInfoIdEqualTo(application.getPrizeInfoId())
+                            .andPrimaryTeachingInstitutionIdEqualTo(application.getPrimaryTeachingInstitutionId())
+                            .andGradeIdEqualTo(application.getGradeId());
+                    List<GradePrize> gradePrizes = gradePrizeMapper.selectByExample(gradePrizeExample);
+                    if (gradePrizes.size() == 1) {
+                        GradePrize gradePrize = gradePrizes.get(0);
+
+                        List<Integer> tmp = new ArrayList<>();
+                        tmp.add(ApplicationPrizeStatusEnum.PASS.code);
+                        tmp.add(ApplicationPrizeStatusEnum.WAIT_PASS.code);
+                        ApplicationStepExample stepExample = new ApplicationStepExample();
+                        stepExample.createCriteria().andFlowTemplateStepIdEqualTo(step.getFlowTemplateStepId())
+                                .andPrimaryTeachingInstitutionIdEqualTo(step.getPrimaryTeachingInstitutionId())
+                                .andGradeIdEqualTo(step.getGradeId())
+                                .andStatusIn(tmp);
+                        Long usedNumber = applicationStepMapper.countByExample(stepExample);
+
+                        if (gradePrize.getNumber() <= usedNumber) {
+                            throw new WSPException(ErrorInfo.FULL_NUMBER);
+                        }
+                    }
+
+                } else if (userService.isCollegeManger(user)) {
+                    CollegePrize collegePrize = collegePrizeMapper.selectByPrimaryKey(application.getPrizeId());
+                    List<Integer> tmp = new ArrayList<>();
+                    tmp.add(ApplicationPrizeStatusEnum.PASS.code);
+                    tmp.add(ApplicationPrizeStatusEnum.WAIT_PASS.code);
+                    ApplicationStepExample stepExample = new ApplicationStepExample();
+                    stepExample.createCriteria().andFlowTemplateStepIdEqualTo(step.getFlowTemplateStepId())
+                            .andPrimaryTeachingInstitutionIdEqualTo(step.getPrimaryTeachingInstitutionId())
+                            .andGradeIdEqualTo(step.getGradeId())
+                            .andStatusIn(tmp);
+                    Long usedNumber = applicationStepMapper.countByExample(stepExample);
+
+                    if (collegePrize.getNumber() - collegePrize.getRestNumber() <= usedNumber) {
+                        throw new WSPException(ErrorInfo.FULL_NUMBER);
+                    }
+                } else if (userService.isSchoolUser(user)) {
+                    CollegePrize collegePrize = collegePrizeMapper.selectByPrimaryKey(application.getPrizeId());
+                    SchoolPrize schoolPrize = schoolPrizeMapper.selectByPrimaryKey(collegePrize.getSchoolPrizeId());
+                    List<Integer> tmp = new ArrayList<>();
+                    tmp.add(ApplicationPrizeStatusEnum.PASS.code);
+                    tmp.add(ApplicationPrizeStatusEnum.WAIT_PASS.code);
+                    ApplicationStepExample stepExample = new ApplicationStepExample();
+                    stepExample.createCriteria().andFlowTemplateStepIdEqualTo(step.getFlowTemplateStepId())
+                            .andPrimaryTeachingInstitutionIdEqualTo(step.getPrimaryTeachingInstitutionId())
+                            .andGradeIdEqualTo(step.getGradeId())
+                            .andStatusIn(tmp);
+                    Long usedNumber = applicationStepMapper.countByExample(stepExample);
+
+                    if (schoolPrize.getNumber() - schoolPrize.getRestNumber() <= usedNumber) {
+                        throw new WSPException(ErrorInfo.FULL_NUMBER);
+                    }
+                }
+
                 if (nextStep == null) {
 
                     step.setStatus(ApplicationPrizeStatusEnum.PASS.code);
@@ -846,7 +902,6 @@ public class ApplicationService implements IApplicationService {
                     step.setOperationDate(new Date());
                     applicationStepMapper.updateByPrimaryKeySelective(step);
 
-                    Application application = applicationMapper.selectByPrimaryKey(step.getApplicationId());
                     application.setPrizeStatus(result.code);
                     applicationMapper.updateByPrimaryKeySelective(application);
                 } else {
@@ -855,17 +910,9 @@ public class ApplicationService implements IApplicationService {
                     step.setOperationDate(new Date());
                     applicationStepMapper.updateByPrimaryKeySelective(step);
 
-                    Application application = applicationMapper.selectByPrimaryKey(step.getApplicationId());
                     application.setPrizeStatus(ApplicationPrizeStatusEnum.SUBMIT.code);
                     applicationMapper.updateByPrimaryKeySelective(application);
 
-//                    ApplicationStep applicationStep = new ApplicationStep();
-//                    applicationStep.setFlowTemplateStepId(nextStep.getId());
-//                    applicationStep.setStatus(ApplicationPrizeStatusEnum.WAIT.code);
-//                    applicationStep.setPrimaryTeachingInstitutionId(step.getPrimaryTeachingInstitutionId());
-//                    applicationStep.setGradeId(step.getGradeId());
-//                    applicationStep.setApplicationId(step.getApplicationId());
-//                    applicationStepMapper.insertSelective(applicationStep);
                 }
             }
         }
@@ -967,7 +1014,7 @@ public class ApplicationService implements IApplicationService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor=Exception.class)
     public void closeSubmit(UserDTO user, Long id, Long unitId) throws WSPException {
         Scholarship scholarship;
         ApplicationExample applicationExample = new ApplicationExample();
@@ -1057,12 +1104,12 @@ public class ApplicationService implements IApplicationService {
     }
 
     @Override
-    @Transactional
-    public void closeCollegeSubmitForSchedule(Long scholarshipId){
+    @Transactional(rollbackFor=Exception.class)
+    public void closeCollegeSubmitForSchedule(Long scholarshipId) {
         SchoolPrizeExample schoolPrizeExample = new SchoolPrizeExample();
         schoolPrizeExample.createCriteria().andScholarshipIdEqualTo(scholarshipId).andSubmitStatusEqualTo(true);
         List<SchoolPrize> schoolPrizes = schoolPrizeMapper.selectByExample(schoolPrizeExample);
-        for (SchoolPrize schoolPrize: schoolPrizes){
+        for (SchoolPrize schoolPrize : schoolPrizes) {
             schoolPrize.setSubmitStatus(false);
             schoolPrizeMapper.updateByPrimaryKeySelective(schoolPrize);
 
@@ -1124,13 +1171,13 @@ public class ApplicationService implements IApplicationService {
     }
 
     @Override
-    @Transactional
-    public void closeGradeSubmitForSchedule(Long scholarshipId, Long unitId){
+    @Transactional(rollbackFor=Exception.class)
+    public void closeGradeSubmitForSchedule(Long scholarshipId, Long unitId) {
         CollegePrizeExample collegePrizeExample = new CollegePrizeExample();
         collegePrizeExample.createCriteria().andSchoolPrizeIdEqualTo(scholarshipId)
                 .andPrimaryTeachingInstitutionIdEqualTo(unitId);
         List<CollegePrize> collegePrizes = collegePrizeMapper.selectByExample(collegePrizeExample);
-        for (CollegePrize collegePrize: collegePrizes){
+        for (CollegePrize collegePrize : collegePrizes) {
             ApplicationExample applicationExample = new ApplicationExample();
             collegePrize.setSubmitStatus(false);
             collegePrizeMapper.updateByPrimaryKeySelective(collegePrize);
@@ -1191,13 +1238,13 @@ public class ApplicationService implements IApplicationService {
     }
 
     @Override
-    @Transactional
-    public void closeApplyForSchedule(Long scholarshipId, Long unitId){
+    @Transactional(rollbackFor=Exception.class)
+    public void closeApplyForSchedule(Long scholarshipId, Long unitId) {
         CollegePrizeExample collegePrizeExample = new CollegePrizeExample();
         collegePrizeExample.createCriteria().andSchoolPrizeIdEqualTo(scholarshipId)
                 .andPrimaryTeachingInstitutionIdEqualTo(unitId);
         List<CollegePrize> collegePrizes = collegePrizeMapper.selectByExample(collegePrizeExample);
-        for (CollegePrize collegePrize: collegePrizes){
+        for (CollegePrize collegePrize : collegePrizes) {
             ApplicationExample applicationExample = new ApplicationExample();
             collegePrize.setApplyStatus(false);
             collegePrizeMapper.updateByPrimaryKeySelective(collegePrize);

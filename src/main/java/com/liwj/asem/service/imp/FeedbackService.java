@@ -37,7 +37,7 @@ public class FeedbackService implements IFeedbackService {
     private PrizeInfoMapper prizeInfoMapper;
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor=Exception.class)
     public void applyQuota(UserDTO user, List<FeedbackBO> feedbackBOList) {
         for (FeedbackBO bo : feedbackBOList) {
             QuotaFeedback quotaFeedback = new QuotaFeedback();
@@ -144,7 +144,7 @@ public class FeedbackService implements IFeedbackService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor=Exception.class)
     public void checkApplyBatch(List<Long> ids, FeedbackStatusEnum result) {
         for (Long id : ids) {
             QuotaFeedback quotaFeedback = quotaFeedbackMapper.selectByPrimaryKey(id);
