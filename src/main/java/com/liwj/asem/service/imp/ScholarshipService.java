@@ -1,8 +1,11 @@
 package com.liwj.asem.service.imp;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.liwj.asem.bo.EntireScholarshipForm;
 import com.liwj.asem.bo.FileBO;
 import com.liwj.asem.bo.NewPrizeItem;
+import com.liwj.asem.bo.SelectOfScholarshipBO;
 import com.liwj.asem.dao.*;
 import com.liwj.asem.data.ErrorInfo;
 import com.liwj.asem.dto.UserDTO;
@@ -18,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -47,6 +51,9 @@ public class ScholarshipService implements IScholarshipService {
     private IUserService userService;
 
     @Autowired
+    private ApplicationMapper applicationMapper;
+
+    @Autowired
     private PrimaryTeachingInstitutionMapper primaryTeachingInstitutionMapper;
 
     @Autowired
@@ -54,7 +61,7 @@ public class ScholarshipService implements IScholarshipService {
 
 
     @Override
-    @Transactional(rollbackFor=Exception.class)
+    @Transactional(rollbackFor = Exception.class)
     public void createNewScholarship(UserDTO user, EntireScholarshipForm scholarshipBO) {
         String name = scholarshipBO.getName();
         String requirement = scholarshipBO.getRequirement();
@@ -167,7 +174,7 @@ public class ScholarshipService implements IScholarshipService {
                     limitTimeExample.createCriteria().andScholarshipIdEqualTo(scholarship.getId())
                             .andPrimaryTeachingInstitutionIdEqualTo(primaryTeachingInstitutionId);
                     Long tmp = prizeCollegeLimitTimeMapper.countByExample(limitTimeExample);
-                    if (tmp==0){
+                    if (tmp == 0) {
                         PrizeCollegeLimitTime prizeCollegeLimitTime = new PrizeCollegeLimitTime();
                         prizeCollegeLimitTime.setPrimaryTeachingInstitutionId(primaryTeachingInstitutionId);
                         prizeCollegeLimitTime.setScholarshipId(scholarship.getId());
@@ -180,7 +187,7 @@ public class ScholarshipService implements IScholarshipService {
     }
 
     @Override
-    @Transactional(rollbackFor=Exception.class)
+    @Transactional(rollbackFor = Exception.class)
     public EntireScholarshipForm getScholarshipDetailInfo(UserDTO user, Long id, Long unitId) throws WSPException {
         Scholarship scholarship = scholarshipMapper.selectByPrimaryKey(id);
         if (scholarship == null) {
@@ -257,7 +264,7 @@ public class ScholarshipService implements IScholarshipService {
     }
 
     @Override
-    @Transactional(rollbackFor=Exception.class)
+    @Transactional(rollbackFor = Exception.class)
     public void deleteScholarship(Long id) throws WSPException {
         Scholarship scholarship = scholarshipMapper.selectByPrimaryKey(id);
         if (scholarship.getScholarshipType() == ScholarshipTypeEnum.SCHOOL.code) {
@@ -301,7 +308,7 @@ public class ScholarshipService implements IScholarshipService {
     }
 
     @Override
-    @Transactional(rollbackFor=Exception.class)
+    @Transactional(rollbackFor = Exception.class)
     public void updateScholarship(UserDTO user, EntireScholarshipForm scholarshipBO) throws WSPException {
         Long scholarshipId = scholarshipBO.getId();
         this.deleteScholarship(scholarshipId);
@@ -309,22 +316,22 @@ public class ScholarshipService implements IScholarshipService {
     }
 
     @Override
-    @Transactional(rollbackFor=Exception.class)
+    @Transactional(rollbackFor = Exception.class)
     public void openToStudent(UserDTO user, Long scholarshipId) {
         Scholarship scholarship = scholarshipMapper.selectByPrimaryKey(scholarshipId);
-        if (scholarship.getAllocationTimeStatus()==false){
+        if (scholarship.getAllocationTimeStatus() == false) {
             return;
         }
         scholarship.setStatus(StatusEnum.OPEN.code);
         scholarshipMapper.updateByPrimaryKeySelective(scholarship);
 
-        if (scholarship.getScholarshipType() == ScholarshipTypeEnum.SCHOOL.code){
+        if (scholarship.getScholarshipType() == ScholarshipTypeEnum.SCHOOL.code) {
             SchoolPrizeExample schoolPrizeExample = new SchoolPrizeExample();
             schoolPrizeExample.createCriteria().andScholarshipIdEqualTo(scholarshipId);
 
             List<SchoolPrize> schoolPrizes = schoolPrizeMapper.selectByExample(schoolPrizeExample);
-            for (SchoolPrize schoolPrize: schoolPrizes){
-                if (schoolPrize.getAllocationNumberStatus()==false){
+            for (SchoolPrize schoolPrize : schoolPrizes) {
+                if (schoolPrize.getAllocationNumberStatus() == false) {
                     continue;
                 }
                 schoolPrize.setStatus(StatusEnum.OPEN.code);
@@ -344,15 +351,15 @@ public class ScholarshipService implements IScholarshipService {
                 GradePrize gradePrize = new GradePrize();
                 gradePrize.setStatus(StatusEnum.OPEN.code);
 
-                gradePrizeMapper.updateByExampleSelective(gradePrize,gradePrizeExample);
+                gradePrizeMapper.updateByExampleSelective(gradePrize, gradePrizeExample);
             }
-        }else  if (scholarship.getScholarshipType() == ScholarshipTypeEnum.COLLEGE.code){
+        } else if (scholarship.getScholarshipType() == ScholarshipTypeEnum.COLLEGE.code) {
             CollegePrizeExample collegePrizeExample = new CollegePrizeExample();
             collegePrizeExample.createCriteria().andScholarshipIdEqualTo(scholarshipId);
             List<CollegePrize> collegePrizes = collegePrizeMapper.selectByExample(collegePrizeExample);
 
-            for (CollegePrize collegePrize: collegePrizes){
-                if (collegePrize.getAllocationNumberStatus()==false){
+            for (CollegePrize collegePrize : collegePrizes) {
+                if (collegePrize.getAllocationNumberStatus() == false) {
                     continue;
                 }
                 collegePrize.setStatus(StatusEnum.OPEN.code);
@@ -364,11 +371,44 @@ public class ScholarshipService implements IScholarshipService {
                 GradePrize gradePrize = new GradePrize();
                 gradePrize.setStatus(StatusEnum.OPEN.code);
 
-                gradePrizeMapper.updateByExampleSelective(gradePrize,gradePrizeExample);
+                gradePrizeMapper.updateByExampleSelective(gradePrize, gradePrizeExample);
             }
         }
 
 
+    }
+
+    @Override
+    public PageInfo getScholarshipsOfAward(UserDTO user, Integer pageNum, Integer pageSize) {
+        ApplicationExample example = new ApplicationExample();
+        example.createCriteria().andPrizeStatusEqualTo(ApplicationPrizeStatusEnum.PASS.code);
+        List<Application> applications = applicationMapper.selectByExampleWithBLOBs(example);
+        if (applications.size() == 0) {
+            return new PageInfo();
+        }
+        HashMap<Long, Integer> scholarshipMap = new HashMap<>();
+        for (Application application : applications) {
+            if (!scholarshipMap.containsKey(application.getScholarshipId())) {
+                scholarshipMap.put(application.getScholarshipId(), 0);
+            }
+            scholarshipMap.put(application.getScholarshipId(), scholarshipMap.get(application.getScholarshipId()) + 1);
+        }
+        ScholarshipExample scholarshipExample = new ScholarshipExample();
+        scholarshipExample.createCriteria().andIdIn(new ArrayList<>(scholarshipMap.keySet()));
+        PageHelper.startPage(pageNum,pageSize);
+        List<Scholarship> list = scholarshipMapper.selectByExample(scholarshipExample);
+        PageInfo pageInfo = new PageInfo(list);
+        List<SelectOfScholarshipBO> res = new ArrayList<>();
+        for (Scholarship scholarship : list) {
+            SelectOfScholarshipBO bo = new SelectOfScholarshipBO();
+            bo.setId(scholarship.getId());
+            bo.setName(scholarship.getScholarshipName());
+            bo.setAwardNumber(scholarshipMap.get(scholarship.getId()));
+            bo.setYear("暂无");
+            res.add(bo);
+        }
+        pageInfo.setList(res);
+        return pageInfo;
     }
 
 }

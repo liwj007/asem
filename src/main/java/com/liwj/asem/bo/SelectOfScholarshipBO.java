@@ -6,6 +6,24 @@ import java.util.List;
 public class SelectOfScholarshipBO {
     private Long id;
     private String name;
+    private Integer awardNumber;
+    private String year;
+
+    public String getYear() {
+        return year;
+    }
+
+    public void setYear(String year) {
+        this.year = year;
+    }
+
+    public Integer getAwardNumber() {
+        return awardNumber;
+    }
+
+    public void setAwardNumber(Integer awardNumber) {
+        this.awardNumber = awardNumber;
+    }
 
     public SelectOfScholarshipBO() {
         prizes = new ArrayList<>();

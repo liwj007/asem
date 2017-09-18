@@ -48,4 +48,6 @@ public interface IApplicationService {
 
     @Transactional
     void closeApplyForSchedule(Long scholarshipId, Long unitId);
+
+    PageInfo getAwardApplicationsByScholarship(UserDTO user, Long scholarshipId, List<Long> studentIds, Integer pageNum, Integer pageSize);
 }

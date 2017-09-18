@@ -1,9 +1,13 @@
 package com.liwj.asem.service;
 
+import com.github.pagehelper.PageInfo;
 import com.liwj.asem.bo.EntireScholarshipForm;
+import com.liwj.asem.bo.SelectOfScholarshipBO;
 import com.liwj.asem.dto.UserDTO;
 import com.liwj.asem.exception.WSPException;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public interface IScholarshipService {
@@ -16,4 +20,6 @@ public interface IScholarshipService {
     void updateScholarship(UserDTO user,EntireScholarshipForm scholarshipBO) throws WSPException;
 
     void openToStudent(UserDTO user, Long scholarshipId);
+
+    PageInfo getScholarshipsOfAward(UserDTO user, Integer pageNum, Integer pageSize);
 }

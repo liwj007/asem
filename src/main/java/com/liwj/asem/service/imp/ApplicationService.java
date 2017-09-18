@@ -1281,6 +1281,80 @@ public class ApplicationService implements IApplicationService {
         }
     }
 
+    @Override
+    public PageInfo getAwardApplicationsByScholarship(UserDTO user, Long scholarshipId, List<Long> studentIds, Integer pageNum, Integer pageSize) {
+        if (studentIds.size() == 0) {
+            return new PageInfo();
+        }
+        ApplicationExample applicationExample = new ApplicationExample();
+        ApplicationExample.Criteria criteria = applicationExample.createCriteria();
+        criteria.andScholarshipIdEqualTo(scholarshipId)
+//                .andStatusEqualTo(ApplicationStatusEnum.PASS.code)
+                .andPrizeStatusEqualTo(ApplicationPrizeStatusEnum.PASS.code);
+        if (studentIds != null && studentIds.size() > 0) {
+            criteria.andUserIdIn(studentIds);
+        }
+        PageHelper.startPage(pageNum, pageSize);
+        List<Application> list = applicationMapper.selectByExampleWithBLOBs(applicationExample);
+        PageInfo pageInfo = new PageInfo(list);
+        List<WinningRecordDetailBO> res = new ArrayList<>();
+        for (Application application : list) {
+            WinningRecordDetailBO bo = new WinningRecordDetailBO();
+            Scholarship scholarship = scholarshipMapper.selectByPrimaryKey(application.getScholarshipId());
+            bo.setScholarshipName(scholarship.getScholarshipName());
+            PrizeInfo prizeInfo = prizeInfoMapper.selectByPrimaryKey(application.getPrizeInfoId());
+            bo.setPrizeName(prizeInfo.getPrizeName());
+            bo.setApplicationId(application.getId());
+            User student = userService.getUserById(application.getUserId());
+            if (student != null) {
+                bo.setName(student.getName());
+                bo.setSn(student.getSn());
+            }
+
+            if (student.getPrimaryTeachingInstitutionId() != null) {
+                PrimaryTeachingInstitution primaryTeachingInstitution = primaryTeachingInstitutionMapper
+                        .selectByPrimaryKey(student.getPrimaryTeachingInstitutionId());
+                bo.setCollegeName(primaryTeachingInstitution.getName());
+            }
+
+            if (student.getSecondaryTeachingInstitutionId() != null) {
+                SecondaryTeachingInstitution secondaryTeachingInstitution = secondaryTeachingInstitutionMapper
+                        .selectByPrimaryKey(student.getSecondaryTeachingInstitutionId());
+                bo.setMajorName(secondaryTeachingInstitution.getName());
+            }
+
+            if (student.getGradeId() != null) {
+                Grade grade = gradeMapper.selectByPrimaryKey(student.getGradeId());
+                bo.setGradeName(grade.getName());
+            }
+
+            if (student.getClassesId() != null) {
+                Classes classes = classesMapper.selectByPrimaryKey(student.getClassesId());
+                bo.setClassName(classes.getName());
+            }
+
+            ApplicationExample applicationExample2 = new ApplicationExample();
+            applicationExample2.createCriteria().andUserIdEqualTo(application.getUserId())
+                    .andPrizeStatusEqualTo(ApplicationPrizeStatusEnum.PASS.code);
+            List<Application> applications2 = applicationMapper.selectByExampleWithBLOBs(applicationExample2);
+            List<String> records = new ArrayList<>();
+            for (Application app : applications2) {
+                Scholarship scho = scholarshipMapper.selectByPrimaryKey(app.getScholarshipId());
+                String scholarName = scho.getScholarshipName();
+                PrizeInfo info = prizeInfoMapper.selectByPrimaryKey(app.getPrizeInfoId());
+                String prizeName = info.getPrizeName();
+                String record = String.format("%s%s，材料%s，获奖%s；",
+                        scholarName, prizeName, ApplicationFileStatusEnum.getNameByCode(app.getFileStatus()),
+                        ApplicationPrizeStatusEnum.getNameByCode(app.getPrizeStatus()));
+                records.add(record);
+            }
+            bo.setRecords(records);
+            res.add(bo);
+        }
+        pageInfo.setList(res);
+        return pageInfo;
+    }
+
 
     private PageInfo getPrizeForGradeCheck(UserDTO user, Long unitId, Integer pageNum, Integer pageSize) throws WSPException {
         if (user.getManageGrades().size() == 0) {
