@@ -17,9 +17,18 @@ public class ApplicationAwardCheckListBO {
     private Long prizeInfoId;
 
     private String unitName;
+    private Long unitId;
 
     private Boolean submitStatus;
     private Boolean applyStatus;
+
+    public Long getUnitId() {
+        return unitId;
+    }
+
+    public void setUnitId(Long unitId) {
+        this.unitId = unitId;
+    }
 
     public Boolean getSubmitStatus() {
         return submitStatus;

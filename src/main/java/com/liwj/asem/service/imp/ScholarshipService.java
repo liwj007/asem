@@ -265,7 +265,7 @@ public class ScholarshipService implements IScholarshipService {
             schoolPrizeExample.createCriteria().andScholarshipIdEqualTo(scholarship.getId());
             List<SchoolPrize> schoolPrizes = schoolPrizeMapper.selectByExample(schoolPrizeExample);
             for (SchoolPrize schoolPrize : schoolPrizes) {
-                if (schoolPrize.getAllocationNumberStatus() == true) {
+                if (schoolPrize.getStatus() != StatusEnum.NEW.code) {
                     throw new WSPException(ErrorInfo.CAN_NOT_DELETE_OR_UPDATE);
                 }
                 PrizeInfo prizeInfo = prizeInfoMapper.selectByPrimaryKey(schoolPrize.getPrizeInfoId());
@@ -278,7 +278,7 @@ public class ScholarshipService implements IScholarshipService {
             collegePrizeExample.createCriteria().andScholarshipIdEqualTo(scholarship.getId());
             List<CollegePrize> collegePrizes = collegePrizeMapper.selectByExample(collegePrizeExample);
             for (CollegePrize collegePrize : collegePrizes) {
-                if (collegePrize.getAllocationNumberStatus() == true) {
+                if (collegePrize.getStatus() != StatusEnum.NEW.code) {
                     throw new WSPException(ErrorInfo.CAN_NOT_DELETE_OR_UPDATE);
                 }
                 PrizeInfo prizeInfo = prizeInfoMapper.selectByPrimaryKey(collegePrize.getPrizeInfoId());
@@ -312,35 +312,63 @@ public class ScholarshipService implements IScholarshipService {
     @Transactional(rollbackFor=Exception.class)
     public void openToStudent(UserDTO user, Long scholarshipId) {
         Scholarship scholarship = scholarshipMapper.selectByPrimaryKey(scholarshipId);
+        if (scholarship.getAllocationTimeStatus()==false){
+            return;
+        }
+        scholarship.setStatus(StatusEnum.OPEN.code);
+        scholarshipMapper.updateByPrimaryKeySelective(scholarship);
 
         if (scholarship.getScholarshipType() == ScholarshipTypeEnum.SCHOOL.code){
             SchoolPrizeExample schoolPrizeExample = new SchoolPrizeExample();
             schoolPrizeExample.createCriteria().andScholarshipIdEqualTo(scholarshipId);
 
-            SchoolPrize schoolPrize = new SchoolPrize();
-            schoolPrize.setStatus(StatusEnum.OPEN.code);
+            List<SchoolPrize> schoolPrizes = schoolPrizeMapper.selectByExample(schoolPrizeExample);
+            for (SchoolPrize schoolPrize: schoolPrizes){
+                if (schoolPrize.getAllocationNumberStatus()==false){
+                    continue;
+                }
+                schoolPrize.setStatus(StatusEnum.OPEN.code);
+                schoolPrizeMapper.updateByPrimaryKeySelective(schoolPrize);
 
-            schoolPrizeMapper.updateByExampleSelective(schoolPrize,schoolPrizeExample);
+                CollegePrizeExample collegePrizeExample = new CollegePrizeExample();
+                collegePrizeExample.createCriteria().andScholarshipIdEqualTo(scholarshipId);
+
+                CollegePrize collegePrize = new CollegePrize();
+                collegePrize.setStatus(StatusEnum.OPEN.code);
+
+                collegePrizeMapper.updateByExampleSelective(collegePrize, collegePrizeExample);
+
+                GradePrizeExample gradePrizeExample = new GradePrizeExample();
+                gradePrizeExample.createCriteria().andScholarshipIdEqualTo(scholarshipId);
+
+                GradePrize gradePrize = new GradePrize();
+                gradePrize.setStatus(StatusEnum.OPEN.code);
+
+                gradePrizeMapper.updateByExampleSelective(gradePrize,gradePrizeExample);
+            }
+        }else  if (scholarship.getScholarshipType() == ScholarshipTypeEnum.COLLEGE.code){
+            CollegePrizeExample collegePrizeExample = new CollegePrizeExample();
+            collegePrizeExample.createCriteria().andScholarshipIdEqualTo(scholarshipId);
+            List<CollegePrize> collegePrizes = collegePrizeMapper.selectByExample(collegePrizeExample);
+
+            for (CollegePrize collegePrize: collegePrizes){
+                if (collegePrize.getAllocationNumberStatus()==false){
+                    continue;
+                }
+                collegePrize.setStatus(StatusEnum.OPEN.code);
+                collegePrizeMapper.updateByPrimaryKeySelective(collegePrize);
+
+                GradePrizeExample gradePrizeExample = new GradePrizeExample();
+                gradePrizeExample.createCriteria().andScholarshipIdEqualTo(scholarshipId);
+
+                GradePrize gradePrize = new GradePrize();
+                gradePrize.setStatus(StatusEnum.OPEN.code);
+
+                gradePrizeMapper.updateByExampleSelective(gradePrize,gradePrizeExample);
+            }
         }
 
-        CollegePrizeExample collegePrizeExample = new CollegePrizeExample();
-        collegePrizeExample.createCriteria().andScholarshipIdEqualTo(scholarshipId);
 
-        CollegePrize collegePrize = new CollegePrize();
-        collegePrize.setStatus(StatusEnum.OPEN.code);
-
-        collegePrizeMapper.updateByExampleSelective(collegePrize, collegePrizeExample);
-
-        GradePrizeExample gradePrizeExample = new GradePrizeExample();
-        gradePrizeExample.createCriteria().andScholarshipIdEqualTo(scholarshipId);
-
-        GradePrize gradePrize = new GradePrize();
-        gradePrize.setStatus(StatusEnum.OPEN.code);
-
-        gradePrizeMapper.updateByExampleSelective(gradePrize,gradePrizeExample);
-
-        scholarship.setStatus(StatusEnum.OPEN.code);
-        scholarshipMapper.updateByPrimaryKeySelective(scholarship);
     }
 
 }

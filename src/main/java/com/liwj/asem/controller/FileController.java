@@ -1,5 +1,6 @@
 package com.liwj.asem.controller;
 
+import com.liwj.asem.data.ErrorInfo;
 import com.liwj.asem.data.ResponseData;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -25,7 +26,12 @@ public class FileController {
         // 截取上传文件的后缀
         String uploadFileSuffix = uploadFilePath.substring(
                 uploadFilePath.indexOf('.') + 1, uploadFilePath.length());
-
+        if (!uploadFileSuffix.equals("doc") && !uploadFileSuffix.equals("docx") && !uploadFileSuffix.equals("pdf")
+                && !uploadFileSuffix.equals("xls") && !uploadFileSuffix.equals("xlsx")){
+            ResponseData responseData = new ResponseData();
+            responseData.setFail(ErrorInfo.ERROR_FILE_TYPE);
+            return responseData;
+        }
 
         String  newFileName = UUID.randomUUID().toString();
 
@@ -61,7 +67,7 @@ public class FileController {
                 }
             }
         }
-      ; ResponseData responseData = new ResponseData();
+        ResponseData responseData = new ResponseData();
         responseData.setSuccessData(newFileName+"."+uploadFileSuffix);
         return responseData;
     }

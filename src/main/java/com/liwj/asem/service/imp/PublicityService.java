@@ -68,14 +68,17 @@ public class PublicityService implements IPublicityService {
     private SchoolPrizeMapper schoolPrizeMapper;
 
     @Override
-    public PageInfo getCollegePublicityList(UserDTO user, Long unitId, Integer pageNum, Integer pageSize) {
+    public PageInfo getCollegePublicityList(UserDTO user, Long unitId, List<Long> studentIds, Long scholarshipId, Long prizeId, Integer pageNum, Integer pageSize) {
         List<Integer> status = new ArrayList<>();
         status.add(StatusEnum.OPEN.code);
         status.add(StatusEnum.CLOSE.code);
         CollegePrizeExample collegePrizeExample = new CollegePrizeExample();
-        collegePrizeExample.createCriteria()
-                .andPrimaryTeachingInstitutionIdEqualTo(unitId)
+        CollegePrizeExample.Criteria criteria = collegePrizeExample.createCriteria();
+        criteria.andPrimaryTeachingInstitutionIdEqualTo(unitId)
                 .andStatusIn(status);
+        if (prizeId != null && prizeId > 0) {
+            criteria.andPrizeInfoIdEqualTo(prizeId);
+        }
         List<CollegePrize> collegePrizes = collegePrizeMapper.selectByExample(collegePrizeExample);
         List<Long> scholarshipIds = new ArrayList<>();
         for (CollegePrize collegePrize : collegePrizes) {
@@ -92,11 +95,20 @@ public class PublicityService implements IPublicityService {
         }
 
         ApplicationExample applicationExample = new ApplicationExample();
-        applicationExample.createCriteria().andScholarshipIdIn(scholarshipIds)
+        ApplicationExample.Criteria criteria1 = applicationExample.createCriteria();
+        criteria1.andScholarshipIdIn(scholarshipIds)
                 .andCollegePublicityEqualTo(false)
                 .andPrimaryTeachingInstitutionIdEqualTo(unitId);
+        if (studentIds.size() > 0) {
+            criteria1.andUserIdIn(studentIds);
+        }
+        if (prizeId != null && prizeId > 0) {
+            criteria1.andPrizeInfoIdEqualTo(prizeId);
+        }
         List<Application> applications = applicationMapper.selectByExampleWithBLOBs(applicationExample);
-
+        if (applications.size() == 0) {
+            return new PageInfo();
+        }
         List<Long> applicationIds = new ArrayList<>();
         for (Application application : applications) {
             applicationIds.add(application.getId());
@@ -233,7 +245,7 @@ public class PublicityService implements IPublicityService {
     }
 
     @Override
-    @Transactional(rollbackFor=Exception.class)
+    @Transactional(rollbackFor = Exception.class)
     public void collegePublicity(UserDTO user, PublicityApplyBO publicityApplyBO) {
         for (Long id : publicityApplyBO.getScholarshipIds()) {
             Publicity publicity = new Publicity();
@@ -329,18 +341,18 @@ public class PublicityService implements IPublicityService {
         Scholarship scholarship = scholarshipMapper.selectByPrimaryKey(scholarshipId);
 
         ApplicationExample applicationExample = new ApplicationExample();
-        if (userService.isSchoolUser(user)){
+        if (userService.isSchoolUser(user)) {
             applicationExample.createCriteria().andScholarshipIdEqualTo(scholarshipId)
                     .andSchoolPublicityEqualTo(true);
-        }else if (userService.isCollegeManger(user)){
+        } else if (userService.isCollegeManger(user)) {
             applicationExample.createCriteria().andScholarshipIdEqualTo(scholarshipId)
                     .andCollegePublicityEqualTo(true)
                     .andPrimaryTeachingInstitutionIdEqualTo(primaryTeachingInstitutionId);
-        }else {
-            if (primaryTeachingInstitutionId==null){
+        } else {
+            if (primaryTeachingInstitutionId == null) {
                 applicationExample.createCriteria().andScholarshipIdEqualTo(scholarshipId)
                         .andSchoolPublicityEqualTo(true);
-            }else {
+            } else {
                 applicationExample.createCriteria().andScholarshipIdEqualTo(scholarshipId)
                         .andCollegePublicityEqualTo(true)
                         .andPrimaryTeachingInstitutionIdEqualTo(primaryTeachingInstitutionId);
@@ -444,10 +456,10 @@ public class PublicityService implements IPublicityService {
             Scholarship scholarship = scholarshipMapper.selectByPrimaryKey(publicity.getScholarshipId());
             bo.setScholarshipName(scholarship.getScholarshipName());
 
-            if (publicity.getPrimaryTeachingInstitutionId()!=null){
+            if (publicity.getPrimaryTeachingInstitutionId() != null) {
                 PrimaryTeachingInstitution primaryTeachingInstitution = primaryTeachingInstitutionMapper.selectByPrimaryKey(publicity.getPrimaryTeachingInstitutionId());
                 bo.setUnitName(primaryTeachingInstitution.getName());
-            }else{
+            } else {
                 bo.setUnitName("学校");
             }
 
@@ -481,10 +493,10 @@ public class PublicityService implements IPublicityService {
             bo.setId(publicity.getId());
             Scholarship scholarship = scholarshipMapper.selectByPrimaryKey(publicity.getScholarshipId());
 
-            if (publicity.getPrimaryTeachingInstitutionId()!=null){
+            if (publicity.getPrimaryTeachingInstitutionId() != null) {
                 PrimaryTeachingInstitution primaryTeachingInstitution = primaryTeachingInstitutionMapper.selectByPrimaryKey(publicity.getPrimaryTeachingInstitutionId());
                 bo.setScholarshipName(scholarship.getScholarshipName() + "-" + primaryTeachingInstitution.getName());
-            }else{
+            } else {
                 bo.setScholarshipName(scholarship.getScholarshipName() + "-学校");
             }
 
@@ -599,14 +611,20 @@ public class PublicityService implements IPublicityService {
     }
 
     @Override
-    public PageInfo getSchoolPublicityList(UserDTO user, Integer pageNum, Integer pageSize) {
+    public PageInfo getSchoolPublicityList(UserDTO user, List<Long> studentIds, Long scholarshipId, Long prizeId, Integer pageNum, Integer pageSize) {
         List<Integer> status = new ArrayList<>();
         status.add(StatusEnum.OPEN.code);
         status.add(StatusEnum.CLOSE.code);
         SchoolPrizeExample schoolPrizeExample = new SchoolPrizeExample();
-        schoolPrizeExample.createCriteria()
-                .andStatusIn(status);
+        SchoolPrizeExample.Criteria criteria = schoolPrizeExample.createCriteria();
+        criteria.andStatusIn(status);
+        if (prizeId!=null&& prizeId>0){
+            criteria.andPrizeInfoIdEqualTo(prizeId);
+        }
         List<SchoolPrize> schoolPrizes = schoolPrizeMapper.selectByExample(schoolPrizeExample);
+        if (schoolPrizes.size()==0){
+            return new PageInfo();
+        }
         List<Long> scholarshipIds = new ArrayList<>();
         for (SchoolPrize schoolPrize : schoolPrizes) {
             scholarshipIds.add(schoolPrize.getScholarshipId());
@@ -622,10 +640,19 @@ public class PublicityService implements IPublicityService {
         }
 
         ApplicationExample applicationExample = new ApplicationExample();
-        applicationExample.createCriteria().andScholarshipIdIn(scholarshipIds)
+        ApplicationExample.Criteria criteria1 = applicationExample.createCriteria();
+        criteria1.andScholarshipIdIn(scholarshipIds)
                 .andSchoolPublicityEqualTo(false);
+        if (prizeId!=null&& prizeId>0){
+            criteria1.andPrizeInfoIdEqualTo(prizeId);
+        }
+        if (studentIds.size()>0){
+            criteria1.andUserIdIn(studentIds);
+        }
         List<Application> applications = applicationMapper.selectByExampleWithBLOBs(applicationExample);
-
+        if (applications.size()==0){
+            return new PageInfo();
+        }
         List<Long> applicationIds = new ArrayList<>();
         for (Application application : applications) {
             applicationIds.add(application.getId());
@@ -658,6 +685,12 @@ public class PublicityService implements IPublicityService {
             if (student != null) {
                 bo.setName(student.getName());
                 bo.setSn(student.getSn());
+            }
+
+            if (student.getPrimaryTeachingInstitutionId() != null) {
+                PrimaryTeachingInstitution primaryTeachingInstitution = primaryTeachingInstitutionMapper
+                        .selectByPrimaryKey(student.getPrimaryTeachingInstitutionId());
+                bo.setCollegeName(primaryTeachingInstitution.getName());
             }
 
             if (student.getSecondaryTeachingInstitutionId() != null) {
@@ -848,6 +881,9 @@ public class PublicityService implements IPublicityService {
         publicityExample.createCriteria().andPrimaryTeachingInstitutionIdIsNull()
                 .andStatusIn(status);
         List<Publicity> publicities = publicityMapper.selectByExample(publicityExample);
+        if (publicities.size() == 0) {
+            return new PageInfo();
+        }
         List<Long> publicityIds = new ArrayList<>();
         for (Publicity publicity : publicities) {
             publicityIds.add(publicity.getId());

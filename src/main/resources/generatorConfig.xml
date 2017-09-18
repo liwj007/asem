@@ -69,7 +69,7 @@
             <!--<generatedKey column="id" sqlStatement="MySql" identity="true"/>-->
         <!--</table>-->
         <table
-                tableName="college_prize"
+                tableName="application_step"
                 enableCountByExample="true"
                 enableUpdateByExample="true"
                 enableDeleteByExample="true"

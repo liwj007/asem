@@ -48,9 +48,16 @@ public class ApplicationCheckController {
     public ResponseData getPrizeDetailForFileCheck(@RequestParam(value = "token") String token,
                                                    @RequestParam(value = "pageSize") Integer pageSize,
                                                    @RequestParam(value = "pageNum") Integer pageNum,
-                                                   @RequestParam(value = "prizeId") Long prizeId) throws WSPException {
+                                                   @RequestParam(value = "prizeId") Long prizeId,
+                                                   @RequestParam(value = "collegeId", required = false) Long collegeId,
+                                                   @RequestParam(value = "majorId", required = false) Long majorId,
+                                                   @RequestParam(value = "gradeId", required = false) Long gradeId,
+                                                   @RequestParam(value = "classId", required = false) Long classId,
+                                                   @RequestParam(value = "content", required = false) String content,
+                                                   @RequestParam(value = "status", required = false) Integer status) throws WSPException {
         UserDTO user = userService.getUserByToken(token);
-        PageInfo pageInfo = applicationService.getPrizeDetailForFileCheck(user, prizeId, pageNum, pageSize);
+        List<Long> studentIds = userService.selectStudentsByFilters(collegeId,majorId,gradeId,classId,content);
+        PageInfo pageInfo = applicationService.getPrizeDetailForFileCheck(user, prizeId,studentIds, status,pageNum, pageSize);
         ResponseData responseData = new ResponseData();
         responseData.setSuccessData(pageInfo);
         return responseData;
@@ -83,9 +90,17 @@ public class ApplicationCheckController {
     public ResponseData getPrizeDetailForAwardCheck(@RequestParam(value = "token") String token,
                                                     @RequestParam(value = "pageSize") Integer pageSize,
                                                     @RequestParam(value = "pageNum") Integer pageNum,
-                                                    @RequestParam(value = "prizeId") Long prizeId) throws WSPException {
+                                                    @RequestParam(value = "prizeId") Long prizeId,
+                                                    @RequestParam(value = "collegeId", required = false) Long collegeId,
+                                                    @RequestParam(value = "majorId", required = false) Long majorId,
+                                                    @RequestParam(value = "gradeId", required = false) Long gradeId,
+                                                    @RequestParam(value = "classId", required = false) Long classId,
+                                                    @RequestParam(value = "content", required = false) String content,
+                                                    @RequestParam(value = "fileStatus", required = false) Integer fileStatus,
+                                                    @RequestParam(value = "prizeStatus", required = false) Integer prizeStatus) throws WSPException {
         UserDTO user = userService.getUserByToken(token);
-        PageInfo pageInfo = applicationService.getPrizeDetailForAwardCheck(user, prizeId, pageNum, pageSize);
+        List<Long> ids = userService.selectStudentsByFilters(collegeId,majorId,gradeId,classId,content);
+        PageInfo pageInfo = applicationService.getPrizeDetailForAwardCheck(user, prizeId,ids,fileStatus,prizeStatus, pageNum, pageSize);
         ResponseData responseData = new ResponseData();
         responseData.setSuccessData(pageInfo);
         return responseData;
@@ -130,9 +145,18 @@ public class ApplicationCheckController {
     public ResponseData getCollegePublicityList(@RequestParam(value = "token") String token,
                                                 @RequestParam(value = "pageSize") Integer pageSize,
                                                 @RequestParam(value = "pageNum") Integer pageNum,
-                                                @RequestParam(value = "manageUnit", required = false) Long unitId) throws WSPException {
+                                                @RequestParam(value = "manageUnit", required = false) Long unitId,
+                                                @RequestParam(value = "collegeId", required = false) Long collegeId,
+                                                @RequestParam(value = "majorId", required = false) Long majorId,
+                                                @RequestParam(value = "gradeId", required = false) Long gradeId,
+                                                @RequestParam(value = "classId", required = false) Long classId,
+                                                @RequestParam(value = "content", required = false) String content,
+                                                @RequestParam(value = "prizeId", required = false) Long prizeId,
+                                                @RequestParam(value = "scholarshipId", required = false) Long scholarshipId
+                                                ) throws WSPException {
         UserDTO user = userService.getUserByToken(token);
-        PageInfo pageInfo = publicityService.getCollegePublicityList(user, unitId, pageNum, pageSize);
+        List<Long> studentIds = userService.selectStudentsByFilters(collegeId,majorId,gradeId,classId,content);
+        PageInfo pageInfo = publicityService.getCollegePublicityList(user, unitId,studentIds,scholarshipId,prizeId, pageNum, pageSize);
         ResponseData responseData = new ResponseData();
         responseData.setSuccessData(pageInfo);
         return responseData;
@@ -141,9 +165,18 @@ public class ApplicationCheckController {
     @RequestMapping(value = "/school_publicity_list", method = RequestMethod.GET)
     public ResponseData getSchoolPublicityList(@RequestParam(value = "token") String token,
                                                 @RequestParam(value = "pageSize") Integer pageSize,
-                                                @RequestParam(value = "pageNum") Integer pageNum) throws WSPException {
+                                                @RequestParam(value = "pageNum") Integer pageNum,
+                                               @RequestParam(value = "collegeId", required = false) Long collegeId,
+                                               @RequestParam(value = "majorId", required = false) Long majorId,
+                                               @RequestParam(value = "gradeId", required = false) Long gradeId,
+                                               @RequestParam(value = "classId", required = false) Long classId,
+                                               @RequestParam(value = "content", required = false) String content,
+                                               @RequestParam(value = "prizeId", required = false) Long prizeId,
+                                               @RequestParam(value = "scholarshipId", required = false) Long scholarshipId
+                                               ) throws WSPException {
         UserDTO user = userService.getUserByToken(token);
-        PageInfo pageInfo = publicityService.getSchoolPublicityList(user, pageNum, pageSize);
+        List<Long> studentIds = userService.selectStudentsByFilters(collegeId,majorId,gradeId,classId,content);
+        PageInfo pageInfo = publicityService.getSchoolPublicityList(user,studentIds,scholarshipId,prizeId, pageNum, pageSize);
         ResponseData responseData = new ResponseData();
         responseData.setSuccessData(pageInfo);
         return responseData;

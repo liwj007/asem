@@ -2,6 +2,7 @@ package com.liwj.asem.controller;
 
 import com.github.pagehelper.PageInfo;
 import com.liwj.asem.bo.FeedbackBO;
+import com.liwj.asem.bo.SelectOfPrizeBO;
 import com.liwj.asem.bo.SelectOfScholarshipBO;
 import com.liwj.asem.data.ResponseData;
 import com.liwj.asem.dto.UserDTO;
@@ -132,6 +133,16 @@ public class PrizeController {
         feedbackService.checkApplyBatch(ids, result);
         ResponseData responseData = new ResponseData();
         responseData.setSuccessData(null);
+        return responseData;
+    }
+
+    @RequestMapping(value = "/getPrizesByScholarship", method = RequestMethod.GET)
+    public ResponseData getPrizesByScholarship(@RequestParam(value = "token") String token,
+                                             @RequestParam(value = "scholarshipId") Long scholarshipId) throws WSPException {
+        UserDTO user = userService.getUserByToken(token);
+        List<SelectOfPrizeBO> res= prizeService.getPrizesByScholarship(user, scholarshipId);
+        ResponseData responseData = new ResponseData();
+        responseData.setSuccessData(res);
         return responseData;
     }
 }

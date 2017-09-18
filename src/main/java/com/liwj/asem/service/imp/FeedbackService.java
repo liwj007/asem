@@ -59,6 +59,7 @@ public class FeedbackService implements IFeedbackService {
     }
 
     @Override
+    @Transactional(rollbackFor=Exception.class)
     public void applyBack(UserDTO user, List<FeedbackBO> feedbackBOList) throws WSPException {
         for (FeedbackBO bo : feedbackBOList) {
             QuotaFeedback quotaFeedback = new QuotaFeedback();
@@ -81,7 +82,7 @@ public class FeedbackService implements IFeedbackService {
             if (newNumber >= 0) {
                 collegePrize.setNumber(newNumber);
             } else {
-                throw new WSPException(ErrorInfo.PARAMS_ERROR);
+                throw new WSPException(ErrorInfo.NUMBER_OUT_LIMIT);
             }
             collegePrizeMapper.updateByPrimaryKeySelective(collegePrize);
 

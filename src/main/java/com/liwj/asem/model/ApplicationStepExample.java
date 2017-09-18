@@ -584,6 +584,66 @@ public class ApplicationStepExample {
             addCriterion("grade_id not between", value1, value2, "gradeId");
             return (Criteria) this;
         }
+
+        public Criteria andPrizeIdIsNull() {
+            addCriterion("prize_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrizeIdIsNotNull() {
+            addCriterion("prize_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrizeIdEqualTo(Long value) {
+            addCriterion("prize_id =", value, "prizeId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrizeIdNotEqualTo(Long value) {
+            addCriterion("prize_id <>", value, "prizeId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrizeIdGreaterThan(Long value) {
+            addCriterion("prize_id >", value, "prizeId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrizeIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("prize_id >=", value, "prizeId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrizeIdLessThan(Long value) {
+            addCriterion("prize_id <", value, "prizeId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrizeIdLessThanOrEqualTo(Long value) {
+            addCriterion("prize_id <=", value, "prizeId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrizeIdIn(List<Long> values) {
+            addCriterion("prize_id in", values, "prizeId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrizeIdNotIn(List<Long> values) {
+            addCriterion("prize_id not in", values, "prizeId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrizeIdBetween(Long value1, Long value2) {
+            addCriterion("prize_id between", value1, value2, "prizeId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrizeIdNotBetween(Long value1, Long value2) {
+            addCriterion("prize_id not between", value1, value2, "prizeId");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

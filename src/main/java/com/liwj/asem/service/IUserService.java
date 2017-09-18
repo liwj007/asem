@@ -1,6 +1,5 @@
 package com.liwj.asem.service;
 
-import com.liwj.asem.bo.UserBO;
 import com.liwj.asem.dto.UserDTO;
 import com.liwj.asem.exception.WSPException;
 import com.liwj.asem.model.User;
@@ -25,4 +24,7 @@ public interface IUserService {
     Boolean isCollegeManger(UserDTO user);
 
     Boolean isGradeManger(UserDTO user);
+
+
+    List<Long> selectStudentsByFilters(Long collegeId, Long majorId, Long gradeId, Long classId, String content);
 }

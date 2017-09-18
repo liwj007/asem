@@ -12,7 +12,7 @@ import java.util.List;
 @Service
 public interface IPublicityService {
 
-    PageInfo getCollegePublicityList(UserDTO user, Long unitId, Integer pageNum, Integer pageSize);
+    PageInfo getCollegePublicityList(UserDTO user, Long unitId, List<Long> studentIds, Long scholarshipId, Long prizeId, Integer pageNum, Integer pageSize);
 
     List<SelectOfScholarshipBO> getCollegePublicityScholarshipList(UserDTO user, Long unitId);
 
@@ -34,7 +34,7 @@ public interface IPublicityService {
 
     PageInfo getCollegeObjections(UserDTO user, Long unitId, Integer pageSize, Integer pageNum);
 
-    PageInfo getSchoolPublicityList(UserDTO user, Integer pageNum, Integer pageSize);
+    PageInfo getSchoolPublicityList(UserDTO user, List<Long> studentIds, Long scholarshipId, Long prizeId, Integer pageNum, Integer pageSize);
 
     List<SelectOfScholarshipBO> getSchoolPublicityScholarshipList(UserDTO user);
 

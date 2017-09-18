@@ -12,9 +12,11 @@ public enum ErrorInfo {
     NO_LOGIN(10002, "该账号未登录，请重新登录"),
     PARAMS_ERROR(10003, "输入数据错误"),
     ERROR_USER_LOGIN(20001,"错误的用户名和密码"),
-    CAN_NOT_DELETE_OR_UPDATE(30001,"该奖学金已经分配名额或评定时间，无法编辑或删除" ),
+    CAN_NOT_DELETE_OR_UPDATE(30001,"该奖学金已经进入评定阶段，无法编辑或删除" ),
     CLOSE_COLLEGE_SUBMIT(40001, "该奖学金已被学院锁定进行审核，无法再提交新的学生名单"),
-    FULL_NUMBER(40002, "提交的学生名单数量超过该奖学金剩余的分配名额，无法提交新的学生名单");
+    FULL_NUMBER(40002, "提交的学生名单数量超过该奖学金剩余的分配名额，无法提交新的学生名单"),
+    NUMBER_OUT_LIMIT(30002,"申请退回的名额数量不能大于分配到的名额" ),
+    ERROR_FILE_TYPE(30003, "该文件格式不被允许");
 
     public final String desc;
     public final int code;

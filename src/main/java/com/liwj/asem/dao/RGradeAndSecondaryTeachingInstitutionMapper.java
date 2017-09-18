@@ -4,7 +4,9 @@ import com.liwj.asem.model.RGradeAndSecondaryTeachingInstitution;
 import com.liwj.asem.model.RGradeAndSecondaryTeachingInstitutionExample;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface RGradeAndSecondaryTeachingInstitutionMapper {
     long countByExample(RGradeAndSecondaryTeachingInstitutionExample example);
 

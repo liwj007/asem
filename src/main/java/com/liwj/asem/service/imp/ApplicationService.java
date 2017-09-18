@@ -82,7 +82,7 @@ public class ApplicationService implements IApplicationService {
 
 
     @Override
-    @Transactional(rollbackFor=Exception.class)
+    @Transactional(rollbackFor = Exception.class)
     public void createApplication(UserDTO user, EntireApplicationForm applicationForm) throws WSPException {
         for (Long prizeId : applicationForm.getPrizeIds()) {
             CollegePrize collegePrize = collegePrizeMapper.selectByPrimaryKey(prizeId);
@@ -123,6 +123,7 @@ public class ApplicationService implements IApplicationService {
             FlowTemplateStep firstStep = flowTemplateService.findTheNextStep(scholarship.getFlowTemplateId(), null);
             ApplicationStep applicationStep = new ApplicationStep();
             applicationStep.setApplicationId(application.getId());
+            applicationStep.setPrizeId(collegePrize.getId());
             applicationStep.setPrimaryTeachingInstitutionId(user.getPrimaryTeachingInstitution().getId());
             applicationStep.setGradeId(user.getGrade().getId());
             applicationStep.setFlowTemplateStepId(firstStep.getId());
@@ -132,7 +133,7 @@ public class ApplicationService implements IApplicationService {
     }
 
     @Override
-    @Transactional(rollbackFor=Exception.class)
+    @Transactional(rollbackFor = Exception.class)
     public void updateApplication(UserDTO user, EntireApplicationForm applicationForm) {
         Long applicationId = applicationForm.getId();
         Application application = applicationMapper.selectByPrimaryKey(applicationId);
@@ -482,7 +483,7 @@ public class ApplicationService implements IApplicationService {
                 for (CollegePrize collegePrize : collegePrizes) {
                     collegePrizeIds.add(collegePrize.getId());
                 }
-                if (collegePrizeIds.size()==0){
+                if (collegePrizeIds.size() == 0) {
                     continue;
                 }
 
@@ -541,7 +542,10 @@ public class ApplicationService implements IApplicationService {
     }
 
     @Override
-    public PageInfo getPrizeDetailForFileCheck(UserDTO user, Long prizeId, Integer pageNum, Integer pageSize) {
+    public PageInfo getPrizeDetailForFileCheck(UserDTO user, Long prizeId, List<Long> studentIds, Integer status, Integer pageNum, Integer pageSize) {
+        if (studentIds.size() == 0) {
+            return new PageInfo();
+        }
         PrizeInfo prizeInfo;
         if (userService.isSchoolUser(user)) {
             SchoolPrize schoolPrize = schoolPrizeMapper.selectByPrimaryKey(prizeId);
@@ -554,11 +558,19 @@ public class ApplicationService implements IApplicationService {
 
         ApplicationExample applicationExample = new ApplicationExample();
         if (userService.isSchoolUser(user)) {
-            applicationExample.createCriteria().andPrizeInfoIdEqualTo(prizeInfo.getId());
+            applicationExample.createCriteria().andPrizeInfoIdEqualTo(prizeInfo.getId())
+                    .andUserIdIn(studentIds);
+            if (status != null && status > 0) {
+                applicationExample.getOredCriteria().get(0).andFileStatusEqualTo(status);
+            }
         } else {
             CollegePrize collegePrize = collegePrizeMapper.selectByPrimaryKey(prizeId);
             applicationExample.createCriteria().andPrizeInfoIdEqualTo(prizeInfo.getId())
-                    .andPrimaryTeachingInstitutionIdEqualTo(collegePrize.getPrimaryTeachingInstitutionId());
+                    .andPrimaryTeachingInstitutionIdEqualTo(collegePrize.getPrimaryTeachingInstitutionId())
+                    .andUserIdIn(studentIds);
+            if (status != null && status > 0) {
+                applicationExample.getOredCriteria().get(0).andFileStatusEqualTo(status);
+            }
         }
         List<Application> applications = applicationMapper.selectByExampleWithBLOBs(applicationExample);
         List<Long> applicationIds = new ArrayList<>();
@@ -646,7 +658,7 @@ public class ApplicationService implements IApplicationService {
     }
 
     @Override
-    @Transactional(rollbackFor=Exception.class)
+    @Transactional(rollbackFor = Exception.class)
     public void checkApplicationFile(UserDTO user, List<Long> ids, ApplicationFileStatusEnum result) {
         Application application = new Application();
         application.setFileStatus(result.code);
@@ -673,7 +685,7 @@ public class ApplicationService implements IApplicationService {
     }
 
     @Override
-    public PageInfo getPrizeDetailForAwardCheck(UserDTO user, Long prizeId, Integer pageNum, Integer pageSize) {
+    public PageInfo getPrizeDetailForAwardCheck(UserDTO user, Long prizeId, List<Long> studentIds, Integer fileStatus, Integer prizeStatus, Integer pageNum, Integer pageSize) {
         PrizeInfo prizeInfo;
         CollegePrize collegePrize = collegePrizeMapper.selectByPrimaryKey(prizeId);
         prizeInfo = prizeInfoMapper.selectByPrimaryKey(collegePrize.getPrizeInfoId());
@@ -681,10 +693,18 @@ public class ApplicationService implements IApplicationService {
 
         ApplicationExample applicationExample = new ApplicationExample();
         if (userService.isSchoolUser(user)) {
-            applicationExample.createCriteria().andPrizeInfoIdEqualTo(prizeInfo.getId());
+            applicationExample.createCriteria().andPrizeInfoIdEqualTo(prizeInfo.getId())
+                    .andUserIdIn(studentIds);
+            if (fileStatus != null && fileStatus > 0) {
+                applicationExample.getOredCriteria().get(0).andFileStatusEqualTo(fileStatus);
+            }
         } else {
             applicationExample.createCriteria().andPrizeInfoIdEqualTo(prizeInfo.getId())
-                    .andPrimaryTeachingInstitutionIdEqualTo(collegePrize.getPrimaryTeachingInstitutionId());
+                    .andPrimaryTeachingInstitutionIdEqualTo(collegePrize.getPrimaryTeachingInstitutionId())
+                    .andUserIdIn(studentIds);
+            if (fileStatus != null && fileStatus > 0) {
+                applicationExample.getOredCriteria().get(0).andFileStatusEqualTo(fileStatus);
+            }
         }
         List<Application> applications = applicationMapper.selectByExampleWithBLOBs(applicationExample);
         List<Long> applicationIds = new ArrayList<>();
@@ -724,6 +744,9 @@ public class ApplicationService implements IApplicationService {
             applicationStepExample.createCriteria().andFlowTemplateStepIdEqualTo(role.getFlowTemplateStepId())
                     .andPrimaryTeachingInstitutionIdEqualTo(collegePrize.getPrimaryTeachingInstitutionId())
                     .andApplicationIdIn(applicationIds);
+            if (prizeStatus != null && prizeStatus > 0) {
+                applicationStepExample.getOredCriteria().get(0).andStatusEqualTo(prizeStatus);
+            }
             PageHelper.startPage(pageNum, pageSize);
             List<ApplicationStep> applicationSteps = applicationStepMapper.selectByExample(applicationStepExample);
             PageInfo pageInfo = new PageInfo(applicationSteps);
@@ -783,7 +806,7 @@ public class ApplicationService implements IApplicationService {
     }
 
     @Override
-    @Transactional(rollbackFor=Exception.class)
+    @Transactional(rollbackFor = Exception.class)
     public void checkApplicationPrize(UserDTO user, List<Long> ids, ApplicationPrizeStatusEnum result) throws WSPException {
         if (result == ApplicationPrizeStatusEnum.REJECT) {
             for (Long id : ids) {
@@ -854,6 +877,7 @@ public class ApplicationService implements IApplicationService {
                         stepExample.createCriteria().andFlowTemplateStepIdEqualTo(step.getFlowTemplateStepId())
                                 .andPrimaryTeachingInstitutionIdEqualTo(step.getPrimaryTeachingInstitutionId())
                                 .andGradeIdEqualTo(step.getGradeId())
+                                .andPrizeIdEqualTo(gradePrize.getCollegePrizeId())
                                 .andStatusIn(tmp);
                         Long usedNumber = applicationStepMapper.countByExample(stepExample);
 
@@ -871,6 +895,7 @@ public class ApplicationService implements IApplicationService {
                     stepExample.createCriteria().andFlowTemplateStepIdEqualTo(step.getFlowTemplateStepId())
                             .andPrimaryTeachingInstitutionIdEqualTo(step.getPrimaryTeachingInstitutionId())
                             .andGradeIdEqualTo(step.getGradeId())
+                            .andPrizeIdEqualTo(collegePrize.getId())
                             .andStatusIn(tmp);
                     Long usedNumber = applicationStepMapper.countByExample(stepExample);
 
@@ -887,6 +912,7 @@ public class ApplicationService implements IApplicationService {
                     stepExample.createCriteria().andFlowTemplateStepIdEqualTo(step.getFlowTemplateStepId())
                             .andPrimaryTeachingInstitutionIdEqualTo(step.getPrimaryTeachingInstitutionId())
                             .andGradeIdEqualTo(step.getGradeId())
+                            .andPrizeIdEqualTo(collegePrize.getId())
                             .andStatusIn(tmp);
                     Long usedNumber = applicationStepMapper.countByExample(stepExample);
 
@@ -944,6 +970,7 @@ public class ApplicationService implements IApplicationService {
             PrimaryTeachingInstitution primaryTeachingInstitution = primaryTeachingInstitutionMapper
                     .selectByPrimaryKey(collegePrize.getPrimaryTeachingInstitutionId());
             bo.setUnitName(primaryTeachingInstitution.getName());
+            bo.setUnitId(primaryTeachingInstitution.getId());
 
             RFlowTemplateStepAndUserRoleExample roleExample = new RFlowTemplateStepAndUserRoleExample();
             roleExample.createCriteria().andRoleTypeEqualTo(RoleTypeEnum.SCHOOL_USER.code);
@@ -1014,7 +1041,7 @@ public class ApplicationService implements IApplicationService {
     }
 
     @Override
-    @Transactional(rollbackFor=Exception.class)
+    @Transactional(rollbackFor = Exception.class)
     public void closeSubmit(UserDTO user, Long id, Long unitId) throws WSPException {
         Scholarship scholarship;
         ApplicationExample applicationExample = new ApplicationExample();
@@ -1097,6 +1124,7 @@ public class ApplicationService implements IApplicationService {
                 applicationStep.setStatus(ApplicationPrizeStatusEnum.SUBMIT.code);
                 applicationStep.setPrimaryTeachingInstitutionId(step.getPrimaryTeachingInstitutionId());
                 applicationStep.setGradeId(step.getGradeId());
+                applicationStep.setPrizeId(step.getPrizeId());
                 applicationStep.setApplicationId(step.getApplicationId());
                 applicationStepMapper.insertSelective(applicationStep);
             }
@@ -1104,7 +1132,7 @@ public class ApplicationService implements IApplicationService {
     }
 
     @Override
-    @Transactional(rollbackFor=Exception.class)
+    @Transactional(rollbackFor = Exception.class)
     public void closeCollegeSubmitForSchedule(Long scholarshipId) {
         SchoolPrizeExample schoolPrizeExample = new SchoolPrizeExample();
         schoolPrizeExample.createCriteria().andScholarshipIdEqualTo(scholarshipId).andSubmitStatusEqualTo(true);
@@ -1163,6 +1191,7 @@ public class ApplicationService implements IApplicationService {
                     applicationStep.setStatus(ApplicationPrizeStatusEnum.SUBMIT.code);
                     applicationStep.setPrimaryTeachingInstitutionId(step.getPrimaryTeachingInstitutionId());
                     applicationStep.setGradeId(step.getGradeId());
+                    applicationStep.setPrizeId(step.getPrizeId());
                     applicationStep.setApplicationId(step.getApplicationId());
                     applicationStepMapper.insertSelective(applicationStep);
                 }
@@ -1171,7 +1200,7 @@ public class ApplicationService implements IApplicationService {
     }
 
     @Override
-    @Transactional(rollbackFor=Exception.class)
+    @Transactional(rollbackFor = Exception.class)
     public void closeGradeSubmitForSchedule(Long scholarshipId, Long unitId) {
         CollegePrizeExample collegePrizeExample = new CollegePrizeExample();
         collegePrizeExample.createCriteria().andSchoolPrizeIdEqualTo(scholarshipId)
@@ -1230,6 +1259,7 @@ public class ApplicationService implements IApplicationService {
                     applicationStep.setStatus(ApplicationPrizeStatusEnum.SUBMIT.code);
                     applicationStep.setPrimaryTeachingInstitutionId(step.getPrimaryTeachingInstitutionId());
                     applicationStep.setGradeId(step.getGradeId());
+                    applicationStep.setPrizeId(step.getPrizeId());
                     applicationStep.setApplicationId(step.getApplicationId());
                     applicationStepMapper.insertSelective(applicationStep);
                 }
@@ -1238,7 +1268,7 @@ public class ApplicationService implements IApplicationService {
     }
 
     @Override
-    @Transactional(rollbackFor=Exception.class)
+    @Transactional(rollbackFor = Exception.class)
     public void closeApplyForSchedule(Long scholarshipId, Long unitId) {
         CollegePrizeExample collegePrizeExample = new CollegePrizeExample();
         collegePrizeExample.createCriteria().andSchoolPrizeIdEqualTo(scholarshipId)

@@ -23,4 +23,14 @@ public interface IOrganizationService {
     List<SelectionBO> getMajors(UserDTO user);
 
     List<SelectionBO> getGrades(UserDTO user);
+
+    List<SelectionBO> getMajorsByCollege(Long id);
+
+    List<SelectionBO> getGradesByMajor(Long id);
+
+    List<SelectionBO> getClassByGradeAndMajor(Long majorId, Long gradeId);
+
+    List<SelectionBO> getManageGrades(UserDTO user);
+
+    List<SelectionBO> getManageClassByGrade(UserDTO user, Long gradeId);
 }

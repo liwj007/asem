@@ -35,4 +35,6 @@ public interface IPrizeService {
     void releaseToCollege(List<Long> prizeList);
 
     List<SelectOfScholarshipBO> getScholarshipSelectionForQuotaFeedback(UserDTO user, Long unitId);
+
+    List<SelectOfPrizeBO> getPrizesByScholarship(UserDTO user, Long scholarshipId);
 }

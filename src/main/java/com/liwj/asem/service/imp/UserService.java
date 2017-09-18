@@ -1,12 +1,10 @@
 package com.liwj.asem.service.imp;
 
-import com.liwj.asem.bo.UserBO;
 import com.liwj.asem.dao.*;
 import com.liwj.asem.data.CommonVariable;
 import com.liwj.asem.data.ErrorInfo;
 import com.liwj.asem.dto.UserDTO;
 import com.liwj.asem.enums.RoleTypeEnum;
-import com.liwj.asem.enums.UserTypeEnum;
 import com.liwj.asem.exception.WSPException;
 import com.liwj.asem.model.*;
 import com.liwj.asem.service.IUserService;
@@ -179,5 +177,50 @@ public class UserService implements IUserService {
     public Boolean isGradeManger(UserDTO user) {
         return  user.getUserType()==RoleTypeEnum.GRADE_ADVISER;
 //        return user.getRoles().contains(RoleTypeEnum.SPECIAL_ADVISER);
+    }
+
+    @Override
+    public List<Long> selectStudentsByFilters(Long collegeId, Long majorId, Long gradeId, Long classId, String content){
+        UserExample example = new UserExample();
+        UserExample.Criteria criteria = example.createCriteria();
+        if (collegeId!=null && collegeId>0){
+            criteria.andPrimaryTeachingInstitutionIdEqualTo(collegeId);
+        }
+        if (majorId!=null && majorId>0){
+            criteria.andSecondaryTeachingInstitutionIdEqualTo(majorId);
+        }
+        if (gradeId!=null && gradeId>0){
+            criteria.andGradeIdEqualTo(gradeId);
+        }
+        if (classId!=null && classId>0){
+            criteria.andClassesIdEqualTo(classId);
+        }
+
+        criteria.andUserTypeEqualTo(RoleTypeEnum.STUDENT.code);
+        List<User> students = userMapper.selectByExample(example);
+        List<Long> ids = new ArrayList<>();
+        for (User user: students){
+            ids.add(user.getId());
+        }
+
+        if (content!=null && !"".equals(content)){
+            if (ids.size()==0){
+                return ids;
+            }
+            example.clear();
+            UserExample.Criteria criteria1 = example.createCriteria();
+            criteria1.andNameLike("%"+content+"%").andIdIn(ids);
+            UserExample.Criteria criteria2 = example.createCriteria();
+            criteria2.andSnLike("%"+content+"%").andIdIn(ids);
+            example.or(criteria2);
+            List<User> tmp = userMapper.selectByExample(example);
+            List<Long> res = new ArrayList<>();
+            for (User user: tmp){
+                res.add(user.getId());
+            }
+            return res;
+        }else {
+            return ids;
+        }
     }
 }
