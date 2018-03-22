@@ -69,7 +69,7 @@
             <!--<generatedKey column="id" sqlStatement="MySql" identity="true"/>-->
         <!--</table>-->
         <table
-                tableName="application_step"
+                tableName="scholarship"
                 enableCountByExample="true"
                 enableUpdateByExample="true"
                 enableDeleteByExample="true"
@@ -78,5 +78,35 @@
             <property name="useActualColumnNames" value="false"/>
             <generatedKey column="id" sqlStatement="MySql" identity="true"/>
         </table>
+        <!--<table-->
+                <!--tableName="grade_prize"-->
+                <!--enableCountByExample="true"-->
+                <!--enableUpdateByExample="true"-->
+                <!--enableDeleteByExample="true"-->
+                <!--enableSelectByExample="true"-->
+                <!--selectByExampleQueryId="true">-->
+            <!--<property name="useActualColumnNames" value="false"/>-->
+            <!--<generatedKey column="id" sqlStatement="MySql" identity="true"/>-->
+        <!--</table>-->
+        <!--<table-->
+                <!--tableName="publicity"-->
+                <!--enableCountByExample="true"-->
+                <!--enableUpdateByExample="true"-->
+                <!--enableDeleteByExample="true"-->
+                <!--enableSelectByExample="true"-->
+                <!--selectByExampleQueryId="true">-->
+            <!--<property name="useActualColumnNames" value="false"/>-->
+            <!--<generatedKey column="id" sqlStatement="MySql" identity="true"/>-->
+        <!--</table>-->
+        <!--<table-->
+                <!--tableName="application_step"-->
+                <!--enableCountByExample="true"-->
+                <!--enableUpdateByExample="true"-->
+                <!--enableDeleteByExample="true"-->
+                <!--enableSelectByExample="true"-->
+                <!--selectByExampleQueryId="true">-->
+            <!--<property name="useActualColumnNames" value="false"/>-->
+            <!--<generatedKey column="id" sqlStatement="MySql" identity="true"/>-->
+        <!--</table>-->
     </context>
 </generatorConfiguration>

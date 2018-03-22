@@ -84,6 +84,9 @@ public class PublicityService implements IPublicityService {
         for (CollegePrize collegePrize : collegePrizes) {
             scholarshipIds.add(collegePrize.getScholarshipId());
         }
+        if(scholarshipIds.size()==0){
+            return new PageInfo();
+        }
 
         RFlowTemplateStepAndUserRoleExample roleExample = new RFlowTemplateStepAndUserRoleExample();
         roleExample.createCriteria().andRoleTypeEqualTo(RoleTypeEnum.SPECIAL_ADVISER.code);
@@ -195,7 +198,9 @@ public class PublicityService implements IPublicityService {
         for (CollegePrize collegePrize : collegePrizes) {
             scholarshipIds.add(collegePrize.getScholarshipId());
         }
-
+        if(scholarshipIds.size()==0){
+            return null;
+        }
         RFlowTemplateStepAndUserRoleExample roleExample = new RFlowTemplateStepAndUserRoleExample();
         roleExample.createCriteria().andRoleTypeEqualTo(RoleTypeEnum.SPECIAL_ADVISER.code);
         List<RFlowTemplateStepAndUserRole> rFlowTemplateStepAndUserRoles = rFlowTemplateStepAndUserRoleMapper
@@ -225,7 +230,8 @@ public class PublicityService implements IPublicityService {
                 .andStatusIn(tmp)
                 .andFlowTemplateStepIdIn(flowTemplateStepIds);
         List<ApplicationStep> applicationSteps = applicationStepMapper.selectByExample(stepExample);
-
+        if (applicationSteps.size()==0)
+            return null;
         scholarshipIds.clear();
         for (ApplicationStep applicationStep : applicationSteps) {
             Application application = applicationMapper.selectByPrimaryKey(applicationStep.getApplicationId());
@@ -744,6 +750,9 @@ public class PublicityService implements IPublicityService {
         for (SchoolPrize schoolPrize : schoolPrizes) {
             scholarshipIds.add(schoolPrize.getScholarshipId());
         }
+        if(scholarshipIds.size()==0){
+            return null;
+        }
 
         RFlowTemplateStepAndUserRoleExample roleExample = new RFlowTemplateStepAndUserRoleExample();
         roleExample.createCriteria().andRoleTypeEqualTo(RoleTypeEnum.SCHOOL_USER.code);
@@ -864,6 +873,8 @@ public class PublicityService implements IPublicityService {
             bo.setBeginDate(publicity.getBeginDate());
             bo.setEndDate(publicity.getEndDate());
             Scholarship scholarship = scholarshipMapper.selectByPrimaryKey(publicity.getScholarshipId());
+            if (scholarship==null)
+                continue;
             bo.setScholarshipName(scholarship.getScholarshipName());
             bo.setUnitName("学校");
             list.add(bo);

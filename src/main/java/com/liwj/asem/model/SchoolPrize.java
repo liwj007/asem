@@ -1,6 +1,7 @@
 package com.liwj.asem.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class SchoolPrize implements Serializable {
     private Long id;
@@ -27,9 +28,13 @@ public class SchoolPrize implements Serializable {
 
     private Boolean submitStatus;
 
+    private Date createDate;
+
+    private Date allocationDate;
+
     private static final long serialVersionUID = 1L;
 
-    public SchoolPrize(Long id, Integer status, Integer number, Long scholarshipId, Integer scholarshipType, Integer restNumber, Integer allocationRule, Integer allocationMethod, Boolean allocationNumberStatus, Integer checkStatus, Long prizeInfoId, Boolean submitStatus) {
+    public SchoolPrize(Long id, Integer status, Integer number, Long scholarshipId, Integer scholarshipType, Integer restNumber, Integer allocationRule, Integer allocationMethod, Boolean allocationNumberStatus, Integer checkStatus, Long prizeInfoId, Boolean submitStatus, Date createDate, Date allocationDate) {
         this.id = id;
         this.status = status;
         this.number = number;
@@ -42,6 +47,8 @@ public class SchoolPrize implements Serializable {
         this.checkStatus = checkStatus;
         this.prizeInfoId = prizeInfoId;
         this.submitStatus = submitStatus;
+        this.createDate = createDate;
+        this.allocationDate = allocationDate;
     }
 
     public SchoolPrize() {
@@ -144,6 +151,22 @@ public class SchoolPrize implements Serializable {
         this.submitStatus = submitStatus;
     }
 
+    public Date getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
+    }
+
+    public Date getAllocationDate() {
+        return allocationDate;
+    }
+
+    public void setAllocationDate(Date allocationDate) {
+        this.allocationDate = allocationDate;
+    }
+
     @Override
     public boolean equals(Object that) {
         if (this == that) {
@@ -167,7 +190,9 @@ public class SchoolPrize implements Serializable {
             && (this.getAllocationNumberStatus() == null ? other.getAllocationNumberStatus() == null : this.getAllocationNumberStatus().equals(other.getAllocationNumberStatus()))
             && (this.getCheckStatus() == null ? other.getCheckStatus() == null : this.getCheckStatus().equals(other.getCheckStatus()))
             && (this.getPrizeInfoId() == null ? other.getPrizeInfoId() == null : this.getPrizeInfoId().equals(other.getPrizeInfoId()))
-            && (this.getSubmitStatus() == null ? other.getSubmitStatus() == null : this.getSubmitStatus().equals(other.getSubmitStatus()));
+            && (this.getSubmitStatus() == null ? other.getSubmitStatus() == null : this.getSubmitStatus().equals(other.getSubmitStatus()))
+            && (this.getCreateDate() == null ? other.getCreateDate() == null : this.getCreateDate().equals(other.getCreateDate()))
+            && (this.getAllocationDate() == null ? other.getAllocationDate() == null : this.getAllocationDate().equals(other.getAllocationDate()));
     }
 
     @Override
@@ -186,6 +211,8 @@ public class SchoolPrize implements Serializable {
         result = prime * result + ((getCheckStatus() == null) ? 0 : getCheckStatus().hashCode());
         result = prime * result + ((getPrizeInfoId() == null) ? 0 : getPrizeInfoId().hashCode());
         result = prime * result + ((getSubmitStatus() == null) ? 0 : getSubmitStatus().hashCode());
+        result = prime * result + ((getCreateDate() == null) ? 0 : getCreateDate().hashCode());
+        result = prime * result + ((getAllocationDate() == null) ? 0 : getAllocationDate().hashCode());
         return result;
     }
 }

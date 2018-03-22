@@ -30,9 +30,11 @@ public class Scholarship implements Serializable {
 
     private Date collegeEndDate;
 
+    private Date allocationTimeDate;
+
     private static final long serialVersionUID = 1L;
 
-    public Scholarship(Long id, Long flowTemplateId, String requirement, Integer status, Date createDate, Long primaryTeachingInstitutionId, String scholarshipName, Integer scholarshipType, Integer prizeType, Boolean allocationTimeStatus, Boolean needGradeCheck, Date studentBeginDate, Date collegeEndDate) {
+    public Scholarship(Long id, Long flowTemplateId, String requirement, Integer status, Date createDate, Long primaryTeachingInstitutionId, String scholarshipName, Integer scholarshipType, Integer prizeType, Boolean allocationTimeStatus, Boolean needGradeCheck, Date studentBeginDate, Date collegeEndDate, Date allocationTimeDate) {
         this.id = id;
         this.flowTemplateId = flowTemplateId;
         this.requirement = requirement;
@@ -46,6 +48,7 @@ public class Scholarship implements Serializable {
         this.needGradeCheck = needGradeCheck;
         this.studentBeginDate = studentBeginDate;
         this.collegeEndDate = collegeEndDate;
+        this.allocationTimeDate = allocationTimeDate;
     }
 
     public Scholarship() {
@@ -156,6 +159,14 @@ public class Scholarship implements Serializable {
         this.collegeEndDate = collegeEndDate;
     }
 
+    public Date getAllocationTimeDate() {
+        return allocationTimeDate;
+    }
+
+    public void setAllocationTimeDate(Date allocationTimeDate) {
+        this.allocationTimeDate = allocationTimeDate;
+    }
+
     @Override
     public boolean equals(Object that) {
         if (this == that) {
@@ -180,7 +191,8 @@ public class Scholarship implements Serializable {
             && (this.getAllocationTimeStatus() == null ? other.getAllocationTimeStatus() == null : this.getAllocationTimeStatus().equals(other.getAllocationTimeStatus()))
             && (this.getNeedGradeCheck() == null ? other.getNeedGradeCheck() == null : this.getNeedGradeCheck().equals(other.getNeedGradeCheck()))
             && (this.getStudentBeginDate() == null ? other.getStudentBeginDate() == null : this.getStudentBeginDate().equals(other.getStudentBeginDate()))
-            && (this.getCollegeEndDate() == null ? other.getCollegeEndDate() == null : this.getCollegeEndDate().equals(other.getCollegeEndDate()));
+            && (this.getCollegeEndDate() == null ? other.getCollegeEndDate() == null : this.getCollegeEndDate().equals(other.getCollegeEndDate()))
+            && (this.getAllocationTimeDate() == null ? other.getAllocationTimeDate() == null : this.getAllocationTimeDate().equals(other.getAllocationTimeDate()));
     }
 
     @Override
@@ -200,6 +212,7 @@ public class Scholarship implements Serializable {
         result = prime * result + ((getNeedGradeCheck() == null) ? 0 : getNeedGradeCheck().hashCode());
         result = prime * result + ((getStudentBeginDate() == null) ? 0 : getStudentBeginDate().hashCode());
         result = prime * result + ((getCollegeEndDate() == null) ? 0 : getCollegeEndDate().hashCode());
+        result = prime * result + ((getAllocationTimeDate() == null) ? 0 : getAllocationTimeDate().hashCode());
         return result;
     }
 }

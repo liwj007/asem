@@ -905,6 +905,66 @@ public class ScholarshipExample {
             return (Criteria) this;
         }
 
+        public Criteria andAllocationTimeDateIsNull() {
+            addCriterion("allocation_time_date is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAllocationTimeDateIsNotNull() {
+            addCriterion("allocation_time_date is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAllocationTimeDateEqualTo(Date value) {
+            addCriterion("allocation_time_date =", value, "allocationTimeDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andAllocationTimeDateNotEqualTo(Date value) {
+            addCriterion("allocation_time_date <>", value, "allocationTimeDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andAllocationTimeDateGreaterThan(Date value) {
+            addCriterion("allocation_time_date >", value, "allocationTimeDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andAllocationTimeDateGreaterThanOrEqualTo(Date value) {
+            addCriterion("allocation_time_date >=", value, "allocationTimeDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andAllocationTimeDateLessThan(Date value) {
+            addCriterion("allocation_time_date <", value, "allocationTimeDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andAllocationTimeDateLessThanOrEqualTo(Date value) {
+            addCriterion("allocation_time_date <=", value, "allocationTimeDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andAllocationTimeDateIn(List<Date> values) {
+            addCriterion("allocation_time_date in", values, "allocationTimeDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andAllocationTimeDateNotIn(List<Date> values) {
+            addCriterion("allocation_time_date not in", values, "allocationTimeDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andAllocationTimeDateBetween(Date value1, Date value2) {
+            addCriterion("allocation_time_date between", value1, value2, "allocationTimeDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andAllocationTimeDateNotBetween(Date value1, Date value2) {
+            addCriterion("allocation_time_date not between", value1, value2, "allocationTimeDate");
+            return (Criteria) this;
+        }
+
         public Criteria andRequirementLikeInsensitive(String value) {
             addCriterion("upper(requirement) like", value.toUpperCase(), "requirement");
             return (Criteria) this;

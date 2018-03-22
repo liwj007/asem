@@ -21,7 +21,7 @@ public interface IApplicationService {
 
     PageInfo getPrizeForFileCheck(UserDTO user, Long unitId, Integer pageNum, Integer pageSize) throws WSPException;
 
-    PageInfo getPrizeDetailForFileCheck(UserDTO user, Long prizeId, List<Long> studentIds, Integer status, Integer pageNum, Integer pageSize);
+    PageInfo getPrizeDetailForFileCheck(UserDTO user, Long prizeId, List<Long> studentIds, List<Integer> status, Integer pageNum, Integer pageSize);
 
     void checkApplicationFile(UserDTO user, List<Long> ids, ApplicationFileStatusEnum result);
 
@@ -29,7 +29,7 @@ public interface IApplicationService {
 
     PageInfo getPrizeForAwardCheck(UserDTO user, Long unitId, Integer pageNum, Integer pageSize) throws WSPException;
 
-    PageInfo getPrizeDetailForAwardCheck(UserDTO user, Long prizeId, List<Long> ids, Integer fileStatus, Integer prizeStatus, Integer pageNum, Integer pageSize);
+    PageInfo getPrizeDetailForAwardCheck(UserDTO user, Long prizeId, List<Long> ids, List<Integer> fileStatus, List<Integer> prizeStatus, Integer pageNum, Integer pageSize);
 
     void checkApplicationPrize(UserDTO user, List<Long> ids, ApplicationPrizeStatusEnum result) throws WSPException;
 

@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -59,6 +60,15 @@ public class ScholarshipService implements IScholarshipService {
     @Autowired
     private PrizeCollegeLimitTimeMapper prizeCollegeLimitTimeMapper;
 
+
+    @Autowired
+    private FlowTemplateStepMapper flowTemplateStepMapper;
+
+    @Autowired
+    private RFlowTemplateStepAndUserRoleMapper rFlowTemplateStepAndUserRoleMapper;
+
+    @Autowired
+    private ApplicationStepMapper applicationStepMapper;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -116,6 +126,7 @@ public class ScholarshipService implements IScholarshipService {
                 schoolPrize.setPrizeInfoId(prizeInfo.getId());
                 schoolPrize.setNumber(avgNumber);
                 schoolPrize.setRestNumber(0);
+                schoolPrize.setCreateDate(scholarship.getCreateDate());
                 schoolPrize.setScholarshipId(prizeInfo.getScholarshipId());
                 schoolPrize.setScholarshipType(prizeInfo.getScholarshipType());
                 schoolPrizeMapper.insertSelective(schoolPrize);
@@ -127,6 +138,7 @@ public class ScholarshipService implements IScholarshipService {
                 collegePrize.setNumber(avgNumber);
                 collegePrize.setPrimaryTeachingInstitutionId(primaryTeachingInstitutionId);
                 collegePrize.setRestNumber(0);
+                collegePrize.setCreateDate(scholarship.getCreateDate());
                 collegePrize.setScholarshipId(prizeInfo.getScholarshipId());
                 collegePrize.setScholarshipType(prizeInfo.getScholarshipType());
                 collegePrizeMapper.insertSelective(collegePrize);
@@ -155,6 +167,7 @@ public class ScholarshipService implements IScholarshipService {
                     schoolPrize.setPrizeInfoId(prizeInfo.getId());
                     schoolPrize.setNumber(bo.getNumber());
                     schoolPrize.setRestNumber(0);
+                    schoolPrize.setCreateDate(scholarship.getCreateDate());
                     schoolPrize.setScholarshipId(prizeInfo.getScholarshipId());
                     schoolPrize.setScholarshipType(prizeInfo.getScholarshipType());
                     schoolPrizeMapper.insertSelective(schoolPrize);
@@ -165,6 +178,7 @@ public class ScholarshipService implements IScholarshipService {
                     collegePrize.setPrizeInfoId(prizeInfo.getId());
                     collegePrize.setNumber(bo.getNumber());
                     collegePrize.setRestNumber(0);
+                    collegePrize.setCreateDate(scholarship.getCreateDate());
                     collegePrize.setScholarshipId(prizeInfo.getScholarshipId());
                     collegePrize.setScholarshipType(prizeInfo.getScholarshipType());
                     collegePrize.setPrimaryTeachingInstitutionId(primaryTeachingInstitutionId);
@@ -395,7 +409,8 @@ public class ScholarshipService implements IScholarshipService {
         }
         ScholarshipExample scholarshipExample = new ScholarshipExample();
         scholarshipExample.createCriteria().andIdIn(new ArrayList<>(scholarshipMap.keySet()));
-        PageHelper.startPage(pageNum,pageSize);
+        scholarshipExample.setOrderByClause("create_date desc");
+        PageHelper.startPage(pageNum, pageSize);
         List<Scholarship> list = scholarshipMapper.selectByExample(scholarshipExample);
         PageInfo pageInfo = new PageInfo(list);
         List<SelectOfScholarshipBO> res = new ArrayList<>();
@@ -404,11 +419,119 @@ public class ScholarshipService implements IScholarshipService {
             bo.setId(scholarship.getId());
             bo.setName(scholarship.getScholarshipName());
             bo.setAwardNumber(scholarshipMap.get(scholarship.getId()));
-            bo.setYear("暂无");
+
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy");
+            bo.setYear(simpleDateFormat.format(scholarship.getCreateDate()));
             res.add(bo);
         }
         pageInfo.setList(res);
         return pageInfo;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void closeScholarship(UserDTO user, Long scholarshipId) throws WSPException{
+        Scholarship scholarship = scholarshipMapper.selectByPrimaryKey(scholarshipId);
+        if (scholarship == null) {
+            return;
+        }
+
+        if (scholarship.getScholarshipType() == ScholarshipTypeEnum.SCHOOL.code) {
+            SchoolPrizeExample schoolPrizeExample = new SchoolPrizeExample();
+            schoolPrizeExample.createCriteria().andScholarshipIdEqualTo(scholarshipId);
+            List<SchoolPrize> schoolPrizes = schoolPrizeMapper.selectByExample(schoolPrizeExample);
+            for (SchoolPrize schoolPrize : schoolPrizes) {
+                FlowTemplateStepExample flowTemplateStepExample = new FlowTemplateStepExample();
+                flowTemplateStepExample.createCriteria().andFlowTemplateIdEqualTo(scholarship.getFlowTemplateId());
+                List<FlowTemplateStep> flowTemplateSteps = flowTemplateStepMapper.selectByExample(flowTemplateStepExample);
+                List<Long> stepIds = new ArrayList<>();
+                for (FlowTemplateStep step : flowTemplateSteps) {
+                    stepIds.add(step.getId());
+                }
+                RFlowTemplateStepAndUserRoleExample roleExample = new RFlowTemplateStepAndUserRoleExample();
+                roleExample.createCriteria().andRoleTypeEqualTo(RoleTypeEnum.SCHOOL_USER.code)
+                        .andFlowTemplateStepIdIn(stepIds);
+                List<RFlowTemplateStepAndUserRole> rFlowTemplateStepAndUserRoles = rFlowTemplateStepAndUserRoleMapper
+                        .selectByExample(roleExample);
+                if (rFlowTemplateStepAndUserRoles.size() == 1) {
+                    RFlowTemplateStepAndUserRole role = rFlowTemplateStepAndUserRoles.get(0);
+                    List<Integer> status = new ArrayList<>();
+                    status.add(ApplicationPrizeStatusEnum.SUBMIT.code);
+                    status.add(ApplicationPrizeStatusEnum.WAIT_PASS.code);
+                    ApplicationStepExample applicationStepExample = new ApplicationStepExample();
+                    applicationStepExample.createCriteria().andFlowTemplateStepIdEqualTo(role.getFlowTemplateStepId())
+                            .andStatusIn(status);
+                    Long count = applicationStepMapper.countByExample(applicationStepExample);
+                    if (count != 0) {
+                        throw new WSPException(ErrorInfo.CAN_NOT_CLOSE);
+                    }
+                }
+
+                CollegePrizeExample collegePrizeExample = new CollegePrizeExample();
+                collegePrizeExample.createCriteria().andSchoolPrizeIdEqualTo(schoolPrize.getId());
+                List<CollegePrize> collegePrizes = collegePrizeMapper.selectByExample(collegePrizeExample);
+                for (CollegePrize collegePrize : collegePrizes) {
+                    GradePrizeExample gradePrizeExample = new GradePrizeExample();
+                    gradePrizeExample.createCriteria().andCollegePrizeIdEqualTo(collegePrize.getId());
+                    List<GradePrize> gradePrizes = gradePrizeMapper.selectByExample(gradePrizeExample);
+                    for (GradePrize gradePrize : gradePrizes) {
+                        gradePrize.setStatus(StatusEnum.CLOSE.code);
+                        gradePrizeMapper.updateByPrimaryKeySelective(gradePrize);
+                    }
+
+                    collegePrize.setStatus(StatusEnum.CLOSE.code);
+                    collegePrizeMapper.updateByPrimaryKeySelective(collegePrize);
+                }
+
+                schoolPrize.setStatus(StatusEnum.CLOSE.code);
+                schoolPrizeMapper.updateByPrimaryKeySelective(schoolPrize);
+            }
+        }else if (scholarship.getScholarshipType()==ScholarshipTypeEnum.COLLEGE.code){
+            FlowTemplateStepExample flowTemplateStepExample = new FlowTemplateStepExample();
+            flowTemplateStepExample.createCriteria().andFlowTemplateIdEqualTo(scholarship.getFlowTemplateId());
+            List<FlowTemplateStep> flowTemplateSteps = flowTemplateStepMapper.selectByExample(flowTemplateStepExample);
+            List<Long> stepIds = new ArrayList<>();
+            for (FlowTemplateStep step : flowTemplateSteps) {
+                stepIds.add(step.getId());
+            }
+            RFlowTemplateStepAndUserRoleExample roleExample = new RFlowTemplateStepAndUserRoleExample();
+            roleExample.createCriteria().andRoleTypeEqualTo(RoleTypeEnum.SPECIAL_ADVISER.code)
+                    .andFlowTemplateStepIdIn(stepIds);
+            List<RFlowTemplateStepAndUserRole> rFlowTemplateStepAndUserRoles = rFlowTemplateStepAndUserRoleMapper
+                    .selectByExample(roleExample);
+            if (rFlowTemplateStepAndUserRoles.size() == 1) {
+                RFlowTemplateStepAndUserRole role = rFlowTemplateStepAndUserRoles.get(0);
+                List<Integer> status = new ArrayList<>();
+                status.add(ApplicationPrizeStatusEnum.SUBMIT.code);
+                status.add(ApplicationPrizeStatusEnum.WAIT_PASS.code);
+                ApplicationStepExample applicationStepExample = new ApplicationStepExample();
+                applicationStepExample.createCriteria().andFlowTemplateStepIdEqualTo(role.getFlowTemplateStepId())
+                        .andStatusIn(status);
+                Long count = applicationStepMapper.countByExample(applicationStepExample);
+                if (count != 0) {
+                    throw new WSPException(ErrorInfo.CAN_NOT_CLOSE);
+                }
+            }
+
+            CollegePrizeExample collegePrizeExample = new CollegePrizeExample();
+            collegePrizeExample.createCriteria().andScholarshipIdEqualTo(scholarshipId);
+            List<CollegePrize> collegePrizes = collegePrizeMapper.selectByExample(collegePrizeExample);
+            for (CollegePrize collegePrize : collegePrizes) {
+                GradePrizeExample gradePrizeExample = new GradePrizeExample();
+                gradePrizeExample.createCriteria().andCollegePrizeIdEqualTo(collegePrize.getId());
+                List<GradePrize> gradePrizes = gradePrizeMapper.selectByExample(gradePrizeExample);
+                for (GradePrize gradePrize : gradePrizes) {
+                    gradePrize.setStatus(StatusEnum.CLOSE.code);
+                    gradePrizeMapper.updateByPrimaryKeySelective(gradePrize);
+                }
+
+                collegePrize.setStatus(StatusEnum.CLOSE.code);
+                collegePrizeMapper.updateByPrimaryKeySelective(collegePrize);
+            }
+        }
+
+        scholarship.setStatus(StatusEnum.CLOSE.code);
+        scholarshipMapper.updateByPrimaryKeySelective(scholarship);
     }
 
 }

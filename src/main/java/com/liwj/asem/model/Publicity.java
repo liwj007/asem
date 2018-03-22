@@ -38,9 +38,11 @@ public class Publicity implements Serializable {
 
     private Integer status;
 
+    private Date createDate;
+
     private static final long serialVersionUID = 1L;
 
-    public Publicity(Long id, Long scholarshipId, Integer scholarshipType, Boolean scholarshipName, Boolean prizeName, Boolean needName, Boolean needSn, Boolean needClasses, Boolean needGrade, Boolean needMajor, Boolean needCollege, Boolean needPrizeNumber, Boolean needFiles, Date beginDate, Date endDate, Long primaryTeachingInstitutionId, Integer status) {
+    public Publicity(Long id, Long scholarshipId, Integer scholarshipType, Boolean scholarshipName, Boolean prizeName, Boolean needName, Boolean needSn, Boolean needClasses, Boolean needGrade, Boolean needMajor, Boolean needCollege, Boolean needPrizeNumber, Boolean needFiles, Date beginDate, Date endDate, Long primaryTeachingInstitutionId, Integer status, Date createDate) {
         this.id = id;
         this.scholarshipId = scholarshipId;
         this.scholarshipType = scholarshipType;
@@ -58,6 +60,7 @@ public class Publicity implements Serializable {
         this.endDate = endDate;
         this.primaryTeachingInstitutionId = primaryTeachingInstitutionId;
         this.status = status;
+        this.createDate = createDate;
     }
 
     public Publicity() {
@@ -200,6 +203,14 @@ public class Publicity implements Serializable {
         this.status = status;
     }
 
+    public Date getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
+    }
+
     @Override
     public boolean equals(Object that) {
         if (this == that) {
@@ -228,7 +239,8 @@ public class Publicity implements Serializable {
             && (this.getBeginDate() == null ? other.getBeginDate() == null : this.getBeginDate().equals(other.getBeginDate()))
             && (this.getEndDate() == null ? other.getEndDate() == null : this.getEndDate().equals(other.getEndDate()))
             && (this.getPrimaryTeachingInstitutionId() == null ? other.getPrimaryTeachingInstitutionId() == null : this.getPrimaryTeachingInstitutionId().equals(other.getPrimaryTeachingInstitutionId()))
-            && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()));
+            && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()))
+            && (this.getCreateDate() == null ? other.getCreateDate() == null : this.getCreateDate().equals(other.getCreateDate()));
     }
 
     @Override
@@ -252,6 +264,7 @@ public class Publicity implements Serializable {
         result = prime * result + ((getEndDate() == null) ? 0 : getEndDate().hashCode());
         result = prime * result + ((getPrimaryTeachingInstitutionId() == null) ? 0 : getPrimaryTeachingInstitutionId().hashCode());
         result = prime * result + ((getStatus() == null) ? 0 : getStatus().hashCode());
+        result = prime * result + ((getCreateDate() == null) ? 0 : getCreateDate().hashCode());
         return result;
     }
 }

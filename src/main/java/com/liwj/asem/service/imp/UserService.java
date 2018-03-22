@@ -207,6 +207,7 @@ public class UserService implements IUserService {
             if (ids.size()==0){
                 return ids;
             }
+            content = content.replace("%","\\%");
             example.clear();
             UserExample.Criteria criteria1 = example.createCriteria();
             criteria1.andNameLike("%"+content+"%").andIdIn(ids);

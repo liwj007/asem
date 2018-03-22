@@ -12,6 +12,7 @@
       <arg column="primary_teaching_institution_id" javaType="java.lang.Long" jdbcType="BIGINT" />
       <arg column="grade_id" javaType="java.lang.Long" jdbcType="BIGINT" />
       <arg column="prize_id" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="create_date" javaType="java.util.Date" jdbcType="TIMESTAMP" />
     </constructor>
   </resultMap>
   <sql id="Example_Where_Clause">
@@ -74,7 +75,7 @@
   </sql>
   <sql id="Base_Column_List">
     id, flow_template_step_id, application_id, operator_id, operation_date, status, primary_teaching_institution_id, 
-    grade_id, prize_id
+    grade_id, prize_id, create_date
   </sql>
   <select id="selectByExample" parameterType="com.liwj.asem.model.ApplicationStepExample" resultMap="BaseResultMap">
     select
@@ -113,12 +114,12 @@
     </selectKey>
     insert into application_step (flow_template_step_id, application_id, 
       operator_id, operation_date, status, 
-      primary_teaching_institution_id, grade_id, prize_id
-      )
+      primary_teaching_institution_id, grade_id, prize_id, 
+      create_date)
     values (#{flowTemplateStepId,jdbcType=BIGINT}, #{applicationId,jdbcType=BIGINT}, 
       #{operatorId,jdbcType=BIGINT}, #{operationDate,jdbcType=TIMESTAMP}, #{status,jdbcType=INTEGER}, 
-      #{primaryTeachingInstitutionId,jdbcType=BIGINT}, #{gradeId,jdbcType=BIGINT}, #{prizeId,jdbcType=BIGINT}
-      )
+      #{primaryTeachingInstitutionId,jdbcType=BIGINT}, #{gradeId,jdbcType=BIGINT}, #{prizeId,jdbcType=BIGINT}, 
+      #{createDate,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.liwj.asem.model.ApplicationStep">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -150,6 +151,9 @@
       <if test="prizeId != null">
         prize_id,
       </if>
+      <if test="createDate != null">
+        create_date,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="flowTemplateStepId != null">
@@ -175,6 +179,9 @@
       </if>
       <if test="prizeId != null">
         #{prizeId,jdbcType=BIGINT},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
       </if>
     </trim>
   </insert>
@@ -214,6 +221,9 @@
       <if test="record.prizeId != null">
         prize_id = #{record.prizeId,jdbcType=BIGINT},
       </if>
+      <if test="record.createDate != null">
+        create_date = #{record.createDate,jdbcType=TIMESTAMP},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -229,7 +239,8 @@
       status = #{record.status,jdbcType=INTEGER},
       primary_teaching_institution_id = #{record.primaryTeachingInstitutionId,jdbcType=BIGINT},
       grade_id = #{record.gradeId,jdbcType=BIGINT},
-      prize_id = #{record.prizeId,jdbcType=BIGINT}
+      prize_id = #{record.prizeId,jdbcType=BIGINT},
+      create_date = #{record.createDate,jdbcType=TIMESTAMP}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -261,6 +272,9 @@
       <if test="prizeId != null">
         prize_id = #{prizeId,jdbcType=BIGINT},
       </if>
+      <if test="createDate != null">
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -273,7 +287,8 @@
       status = #{status,jdbcType=INTEGER},
       primary_teaching_institution_id = #{primaryTeachingInstitutionId,jdbcType=BIGINT},
       grade_id = #{gradeId,jdbcType=BIGINT},
-      prize_id = #{prizeId,jdbcType=BIGINT}
+      prize_id = #{prizeId,jdbcType=BIGINT},
+      create_date = #{createDate,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

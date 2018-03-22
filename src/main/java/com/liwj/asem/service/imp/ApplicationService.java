@@ -335,7 +335,8 @@ public class ApplicationService implements IApplicationService {
                 bo.setPrizeId(collegePrize.getId());
 
                 ApplicationExample applicationExample = new ApplicationExample();
-                applicationExample.createCriteria().andPrizeIdEqualTo(collegePrize.getId());
+                applicationExample.createCriteria().andPrizeIdEqualTo(collegePrize.getId())
+                        .andGradeIdIn(user.getMangeGradeId());
                 Long num1 = applicationMapper.countByExample(applicationExample);
                 bo.setApplyNumber(num1);
 
@@ -344,14 +345,16 @@ public class ApplicationService implements IApplicationService {
                 statuses.add(ApplicationFileStatusEnum.REJECT.code);
                 statuses.add(ApplicationFileStatusEnum.RESUBMIT.code);
                 applicationExample.createCriteria().andPrizeIdEqualTo(collegePrize.getId())
-                        .andFileStatusIn(statuses);
+                        .andFileStatusIn(statuses)
+                        .andGradeIdIn(user.getMangeGradeId());
                 Long num2 = applicationMapper.countByExample(applicationExample);
                 bo.setRejectNumber(num2);
 
                 applicationExample.clear();
 
                 applicationExample.createCriteria().andPrizeIdEqualTo(collegePrize.getId())
-                        .andFileStatusEqualTo(ApplicationFileStatusEnum.RESUBMIT.code);
+                        .andFileStatusEqualTo(ApplicationFileStatusEnum.RESUBMIT.code)
+                        .andGradeIdIn(user.getMangeGradeId());
                 Long num3 = applicationMapper.countByExample(applicationExample);
                 bo.setReSubmitNumber(num3);
                 res.add(bo);
@@ -542,7 +545,7 @@ public class ApplicationService implements IApplicationService {
     }
 
     @Override
-    public PageInfo getPrizeDetailForFileCheck(UserDTO user, Long prizeId, List<Long> studentIds, Integer status, Integer pageNum, Integer pageSize) {
+    public PageInfo getPrizeDetailForFileCheck(UserDTO user, Long prizeId, List<Long> studentIds, List<Integer> status, Integer pageNum, Integer pageSize) {
         if (studentIds.size() == 0) {
             return new PageInfo();
         }
@@ -560,16 +563,19 @@ public class ApplicationService implements IApplicationService {
         if (userService.isSchoolUser(user)) {
             applicationExample.createCriteria().andPrizeInfoIdEqualTo(prizeInfo.getId())
                     .andUserIdIn(studentIds);
-            if (status != null && status > 0) {
-                applicationExample.getOredCriteria().get(0).andFileStatusEqualTo(status);
+            if (status != null && !status.contains(0)) {
+                applicationExample.getOredCriteria().get(0).andFileStatusIn(status);
             }
         } else {
             CollegePrize collegePrize = collegePrizeMapper.selectByPrimaryKey(prizeId);
             applicationExample.createCriteria().andPrizeInfoIdEqualTo(prizeInfo.getId())
                     .andPrimaryTeachingInstitutionIdEqualTo(collegePrize.getPrimaryTeachingInstitutionId())
                     .andUserIdIn(studentIds);
-            if (status != null && status > 0) {
-                applicationExample.getOredCriteria().get(0).andFileStatusEqualTo(status);
+            if (userService.isGradeManger(user)){
+                applicationExample.getOredCriteria().get(0).andGradeIdIn(user.getMangeGradeId());
+            }
+            if (status != null && !status.contains(0)) {
+                applicationExample.getOredCriteria().get(0).andFileStatusIn(status);
             }
         }
         List<Application> applications = applicationMapper.selectByExampleWithBLOBs(applicationExample);
@@ -685,7 +691,10 @@ public class ApplicationService implements IApplicationService {
     }
 
     @Override
-    public PageInfo getPrizeDetailForAwardCheck(UserDTO user, Long prizeId, List<Long> studentIds, Integer fileStatus, Integer prizeStatus, Integer pageNum, Integer pageSize) {
+    public PageInfo getPrizeDetailForAwardCheck(UserDTO user, Long prizeId, List<Long> studentIds, List<Integer> fileStatus, List<Integer> prizeStatus, Integer pageNum, Integer pageSize) {
+        if (studentIds.size() == 0) {
+            return new PageInfo();
+        }
         PrizeInfo prizeInfo;
         CollegePrize collegePrize = collegePrizeMapper.selectByPrimaryKey(prizeId);
         prizeInfo = prizeInfoMapper.selectByPrimaryKey(collegePrize.getPrizeInfoId());
@@ -695,15 +704,18 @@ public class ApplicationService implements IApplicationService {
         if (userService.isSchoolUser(user)) {
             applicationExample.createCriteria().andPrizeInfoIdEqualTo(prizeInfo.getId())
                     .andUserIdIn(studentIds);
-            if (fileStatus != null && fileStatus > 0) {
-                applicationExample.getOredCriteria().get(0).andFileStatusEqualTo(fileStatus);
+            if (fileStatus != null && !fileStatus.contains(0)) {
+                applicationExample.getOredCriteria().get(0).andFileStatusIn(fileStatus);
             }
         } else {
             applicationExample.createCriteria().andPrizeInfoIdEqualTo(prizeInfo.getId())
                     .andPrimaryTeachingInstitutionIdEqualTo(collegePrize.getPrimaryTeachingInstitutionId())
                     .andUserIdIn(studentIds);
-            if (fileStatus != null && fileStatus > 0) {
-                applicationExample.getOredCriteria().get(0).andFileStatusEqualTo(fileStatus);
+            if (userService.isGradeManger(user)){
+                applicationExample.getOredCriteria().get(0).andGradeIdIn(user.getMangeGradeId());
+            }
+            if (fileStatus != null && !fileStatus.contains(0)) {
+                applicationExample.getOredCriteria().get(0).andFileStatusIn(fileStatus);
             }
         }
         List<Application> applications = applicationMapper.selectByExampleWithBLOBs(applicationExample);
@@ -744,8 +756,8 @@ public class ApplicationService implements IApplicationService {
             applicationStepExample.createCriteria().andFlowTemplateStepIdEqualTo(role.getFlowTemplateStepId())
                     .andPrimaryTeachingInstitutionIdEqualTo(collegePrize.getPrimaryTeachingInstitutionId())
                     .andApplicationIdIn(applicationIds);
-            if (prizeStatus != null && prizeStatus > 0) {
-                applicationStepExample.getOredCriteria().get(0).andStatusEqualTo(prizeStatus);
+            if (prizeStatus != null && !prizeStatus.contains(0)) {
+                applicationStepExample.getOredCriteria().get(0).andStatusIn(prizeStatus);
             }
             PageHelper.startPage(pageNum, pageSize);
             List<ApplicationStep> applicationSteps = applicationStepMapper.selectByExample(applicationStepExample);

@@ -17,6 +17,8 @@
       <arg column="school_prize_id" javaType="java.lang.Long" jdbcType="BIGINT" />
       <arg column="submit_status" javaType="java.lang.Boolean" jdbcType="BIT" />
       <arg column="apply_status" javaType="java.lang.Boolean" jdbcType="BIT" />
+      <arg column="create_date" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <arg column="allocation_date" javaType="java.util.Date" jdbcType="TIMESTAMP" />
     </constructor>
   </resultMap>
   <sql id="Example_Where_Clause">
@@ -80,7 +82,7 @@
   <sql id="Base_Column_List">
     id, primary_teaching_institution_id, number, rest_number, prize_info_id, scholarship_id, 
     scholarship_type, status, allocation_rule, allocation_method, allocation_number_status, 
-    school_prize_id, submit_status, apply_status
+    school_prize_id, submit_status, apply_status, create_date, allocation_date
   </sql>
   <select id="selectByExample" parameterType="com.liwj.asem.model.CollegePrizeExample" resultMap="BaseResultMap">
     select
@@ -121,12 +123,14 @@
       rest_number, prize_info_id, scholarship_id, 
       scholarship_type, status, allocation_rule, 
       allocation_method, allocation_number_status, school_prize_id, 
-      submit_status, apply_status)
+      submit_status, apply_status, create_date, 
+      allocation_date)
     values (#{primaryTeachingInstitutionId,jdbcType=BIGINT}, #{number,jdbcType=INTEGER}, 
       #{restNumber,jdbcType=INTEGER}, #{prizeInfoId,jdbcType=BIGINT}, #{scholarshipId,jdbcType=BIGINT}, 
       #{scholarshipType,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, #{allocationRule,jdbcType=INTEGER}, 
       #{allocationMethod,jdbcType=INTEGER}, #{allocationNumberStatus,jdbcType=BIT}, #{schoolPrizeId,jdbcType=BIGINT}, 
-      #{submitStatus,jdbcType=BIT}, #{applyStatus,jdbcType=BIT})
+      #{submitStatus,jdbcType=BIT}, #{applyStatus,jdbcType=BIT}, #{createDate,jdbcType=TIMESTAMP}, 
+      #{allocationDate,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.liwj.asem.model.CollegePrize">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -173,6 +177,12 @@
       <if test="applyStatus != null">
         apply_status,
       </if>
+      <if test="createDate != null">
+        create_date,
+      </if>
+      <if test="allocationDate != null">
+        allocation_date,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="primaryTeachingInstitutionId != null">
@@ -213,6 +223,12 @@
       </if>
       <if test="applyStatus != null">
         #{applyStatus,jdbcType=BIT},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="allocationDate != null">
+        #{allocationDate,jdbcType=TIMESTAMP},
       </if>
     </trim>
   </insert>
@@ -267,6 +283,12 @@
       <if test="record.applyStatus != null">
         apply_status = #{record.applyStatus,jdbcType=BIT},
       </if>
+      <if test="record.createDate != null">
+        create_date = #{record.createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.allocationDate != null">
+        allocation_date = #{record.allocationDate,jdbcType=TIMESTAMP},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -287,7 +309,9 @@
       allocation_number_status = #{record.allocationNumberStatus,jdbcType=BIT},
       school_prize_id = #{record.schoolPrizeId,jdbcType=BIGINT},
       submit_status = #{record.submitStatus,jdbcType=BIT},
-      apply_status = #{record.applyStatus,jdbcType=BIT}
+      apply_status = #{record.applyStatus,jdbcType=BIT},
+      create_date = #{record.createDate,jdbcType=TIMESTAMP},
+      allocation_date = #{record.allocationDate,jdbcType=TIMESTAMP}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -334,6 +358,12 @@
       <if test="applyStatus != null">
         apply_status = #{applyStatus,jdbcType=BIT},
       </if>
+      <if test="createDate != null">
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="allocationDate != null">
+        allocation_date = #{allocationDate,jdbcType=TIMESTAMP},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -351,7 +381,9 @@
       allocation_number_status = #{allocationNumberStatus,jdbcType=BIT},
       school_prize_id = #{schoolPrizeId,jdbcType=BIGINT},
       submit_status = #{submitStatus,jdbcType=BIT},
-      apply_status = #{applyStatus,jdbcType=BIT}
+      apply_status = #{applyStatus,jdbcType=BIT},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      allocation_date = #{allocationDate,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

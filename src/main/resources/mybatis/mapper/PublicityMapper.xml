@@ -20,6 +20,7 @@
       <arg column="end_date" javaType="java.util.Date" jdbcType="TIMESTAMP" />
       <arg column="primary_teaching_institution_id" javaType="java.lang.Long" jdbcType="BIGINT" />
       <arg column="status" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="create_date" javaType="java.util.Date" jdbcType="TIMESTAMP" />
     </constructor>
   </resultMap>
   <sql id="Example_Where_Clause">
@@ -83,7 +84,7 @@
   <sql id="Base_Column_List">
     id, scholarship_id, scholarship_type, scholarship_name, prize_name, need_name, need_sn, 
     need_classes, need_grade, need_major, need_college, need_prize_number, need_files, 
-    begin_date, end_date, primary_teaching_institution_id, status
+    begin_date, end_date, primary_teaching_institution_id, status, create_date
   </sql>
   <select id="selectByExample" parameterType="com.liwj.asem.model.PublicityExample" resultMap="BaseResultMap">
     select
@@ -125,13 +126,13 @@
       need_grade, need_major, need_college, 
       need_prize_number, need_files, begin_date, 
       end_date, primary_teaching_institution_id, 
-      status)
+      status, create_date)
     values (#{scholarshipId,jdbcType=BIGINT}, #{scholarshipType,jdbcType=INTEGER}, #{scholarshipName,jdbcType=BIT}, 
       #{prizeName,jdbcType=BIT}, #{needName,jdbcType=BIT}, #{needSn,jdbcType=BIT}, #{needClasses,jdbcType=BIT}, 
       #{needGrade,jdbcType=BIT}, #{needMajor,jdbcType=BIT}, #{needCollege,jdbcType=BIT}, 
       #{needPrizeNumber,jdbcType=BIT}, #{needFiles,jdbcType=BIT}, #{beginDate,jdbcType=TIMESTAMP}, 
       #{endDate,jdbcType=TIMESTAMP}, #{primaryTeachingInstitutionId,jdbcType=BIGINT}, 
-      #{status,jdbcType=INTEGER})
+      #{status,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.liwj.asem.model.Publicity">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -187,6 +188,9 @@
       <if test="status != null">
         status,
       </if>
+      <if test="createDate != null">
+        create_date,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="scholarshipId != null">
@@ -236,6 +240,9 @@
       </if>
       <if test="status != null">
         #{status,jdbcType=INTEGER},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
       </if>
     </trim>
   </insert>
@@ -299,6 +306,9 @@
       <if test="record.status != null">
         status = #{record.status,jdbcType=INTEGER},
       </if>
+      <if test="record.createDate != null">
+        create_date = #{record.createDate,jdbcType=TIMESTAMP},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -322,7 +332,8 @@
       begin_date = #{record.beginDate,jdbcType=TIMESTAMP},
       end_date = #{record.endDate,jdbcType=TIMESTAMP},
       primary_teaching_institution_id = #{record.primaryTeachingInstitutionId,jdbcType=BIGINT},
-      status = #{record.status,jdbcType=INTEGER}
+      status = #{record.status,jdbcType=INTEGER},
+      create_date = #{record.createDate,jdbcType=TIMESTAMP}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -378,6 +389,9 @@
       <if test="status != null">
         status = #{status,jdbcType=INTEGER},
       </if>
+      <if test="createDate != null">
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -398,7 +412,8 @@
       begin_date = #{beginDate,jdbcType=TIMESTAMP},
       end_date = #{endDate,jdbcType=TIMESTAMP},
       primary_teaching_institution_id = #{primaryTeachingInstitutionId,jdbcType=BIGINT},
-      status = #{status,jdbcType=INTEGER}
+      status = #{status,jdbcType=INTEGER},
+      create_date = #{createDate,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

@@ -1,6 +1,7 @@
 package com.liwj.asem.model;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class CollegePrizeExample {
@@ -941,6 +942,126 @@ public class CollegePrizeExample {
 
         public Criteria andApplyStatusNotBetween(Boolean value1, Boolean value2) {
             addCriterion("apply_status not between", value1, value2, "applyStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateDateIsNull() {
+            addCriterion("create_date is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateDateIsNotNull() {
+            addCriterion("create_date is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateDateEqualTo(Date value) {
+            addCriterion("create_date =", value, "createDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateDateNotEqualTo(Date value) {
+            addCriterion("create_date <>", value, "createDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateDateGreaterThan(Date value) {
+            addCriterion("create_date >", value, "createDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateDateGreaterThanOrEqualTo(Date value) {
+            addCriterion("create_date >=", value, "createDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateDateLessThan(Date value) {
+            addCriterion("create_date <", value, "createDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateDateLessThanOrEqualTo(Date value) {
+            addCriterion("create_date <=", value, "createDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateDateIn(List<Date> values) {
+            addCriterion("create_date in", values, "createDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateDateNotIn(List<Date> values) {
+            addCriterion("create_date not in", values, "createDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateDateBetween(Date value1, Date value2) {
+            addCriterion("create_date between", value1, value2, "createDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateDateNotBetween(Date value1, Date value2) {
+            addCriterion("create_date not between", value1, value2, "createDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andAllocationDateIsNull() {
+            addCriterion("allocation_date is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAllocationDateIsNotNull() {
+            addCriterion("allocation_date is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAllocationDateEqualTo(Date value) {
+            addCriterion("allocation_date =", value, "allocationDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andAllocationDateNotEqualTo(Date value) {
+            addCriterion("allocation_date <>", value, "allocationDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andAllocationDateGreaterThan(Date value) {
+            addCriterion("allocation_date >", value, "allocationDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andAllocationDateGreaterThanOrEqualTo(Date value) {
+            addCriterion("allocation_date >=", value, "allocationDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andAllocationDateLessThan(Date value) {
+            addCriterion("allocation_date <", value, "allocationDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andAllocationDateLessThanOrEqualTo(Date value) {
+            addCriterion("allocation_date <=", value, "allocationDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andAllocationDateIn(List<Date> values) {
+            addCriterion("allocation_date in", values, "allocationDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andAllocationDateNotIn(List<Date> values) {
+            addCriterion("allocation_date not in", values, "allocationDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andAllocationDateBetween(Date value1, Date value2) {
+            addCriterion("allocation_date between", value1, value2, "allocationDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andAllocationDateNotBetween(Date value1, Date value2) {
+            addCriterion("allocation_date not between", value1, value2, "allocationDate");
             return (Criteria) this;
         }
     }

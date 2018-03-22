@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -72,6 +73,7 @@ public class FlowTemplateService implements IFlowTemplateService {
         flowTemplate.setNeedGradeCheck(needGradeCheck);
         flowTemplate.setGradeInstructor(needGradeCheck);
         flowTemplate.setGradeStudent(gradeStudent);
+        flowTemplate.setCreateDate(new Date());
         Boolean schoolUser = type == ScholarshipTypeEnum.SCHOOL ? true : false;
         flowTemplate.setSchoolUser(schoolUser);
         flowTemplate.setCollegeStudent(collegeStudent);
@@ -151,6 +153,7 @@ public class FlowTemplateService implements IFlowTemplateService {
     public PageInfo getFlowTemplates(Integer pageNum, Integer pageSize) throws WSPException {
         FlowTemplateExample example = new FlowTemplateExample();
         example.createCriteria().andVersionGreaterThan(0);
+        example.setOrderByClause("id desc");
         PageHelper.startPage(pageNum, pageSize);
         List<FlowTemplate> lst = flowTemplateMapper.selectByExample(example);
         PageInfo pageInfo = new PageInfo(lst);

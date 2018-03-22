@@ -56,7 +56,7 @@ public class PrizeService implements IPrizeService {
         if (userService.isSchoolUser(user)) {
             SchoolPrizeExample schoolPrizeExample = new SchoolPrizeExample();
             schoolPrizeExample.createCriteria().andStatusNotEqualTo(StatusEnum.CLOSE.code);
-            schoolPrizeExample.setOrderByClause("`id` ASC");
+            schoolPrizeExample.setOrderByClause("create_date desc, prize_info_id asc");
             PageHelper.startPage(pageNum, pageSize);
             List<SchoolPrize> schoolPrizes = schoolPrizeMapper.selectByExample(schoolPrizeExample);
             PageInfo pageInfo = new PageInfo(schoolPrizes);
@@ -71,6 +71,7 @@ public class PrizeService implements IPrizeService {
             collegePrizeExample.createCriteria().andPrimaryTeachingInstitutionIdEqualTo(unitId)
                     .andStatusNotEqualTo(StatusEnum.CLOSE.code)
                     .andStatusNotEqualTo(StatusEnum.UNREADY.code);
+            collegePrizeExample.setOrderByClause("create_date desc, prize_info_id asc");
             List<CollegePrize> collegePrizes = collegePrizeMapper.selectByExample(collegePrizeExample);
             PageInfo pageInfo = new PageInfo(collegePrizes);
             List<PrizeForListBO> res = packingCollegePrizeForListBO(collegePrizes, false, unitId);
@@ -137,6 +138,7 @@ public class PrizeService implements IPrizeService {
                     schoolPrize.setAllocationRule(entireUnitPrizeForm.getAllocationRule().code);
                     schoolPrize.setAllocationMethod(entireUnitPrizeForm.getAllocationMethod().code);
                     schoolPrize.setAllocationNumberStatus(true);
+                    schoolPrize.setAllocationDate(new Date());
                     schoolPrizeMapper.updateByPrimaryKeySelective(schoolPrize);
                 }
 
@@ -150,7 +152,7 @@ public class PrizeService implements IPrizeService {
                 collegePrize.setScholarshipType(schoolPrize.getScholarshipType());
                 collegePrize.setSchoolPrizeId(schoolPrize.getId());
                 collegePrize.setStatus(StatusEnum.UNREADY.code);
-
+                collegePrize.setCreateDate(new Date());
                 collegePrizeMapper.insertSelective(collegePrize);
             }
         } else if (userService.isCollegeManger(user)) {
@@ -161,6 +163,7 @@ public class PrizeService implements IPrizeService {
                     collegePrize.setAllocationRule(entireUnitPrizeForm.getAllocationRule().code);
                     collegePrize.setAllocationMethod(entireUnitPrizeForm.getAllocationMethod().code);
                     collegePrize.setAllocationNumberStatus(true);
+                    collegePrize.setAllocationDate(new Date());
                     collegePrizeMapper.updateByPrimaryKeySelective(collegePrize);
                 }
 
@@ -172,6 +175,7 @@ public class PrizeService implements IPrizeService {
                 gradePrize.setGradeId(unitPrizeBO.getUnitId());
                 gradePrize.setScholarshipType(collegePrize.getScholarshipType());
                 gradePrize.setStatus(StatusEnum.NEW.code);
+                gradePrize.setCreateDate(new Date());
                 gradePrize.setCollegePrizeId(collegePrize.getId());
                 gradePrizeMapper.insertSelective(gradePrize);
             }
@@ -185,6 +189,7 @@ public class PrizeService implements IPrizeService {
             SchoolPrizeExample schoolPrizeExample = new SchoolPrizeExample();
             schoolPrizeExample.createCriteria().andStatusNotEqualTo(StatusEnum.CLOSE.code)
                     .andAllocationNumberStatusEqualTo(true);
+            schoolPrizeExample.setOrderByClause("allocation_date desc, prize_info_id asc");
             List<SchoolPrize> prizes = schoolPrizeMapper.selectByExample(schoolPrizeExample);
             PageInfo pageInfo = new PageInfo(prizes);
             List<PrizeForListBO> res = packingSchoolPrizeForListBO(prizes, true);
@@ -196,6 +201,7 @@ public class PrizeService implements IPrizeService {
                     .andStatusNotEqualTo(StatusEnum.CLOSE.code)
                     .andStatusNotEqualTo(StatusEnum.UNREADY.code)
                     .andAllocationNumberStatusEqualTo(true);
+            collegePrizeExample.setOrderByClause("allocation_date desc, prize_info_id asc");
             List<CollegePrize> collegePrizes = collegePrizeMapper.selectByExample(collegePrizeExample);
             PageInfo pageInfo = new PageInfo(collegePrizes);
             List<PrizeForListBO> res = packingCollegePrizeForListBO(collegePrizes, true, unitId);
@@ -375,6 +381,7 @@ public class PrizeService implements IPrizeService {
                 scholarship.setAllocationTimeStatus(true);
                 scholarship.setStudentBeginDate(bo.getStudentStartDate());
                 scholarship.setCollegeEndDate(bo.getCollegeEndDate());
+                scholarship.setAllocationTimeDate(new Date());
                 scholarshipMapper.updateByPrimaryKeySelective(scholarship);
             }
         } else if (userService.isCollegeManger(user)) {
@@ -387,6 +394,7 @@ public class PrizeService implements IPrizeService {
                 if (scholarship.getScholarshipType() == ScholarshipTypeEnum.COLLEGE.code) {
                     scholarship.setAllocationTimeStatus(true);
                     scholarship.setStudentBeginDate(bo.getStudentStartDate());
+                    scholarship.setAllocationTimeDate(new Date());
                     scholarshipMapper.updateByPrimaryKeySelective(scholarship);
                 }
 
@@ -415,6 +423,7 @@ public class PrizeService implements IPrizeService {
             ScholarshipExample scholarshipExample = new ScholarshipExample();
             scholarshipExample.createCriteria().andAllocationTimeStatusEqualTo(true)
                     .andScholarshipTypeEqualTo(ScholarshipTypeEnum.SCHOOL.code);
+            scholarshipExample.setOrderByClause("allocation_time_date desc");
             PageHelper.startPage(pageNum, pageSize);
             List<Scholarship> scholarships = scholarshipMapper.selectByExample(scholarshipExample);
             pageInfo = new PageInfo(scholarships);
@@ -431,7 +440,6 @@ public class PrizeService implements IPrizeService {
             limitTimeExample.createCriteria().andPrimaryTeachingInstitutionIdEqualTo(unitId)
                     .andAllocationTimeStatusEqualTo(true);
             List<PrizeCollegeLimitTime> prizeCollegeLimitTimes = prizeCollegeLimitTimeMapper.selectByExample(limitTimeExample);
-
             List<Long> scholarshipIds = new ArrayList<>();
             if (prizeCollegeLimitTimes.size() > 0) {
                 for (PrizeCollegeLimitTime limitTime : prizeCollegeLimitTimes) {
@@ -440,8 +448,10 @@ public class PrizeService implements IPrizeService {
 
                 ScholarshipExample scholarshipExample = new ScholarshipExample();
                 scholarshipExample.createCriteria().andIdIn(scholarshipIds).andStatusNotEqualTo(StatusEnum.CLOSE.code);
+                scholarshipExample.setOrderByClause("allocation_time_date desc");
                 PageHelper.startPage(pageNum, pageSize);
                 List<Scholarship> scholarships = scholarshipMapper.selectByExample(scholarshipExample);
+                pageInfo = new PageInfo(scholarships);
                 for (Scholarship scholarship : scholarships) {
                     ScholarshipForListBO bo = new ScholarshipForListBO();
                     bo.setId(scholarship.getId());
@@ -651,8 +661,12 @@ public class PrizeService implements IPrizeService {
             timeExample.createCriteria().andScholarshipIdEqualTo(collegePrize.getScholarshipId())
                     .andPrimaryTeachingInstitutionIdEqualTo(collegePrize.getPrimaryTeachingInstitutionId());
             List<PrizeCollegeLimitTime> limitTimes = prizeCollegeLimitTimeMapper.selectByExample(timeExample);
-            PrizeCollegeLimitTime prizeCollegeLimitTime = limitTimes.get(0);
-            bo.setTimeStatus(prizeCollegeLimitTime.getAllocationTimeStatus());
+            if (limitTimes.size()>0){
+                PrizeCollegeLimitTime prizeCollegeLimitTime = limitTimes.get(0);
+                bo.setTimeStatus(prizeCollegeLimitTime.getAllocationTimeStatus());
+            }else{
+                bo.setTimeStatus(false);
+            }
 
             Scholarship scholarship = scholarshipMapper.selectByPrimaryKey(collegePrize.getScholarshipId());
             bo.setScholarshipName(scholarship.getScholarshipName());

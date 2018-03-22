@@ -5,6 +5,7 @@ import com.liwj.asem.bo.SelectionBO;
 import com.liwj.asem.data.ResponseData;
 import com.liwj.asem.dto.UserDTO;
 import com.liwj.asem.exception.WSPException;
+import com.liwj.asem.model.Grade;
 import com.liwj.asem.service.IOrganizationService;
 import com.liwj.asem.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController

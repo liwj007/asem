@@ -33,6 +33,7 @@ public class ScheduleTask {
 
 
     @Scheduled(cron = "0 0/30 * * * ?")
+//    @Scheduled(cron = "*/5 * * * * ?")
     public void executeUploadTask() {
         System.out.println("test schedule");
         ScholarshipExample scholarshipExample = new ScholarshipExample();

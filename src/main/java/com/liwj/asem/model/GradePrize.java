@@ -1,6 +1,7 @@
 package com.liwj.asem.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class GradePrize implements Serializable {
     private Long id;
@@ -21,9 +22,11 @@ public class GradePrize implements Serializable {
 
     private Long collegePrizeId;
 
+    private Date createDate;
+
     private static final long serialVersionUID = 1L;
 
-    public GradePrize(Long id, Long primaryTeachingInstitutionId, Integer number, Long prizeInfoId, Long scholarshipId, Integer scholarshipType, Long gradeId, Integer status, Long collegePrizeId) {
+    public GradePrize(Long id, Long primaryTeachingInstitutionId, Integer number, Long prizeInfoId, Long scholarshipId, Integer scholarshipType, Long gradeId, Integer status, Long collegePrizeId, Date createDate) {
         this.id = id;
         this.primaryTeachingInstitutionId = primaryTeachingInstitutionId;
         this.number = number;
@@ -33,6 +36,7 @@ public class GradePrize implements Serializable {
         this.gradeId = gradeId;
         this.status = status;
         this.collegePrizeId = collegePrizeId;
+        this.createDate = createDate;
     }
 
     public GradePrize() {
@@ -111,6 +115,14 @@ public class GradePrize implements Serializable {
         this.collegePrizeId = collegePrizeId;
     }
 
+    public Date getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
+    }
+
     @Override
     public boolean equals(Object that) {
         if (this == that) {
@@ -131,7 +143,8 @@ public class GradePrize implements Serializable {
             && (this.getScholarshipType() == null ? other.getScholarshipType() == null : this.getScholarshipType().equals(other.getScholarshipType()))
             && (this.getGradeId() == null ? other.getGradeId() == null : this.getGradeId().equals(other.getGradeId()))
             && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()))
-            && (this.getCollegePrizeId() == null ? other.getCollegePrizeId() == null : this.getCollegePrizeId().equals(other.getCollegePrizeId()));
+            && (this.getCollegePrizeId() == null ? other.getCollegePrizeId() == null : this.getCollegePrizeId().equals(other.getCollegePrizeId()))
+            && (this.getCreateDate() == null ? other.getCreateDate() == null : this.getCreateDate().equals(other.getCreateDate()));
     }
 
     @Override
@@ -147,6 +160,7 @@ public class GradePrize implements Serializable {
         result = prime * result + ((getGradeId() == null) ? 0 : getGradeId().hashCode());
         result = prime * result + ((getStatus() == null) ? 0 : getStatus().hashCode());
         result = prime * result + ((getCollegePrizeId() == null) ? 0 : getCollegePrizeId().hashCode());
+        result = prime * result + ((getCreateDate() == null) ? 0 : getCreateDate().hashCode());
         return result;
     }
 }

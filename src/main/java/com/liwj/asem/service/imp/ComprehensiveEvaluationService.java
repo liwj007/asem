@@ -21,6 +21,7 @@ import com.liwj.asem.utils.Util;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -47,7 +48,7 @@ public class ComprehensiveEvaluationService implements IComprehensiveEvaluationS
     private UserMapper userMapper;
 
     @Override
-    @Transactional(rollbackFor=Exception.class)
+    @Transactional(rollbackFor = Exception.class)
     public void uploadFiles(List<FileBO> fileBOList) throws IOException, WSPException {
         for (FileBO bo : fileBOList) {
             String fileName = bo.getName();
@@ -90,7 +91,7 @@ public class ComprehensiveEvaluationService implements IComprehensiveEvaluationS
 
         AssessmentRecordExample example = new AssessmentRecordExample();
         AssessmentRecordExample.Criteria criteria1 = example.createCriteria();
-        if (year != null)
+        if (year != null && year != 0)
             criteria1.andYearEqualTo(year.intValue());
         if (userSns.size() > 0) {
             criteria1.andSnIn(userSns);
@@ -171,7 +172,8 @@ public class ComprehensiveEvaluationService implements IComprehensiveEvaluationS
             HSSFRow hssfRow = hssfSheet.getRow(rowNum);
 
             Integer academicYear = new Double(hssfRow.getCell(0).getNumericCellValue()).intValue();
-            String Sn = hssfRow.getCell(1).toString();
+            String Sn  = hssfRow.getCell(1).toString();
+            
             Integer majorNumber = new Double(hssfRow.getCell(2).getNumericCellValue()).intValue();
             Double compositeScore = hssfRow.getCell(3).getNumericCellValue();
             Integer compositeRank = new Double(hssfRow.getCell(4).getNumericCellValue()).intValue();

@@ -22,4 +22,6 @@ public interface IScholarshipService {
     void openToStudent(UserDTO user, Long scholarshipId);
 
     PageInfo getScholarshipsOfAward(UserDTO user, Integer pageNum, Integer pageSize);
+
+    void closeScholarship(UserDTO user, Long scholarshipId) throws WSPException;
 }

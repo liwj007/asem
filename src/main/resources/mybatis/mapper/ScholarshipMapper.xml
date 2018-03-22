@@ -16,6 +16,7 @@
       <arg column="need_grade_check" javaType="java.lang.Boolean" jdbcType="BIT" />
       <arg column="student_begin_date" javaType="java.util.Date" jdbcType="TIMESTAMP" />
       <arg column="college_end_date" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <arg column="allocation_time_date" javaType="java.util.Date" jdbcType="TIMESTAMP" />
     </constructor>
   </resultMap>
   <sql id="Example_Where_Clause">
@@ -79,7 +80,7 @@
   <sql id="Base_Column_List">
     id, flow_template_id, requirement, status, create_date, primary_teaching_institution_id, 
     scholarship_name, scholarship_type, prize_type, allocation_time_status, need_grade_check, 
-    student_begin_date, college_end_date
+    student_begin_date, college_end_date, allocation_time_date
   </sql>
   <select id="selectByExample" parameterType="com.liwj.asem.model.ScholarshipExample" resultMap="BaseResultMap">
     select
@@ -120,12 +121,12 @@
       create_date, primary_teaching_institution_id, 
       scholarship_name, scholarship_type, prize_type, 
       allocation_time_status, need_grade_check, student_begin_date, 
-      college_end_date)
+      college_end_date, allocation_time_date)
     values (#{flowTemplateId,jdbcType=BIGINT}, #{requirement,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, 
       #{createDate,jdbcType=TIMESTAMP}, #{primaryTeachingInstitutionId,jdbcType=BIGINT}, 
       #{scholarshipName,jdbcType=VARCHAR}, #{scholarshipType,jdbcType=INTEGER}, #{prizeType,jdbcType=INTEGER}, 
       #{allocationTimeStatus,jdbcType=BIT}, #{needGradeCheck,jdbcType=BIT}, #{studentBeginDate,jdbcType=TIMESTAMP}, 
-      #{collegeEndDate,jdbcType=TIMESTAMP})
+      #{collegeEndDate,jdbcType=TIMESTAMP}, #{allocationTimeDate,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.liwj.asem.model.Scholarship">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -169,6 +170,9 @@
       <if test="collegeEndDate != null">
         college_end_date,
       </if>
+      <if test="allocationTimeDate != null">
+        allocation_time_date,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="flowTemplateId != null">
@@ -206,6 +210,9 @@
       </if>
       <if test="collegeEndDate != null">
         #{collegeEndDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="allocationTimeDate != null">
+        #{allocationTimeDate,jdbcType=TIMESTAMP},
       </if>
     </trim>
   </insert>
@@ -257,6 +264,9 @@
       <if test="record.collegeEndDate != null">
         college_end_date = #{record.collegeEndDate,jdbcType=TIMESTAMP},
       </if>
+      <if test="record.allocationTimeDate != null">
+        allocation_time_date = #{record.allocationTimeDate,jdbcType=TIMESTAMP},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -276,7 +286,8 @@
       allocation_time_status = #{record.allocationTimeStatus,jdbcType=BIT},
       need_grade_check = #{record.needGradeCheck,jdbcType=BIT},
       student_begin_date = #{record.studentBeginDate,jdbcType=TIMESTAMP},
-      college_end_date = #{record.collegeEndDate,jdbcType=TIMESTAMP}
+      college_end_date = #{record.collegeEndDate,jdbcType=TIMESTAMP},
+      allocation_time_date = #{record.allocationTimeDate,jdbcType=TIMESTAMP}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -320,6 +331,9 @@
       <if test="collegeEndDate != null">
         college_end_date = #{collegeEndDate,jdbcType=TIMESTAMP},
       </if>
+      <if test="allocationTimeDate != null">
+        allocation_time_date = #{allocationTimeDate,jdbcType=TIMESTAMP},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -336,7 +350,8 @@
       allocation_time_status = #{allocationTimeStatus,jdbcType=BIT},
       need_grade_check = #{needGradeCheck,jdbcType=BIT},
       student_begin_date = #{studentBeginDate,jdbcType=TIMESTAMP},
-      college_end_date = #{collegeEndDate,jdbcType=TIMESTAMP}
+      college_end_date = #{collegeEndDate,jdbcType=TIMESTAMP},
+      allocation_time_date = #{allocationTimeDate,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

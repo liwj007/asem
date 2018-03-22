@@ -22,9 +22,11 @@ public class ApplicationStep implements Serializable {
 
     private Long prizeId;
 
+    private Date createDate;
+
     private static final long serialVersionUID = 1L;
 
-    public ApplicationStep(Long id, Long flowTemplateStepId, Long applicationId, Long operatorId, Date operationDate, Integer status, Long primaryTeachingInstitutionId, Long gradeId, Long prizeId) {
+    public ApplicationStep(Long id, Long flowTemplateStepId, Long applicationId, Long operatorId, Date operationDate, Integer status, Long primaryTeachingInstitutionId, Long gradeId, Long prizeId, Date createDate) {
         this.id = id;
         this.flowTemplateStepId = flowTemplateStepId;
         this.applicationId = applicationId;
@@ -34,6 +36,7 @@ public class ApplicationStep implements Serializable {
         this.primaryTeachingInstitutionId = primaryTeachingInstitutionId;
         this.gradeId = gradeId;
         this.prizeId = prizeId;
+        this.createDate = createDate;
     }
 
     public ApplicationStep() {
@@ -112,6 +115,14 @@ public class ApplicationStep implements Serializable {
         this.prizeId = prizeId;
     }
 
+    public Date getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
+    }
+
     @Override
     public boolean equals(Object that) {
         if (this == that) {
@@ -132,7 +143,8 @@ public class ApplicationStep implements Serializable {
             && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()))
             && (this.getPrimaryTeachingInstitutionId() == null ? other.getPrimaryTeachingInstitutionId() == null : this.getPrimaryTeachingInstitutionId().equals(other.getPrimaryTeachingInstitutionId()))
             && (this.getGradeId() == null ? other.getGradeId() == null : this.getGradeId().equals(other.getGradeId()))
-            && (this.getPrizeId() == null ? other.getPrizeId() == null : this.getPrizeId().equals(other.getPrizeId()));
+            && (this.getPrizeId() == null ? other.getPrizeId() == null : this.getPrizeId().equals(other.getPrizeId()))
+            && (this.getCreateDate() == null ? other.getCreateDate() == null : this.getCreateDate().equals(other.getCreateDate()));
     }
 
     @Override
@@ -148,6 +160,7 @@ public class ApplicationStep implements Serializable {
         result = prime * result + ((getPrimaryTeachingInstitutionId() == null) ? 0 : getPrimaryTeachingInstitutionId().hashCode());
         result = prime * result + ((getGradeId() == null) ? 0 : getGradeId().hashCode());
         result = prime * result + ((getPrizeId() == null) ? 0 : getPrizeId().hashCode());
+        result = prime * result + ((getCreateDate() == null) ? 0 : getCreateDate().hashCode());
         return result;
     }
 }

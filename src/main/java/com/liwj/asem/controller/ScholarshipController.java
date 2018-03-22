@@ -75,6 +75,16 @@ public class ScholarshipController {
         return responseData;
     }
 
+    @RequestMapping(value = "/close_scholarship", method = RequestMethod.POST)
+    public ResponseData closeScholarship(@RequestParam(value = "token") String token,
+                                      @RequestParam(value = "id") Long scholarshipId) throws WSPException {
+        UserDTO user = userService.getUserByToken(token);
+        scholarshipService.closeScholarship(user, scholarshipId);
+        ResponseData responseData = new ResponseData();
+        responseData.setSuccessData(null);
+        return responseData;
+    }
+
     @RequestMapping(value = "/getScholarshipsOfAward", method = RequestMethod.GET)
     public ResponseData getScholarshipsOfAward(@RequestParam(value = "token") String token,
                                                @RequestParam(value = "pageSize") Integer pageSize,
