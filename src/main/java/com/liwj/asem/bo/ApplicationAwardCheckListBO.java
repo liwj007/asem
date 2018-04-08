@@ -1,6 +1,5 @@
 package com.liwj.asem.bo;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 
 import java.util.Date;
 

@@ -16,9 +16,9 @@ public class ApplicationStep implements Serializable {
 
     private Integer status;
 
-    private Long primaryTeachingInstitutionId;
+    private Long collegeId;
 
-    private Long gradeId;
+    private String grade;
 
     private Long prizeId;
 
@@ -26,15 +26,15 @@ public class ApplicationStep implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public ApplicationStep(Long id, Long flowTemplateStepId, Long applicationId, Long operatorId, Date operationDate, Integer status, Long primaryTeachingInstitutionId, Long gradeId, Long prizeId, Date createDate) {
+    public ApplicationStep(Long id, Long flowTemplateStepId, Long applicationId, Long operatorId, Date operationDate, Integer status, Long collegeId, String grade, Long prizeId, Date createDate) {
         this.id = id;
         this.flowTemplateStepId = flowTemplateStepId;
         this.applicationId = applicationId;
         this.operatorId = operatorId;
         this.operationDate = operationDate;
         this.status = status;
-        this.primaryTeachingInstitutionId = primaryTeachingInstitutionId;
-        this.gradeId = gradeId;
+        this.collegeId = collegeId;
+        this.grade = grade;
         this.prizeId = prizeId;
         this.createDate = createDate;
     }
@@ -91,20 +91,20 @@ public class ApplicationStep implements Serializable {
         this.status = status;
     }
 
-    public Long getPrimaryTeachingInstitutionId() {
-        return primaryTeachingInstitutionId;
+    public Long getCollegeId() {
+        return collegeId;
     }
 
-    public void setPrimaryTeachingInstitutionId(Long primaryTeachingInstitutionId) {
-        this.primaryTeachingInstitutionId = primaryTeachingInstitutionId;
+    public void setCollegeId(Long collegeId) {
+        this.collegeId = collegeId;
     }
 
-    public Long getGradeId() {
-        return gradeId;
+    public String getGrade() {
+        return grade;
     }
 
-    public void setGradeId(Long gradeId) {
-        this.gradeId = gradeId;
+    public void setGrade(String grade) {
+        this.grade = grade == null ? null : grade.trim();
     }
 
     public Long getPrizeId() {
@@ -141,8 +141,8 @@ public class ApplicationStep implements Serializable {
             && (this.getOperatorId() == null ? other.getOperatorId() == null : this.getOperatorId().equals(other.getOperatorId()))
             && (this.getOperationDate() == null ? other.getOperationDate() == null : this.getOperationDate().equals(other.getOperationDate()))
             && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()))
-            && (this.getPrimaryTeachingInstitutionId() == null ? other.getPrimaryTeachingInstitutionId() == null : this.getPrimaryTeachingInstitutionId().equals(other.getPrimaryTeachingInstitutionId()))
-            && (this.getGradeId() == null ? other.getGradeId() == null : this.getGradeId().equals(other.getGradeId()))
+            && (this.getCollegeId() == null ? other.getCollegeId() == null : this.getCollegeId().equals(other.getCollegeId()))
+            && (this.getGrade() == null ? other.getGrade() == null : this.getGrade().equals(other.getGrade()))
             && (this.getPrizeId() == null ? other.getPrizeId() == null : this.getPrizeId().equals(other.getPrizeId()))
             && (this.getCreateDate() == null ? other.getCreateDate() == null : this.getCreateDate().equals(other.getCreateDate()));
     }
@@ -157,8 +157,8 @@ public class ApplicationStep implements Serializable {
         result = prime * result + ((getOperatorId() == null) ? 0 : getOperatorId().hashCode());
         result = prime * result + ((getOperationDate() == null) ? 0 : getOperationDate().hashCode());
         result = prime * result + ((getStatus() == null) ? 0 : getStatus().hashCode());
-        result = prime * result + ((getPrimaryTeachingInstitutionId() == null) ? 0 : getPrimaryTeachingInstitutionId().hashCode());
-        result = prime * result + ((getGradeId() == null) ? 0 : getGradeId().hashCode());
+        result = prime * result + ((getCollegeId() == null) ? 0 : getCollegeId().hashCode());
+        result = prime * result + ((getGrade() == null) ? 0 : getGrade().hashCode());
         result = prime * result + ((getPrizeId() == null) ? 0 : getPrizeId().hashCode());
         result = prime * result + ((getCreateDate() == null) ? 0 : getCreateDate().hashCode());
         return result;

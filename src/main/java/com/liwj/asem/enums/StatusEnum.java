@@ -6,7 +6,7 @@ import java.util.Map;
 public enum StatusEnum {
     NEW(0, "新建"),
     RELEASE(1, "下发至学院"),
-    UNREADY(2,"不可见"),
+    UNREADY(2,"已分配但不可见"),
     OPEN(3, "开放申请中"),
     CHECK(4, "审核中"),
     CLOSE(5, "关闭"),

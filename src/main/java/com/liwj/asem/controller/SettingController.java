@@ -4,6 +4,7 @@ import com.github.pagehelper.PageInfo;
 import com.liwj.asem.bo.FileBO;
 import com.liwj.asem.data.ResponseData;
 import com.liwj.asem.exception.WSPException;
+import com.liwj.asem.remote.RemoteException;
 import com.liwj.asem.service.IComprehensiveEvaluationService;
 import com.liwj.asem.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,9 +36,9 @@ public class SettingController {
                                                        @RequestParam(value = "year") Long year,
                                                        @RequestParam(value = "college", required = false) Long college,
                                                        @RequestParam(value = "major", required = false) Long major,
-                                                       @RequestParam(value = "grade", required = false) Long grade,
+                                                       @RequestParam(value = "grade", required = false) String grade,
                                                        @RequestParam(value = "pageSize") Integer pageSize,
-                                                       @RequestParam(value = "pageNum") Integer pageNum) throws WSPException {
+                                                       @RequestParam(value = "pageNum") Integer pageNum) throws WSPException, RemoteException {
         PageInfo pageInfo = comprehensiveEvaluationService
                 .getAssessmentRecordList(year,college,major,grade,pageNum, pageSize);
         ResponseData responseData = new ResponseData();

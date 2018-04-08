@@ -10,7 +10,7 @@ public class PrizeCollegeLimitTime implements Serializable {
 
     private Date gradeEndDate;
 
-    private Long primaryTeachingInstitutionId;
+    private Long collegeId;
 
     private Long scholarshipId;
 
@@ -18,11 +18,11 @@ public class PrizeCollegeLimitTime implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public PrizeCollegeLimitTime(Long id, Date studentEndDate, Date gradeEndDate, Long primaryTeachingInstitutionId, Long scholarshipId, Boolean allocationTimeStatus) {
+    public PrizeCollegeLimitTime(Long id, Date studentEndDate, Date gradeEndDate, Long collegeId, Long scholarshipId, Boolean allocationTimeStatus) {
         this.id = id;
         this.studentEndDate = studentEndDate;
         this.gradeEndDate = gradeEndDate;
-        this.primaryTeachingInstitutionId = primaryTeachingInstitutionId;
+        this.collegeId = collegeId;
         this.scholarshipId = scholarshipId;
         this.allocationTimeStatus = allocationTimeStatus;
     }
@@ -55,12 +55,12 @@ public class PrizeCollegeLimitTime implements Serializable {
         this.gradeEndDate = gradeEndDate;
     }
 
-    public Long getPrimaryTeachingInstitutionId() {
-        return primaryTeachingInstitutionId;
+    public Long getCollegeId() {
+        return collegeId;
     }
 
-    public void setPrimaryTeachingInstitutionId(Long primaryTeachingInstitutionId) {
-        this.primaryTeachingInstitutionId = primaryTeachingInstitutionId;
+    public void setCollegeId(Long collegeId) {
+        this.collegeId = collegeId;
     }
 
     public Long getScholarshipId() {
@@ -94,7 +94,7 @@ public class PrizeCollegeLimitTime implements Serializable {
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
             && (this.getStudentEndDate() == null ? other.getStudentEndDate() == null : this.getStudentEndDate().equals(other.getStudentEndDate()))
             && (this.getGradeEndDate() == null ? other.getGradeEndDate() == null : this.getGradeEndDate().equals(other.getGradeEndDate()))
-            && (this.getPrimaryTeachingInstitutionId() == null ? other.getPrimaryTeachingInstitutionId() == null : this.getPrimaryTeachingInstitutionId().equals(other.getPrimaryTeachingInstitutionId()))
+            && (this.getCollegeId() == null ? other.getCollegeId() == null : this.getCollegeId().equals(other.getCollegeId()))
             && (this.getScholarshipId() == null ? other.getScholarshipId() == null : this.getScholarshipId().equals(other.getScholarshipId()))
             && (this.getAllocationTimeStatus() == null ? other.getAllocationTimeStatus() == null : this.getAllocationTimeStatus().equals(other.getAllocationTimeStatus()));
     }
@@ -106,7 +106,7 @@ public class PrizeCollegeLimitTime implements Serializable {
         result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
         result = prime * result + ((getStudentEndDate() == null) ? 0 : getStudentEndDate().hashCode());
         result = prime * result + ((getGradeEndDate() == null) ? 0 : getGradeEndDate().hashCode());
-        result = prime * result + ((getPrimaryTeachingInstitutionId() == null) ? 0 : getPrimaryTeachingInstitutionId().hashCode());
+        result = prime * result + ((getCollegeId() == null) ? 0 : getCollegeId().hashCode());
         result = prime * result + ((getScholarshipId() == null) ? 0 : getScholarshipId().hashCode());
         result = prime * result + ((getAllocationTimeStatus() == null) ? 0 : getAllocationTimeStatus().hashCode());
         return result;

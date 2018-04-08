@@ -6,7 +6,7 @@
       <idArg column="id" javaType="java.lang.Long" jdbcType="BIGINT" />
       <arg column="student_end_date" javaType="java.util.Date" jdbcType="TIMESTAMP" />
       <arg column="grade_end_date" javaType="java.util.Date" jdbcType="TIMESTAMP" />
-      <arg column="primary_teaching_institution_id" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="college_id" javaType="java.lang.Long" jdbcType="BIGINT" />
       <arg column="scholarship_id" javaType="java.lang.Long" jdbcType="BIGINT" />
       <arg column="allocation_time_status" javaType="java.lang.Boolean" jdbcType="BIT" />
     </constructor>
@@ -70,8 +70,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, student_end_date, grade_end_date, primary_teaching_institution_id, scholarship_id, 
-    allocation_time_status
+    id, student_end_date, grade_end_date, college_id, scholarship_id, allocation_time_status
   </sql>
   <select id="selectByExample" parameterType="com.liwj.asem.model.PrizeCollegeLimitTimeExample" resultMap="BaseResultMap">
     select
@@ -109,11 +108,11 @@
       SELECT LAST_INSERT_ID()
     </selectKey>
     insert into prize_college_limit_time (student_end_date, grade_end_date, 
-      primary_teaching_institution_id, scholarship_id, 
-      allocation_time_status)
+      college_id, scholarship_id, allocation_time_status
+      )
     values (#{studentEndDate,jdbcType=TIMESTAMP}, #{gradeEndDate,jdbcType=TIMESTAMP}, 
-      #{primaryTeachingInstitutionId,jdbcType=BIGINT}, #{scholarshipId,jdbcType=BIGINT}, 
-      #{allocationTimeStatus,jdbcType=BIT})
+      #{collegeId,jdbcType=BIGINT}, #{scholarshipId,jdbcType=BIGINT}, #{allocationTimeStatus,jdbcType=BIT}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.liwj.asem.model.PrizeCollegeLimitTime">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -127,8 +126,8 @@
       <if test="gradeEndDate != null">
         grade_end_date,
       </if>
-      <if test="primaryTeachingInstitutionId != null">
-        primary_teaching_institution_id,
+      <if test="collegeId != null">
+        college_id,
       </if>
       <if test="scholarshipId != null">
         scholarship_id,
@@ -144,8 +143,8 @@
       <if test="gradeEndDate != null">
         #{gradeEndDate,jdbcType=TIMESTAMP},
       </if>
-      <if test="primaryTeachingInstitutionId != null">
-        #{primaryTeachingInstitutionId,jdbcType=BIGINT},
+      <if test="collegeId != null">
+        #{collegeId,jdbcType=BIGINT},
       </if>
       <if test="scholarshipId != null">
         #{scholarshipId,jdbcType=BIGINT},
@@ -173,8 +172,8 @@
       <if test="record.gradeEndDate != null">
         grade_end_date = #{record.gradeEndDate,jdbcType=TIMESTAMP},
       </if>
-      <if test="record.primaryTeachingInstitutionId != null">
-        primary_teaching_institution_id = #{record.primaryTeachingInstitutionId,jdbcType=BIGINT},
+      <if test="record.collegeId != null">
+        college_id = #{record.collegeId,jdbcType=BIGINT},
       </if>
       <if test="record.scholarshipId != null">
         scholarship_id = #{record.scholarshipId,jdbcType=BIGINT},
@@ -192,7 +191,7 @@
     set id = #{record.id,jdbcType=BIGINT},
       student_end_date = #{record.studentEndDate,jdbcType=TIMESTAMP},
       grade_end_date = #{record.gradeEndDate,jdbcType=TIMESTAMP},
-      primary_teaching_institution_id = #{record.primaryTeachingInstitutionId,jdbcType=BIGINT},
+      college_id = #{record.collegeId,jdbcType=BIGINT},
       scholarship_id = #{record.scholarshipId,jdbcType=BIGINT},
       allocation_time_status = #{record.allocationTimeStatus,jdbcType=BIT}
     <if test="_parameter != null">
@@ -208,8 +207,8 @@
       <if test="gradeEndDate != null">
         grade_end_date = #{gradeEndDate,jdbcType=TIMESTAMP},
       </if>
-      <if test="primaryTeachingInstitutionId != null">
-        primary_teaching_institution_id = #{primaryTeachingInstitutionId,jdbcType=BIGINT},
+      <if test="collegeId != null">
+        college_id = #{collegeId,jdbcType=BIGINT},
       </if>
       <if test="scholarshipId != null">
         scholarship_id = #{scholarshipId,jdbcType=BIGINT},
@@ -224,7 +223,7 @@
     update prize_college_limit_time
     set student_end_date = #{studentEndDate,jdbcType=TIMESTAMP},
       grade_end_date = #{gradeEndDate,jdbcType=TIMESTAMP},
-      primary_teaching_institution_id = #{primaryTeachingInstitutionId,jdbcType=BIGINT},
+      college_id = #{collegeId,jdbcType=BIGINT},
       scholarship_id = #{scholarshipId,jdbcType=BIGINT},
       allocation_time_status = #{allocationTimeStatus,jdbcType=BIT}
     where id = #{id,jdbcType=BIGINT}

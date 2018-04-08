@@ -1,8 +1,10 @@
 package com.liwj.asem.dto;
 
+import com.liwj.asem.bo.Unit;
 import com.liwj.asem.enums.RoleTypeEnum;
 import com.liwj.asem.enums.UserTypeEnum;
 import com.liwj.asem.model.*;
+import com.liwj.asem.remote.bo.College;
 
 
 import java.util.ArrayList;
@@ -14,7 +16,7 @@ public class UserDTO {
 
     private String sn;
 
-    private RoleTypeEnum userType;
+    private RoleTypeEnum userRole;
 
     private String name;
 
@@ -26,19 +28,35 @@ public class UserDTO {
 
     private String token;
 
-    private PrimaryTeachingInstitution primaryTeachingInstitution;
+    private Long collegeId;
+//
+//    private Major major;
+//
+    private String grade;
+//
+//    private String classes;
 
-    private SecondaryTeachingInstitution secondaryTeachingInstitution;
+    public String getGrade() {
+        return grade;
+    }
 
-    private Grade grade;
+    public void setGrade(String grade) {
+        this.grade = grade;
+    }
 
-    private Classes classes;
+    public Long getCollegeId() {
+        return collegeId;
+    }
+
+    public void setCollegeId(Long collegeId) {
+        this.collegeId = collegeId;
+    }
 
     private List<RoleTypeEnum> roles;
 
-    private List<PrimaryTeachingInstitution> managePrimaryTeachingInstitutions;
+    private List<Unit> manageColleges;
 
-    private List<Grade> manageGrades;
+    private List<String> manageGrades;
 
     private Long expire;
 
@@ -50,25 +68,10 @@ public class UserDTO {
         this.expire = expire;
     }
 
-    public List<Long> getManageCollegeId(){
-        List<Long> res = new ArrayList<>();
-        for (PrimaryTeachingInstitution institution: managePrimaryTeachingInstitutions){
-            res.add(institution.getId());
-        }
-        return res;
-    }
-
-    public List<Long> getMangeGradeId(){
-        List<Long> res = new ArrayList<>();
-        for (Grade grade: manageGrades){
-            res.add(grade.getId());
-        }
-        return res;
-    }
 
     public UserDTO() {
         manageGrades = new ArrayList<>();
-        managePrimaryTeachingInstitutions = new ArrayList<>();
+        manageColleges = new ArrayList<>();
         roles = new ArrayList<>();
     }
 
@@ -88,12 +91,12 @@ public class UserDTO {
         this.sn = sn;
     }
 
-    public RoleTypeEnum getUserType() {
-        return userType;
+    public RoleTypeEnum getUserRole() {
+        return userRole;
     }
 
-    public void setUserType(RoleTypeEnum userType) {
-        this.userType = userType;
+    public void setUserRole(RoleTypeEnum userRole) {
+        this.userRole = userRole;
     }
 
     public String getName() {
@@ -136,37 +139,7 @@ public class UserDTO {
         this.token = token;
     }
 
-    public PrimaryTeachingInstitution getPrimaryTeachingInstitution() {
-        return primaryTeachingInstitution;
-    }
 
-    public void setPrimaryTeachingInstitution(PrimaryTeachingInstitution primaryTeachingInstitution) {
-        this.primaryTeachingInstitution = primaryTeachingInstitution;
-    }
-
-    public SecondaryTeachingInstitution getSecondaryTeachingInstitution() {
-        return secondaryTeachingInstitution;
-    }
-
-    public void setSecondaryTeachingInstitution(SecondaryTeachingInstitution secondaryTeachingInstitution) {
-        this.secondaryTeachingInstitution = secondaryTeachingInstitution;
-    }
-
-    public Grade getGrade() {
-        return grade;
-    }
-
-    public void setGrade(Grade grade) {
-        this.grade = grade;
-    }
-
-    public Classes getClasses() {
-        return classes;
-    }
-
-    public void setClasses(Classes classes) {
-        this.classes = classes;
-    }
 
     public List<RoleTypeEnum> getRoles() {
         return roles;
@@ -176,19 +149,27 @@ public class UserDTO {
         this.roles = roles;
     }
 
-    public List<PrimaryTeachingInstitution> getManagePrimaryTeachingInstitutions() {
-        return managePrimaryTeachingInstitutions;
+    public List<Unit> getManageColleges() {
+        return manageColleges;
     }
 
-    public void setManagePrimaryTeachingInstitutions(List<PrimaryTeachingInstitution> managePrimaryTeachingInstitutions) {
-        this.managePrimaryTeachingInstitutions = managePrimaryTeachingInstitutions;
+    public List<Long> getManageCollegeIDs() {
+        List<Long> res = new ArrayList<>();
+        for (Unit unit: manageColleges){
+            res.add(unit.getId());
+        }
+        return res;
     }
 
-    public List<Grade> getManageGrades() {
+    public void setManageColleges(List<Unit> manageColleges) {
+        this.manageColleges = manageColleges;
+    }
+
+    public List<String> getManageGrades() {
         return manageGrades;
     }
 
-    public void setManageGrades(List<Grade> manageGrades) {
+    public void setManageGrades(List<String> manageGrades) {
         this.manageGrades = manageGrades;
     }
 }

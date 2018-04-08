@@ -8,7 +8,7 @@
       <arg column="requirement" javaType="java.lang.String" jdbcType="VARCHAR" />
       <arg column="status" javaType="java.lang.Integer" jdbcType="INTEGER" />
       <arg column="create_date" javaType="java.util.Date" jdbcType="TIMESTAMP" />
-      <arg column="primary_teaching_institution_id" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="college_id" javaType="java.lang.Long" jdbcType="BIGINT" />
       <arg column="scholarship_name" javaType="java.lang.String" jdbcType="VARCHAR" />
       <arg column="scholarship_type" javaType="java.lang.Integer" jdbcType="INTEGER" />
       <arg column="prize_type" javaType="java.lang.Integer" jdbcType="INTEGER" />
@@ -78,9 +78,9 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, flow_template_id, requirement, status, create_date, primary_teaching_institution_id, 
-    scholarship_name, scholarship_type, prize_type, allocation_time_status, need_grade_check, 
-    student_begin_date, college_end_date, allocation_time_date
+    id, flow_template_id, requirement, status, create_date, college_id, scholarship_name, 
+    scholarship_type, prize_type, allocation_time_status, need_grade_check, student_begin_date, 
+    college_end_date, allocation_time_date
   </sql>
   <select id="selectByExample" parameterType="com.liwj.asem.model.ScholarshipExample" resultMap="BaseResultMap">
     select
@@ -118,15 +118,15 @@
       SELECT LAST_INSERT_ID()
     </selectKey>
     insert into scholarship (flow_template_id, requirement, status, 
-      create_date, primary_teaching_institution_id, 
-      scholarship_name, scholarship_type, prize_type, 
-      allocation_time_status, need_grade_check, student_begin_date, 
-      college_end_date, allocation_time_date)
+      create_date, college_id, scholarship_name, 
+      scholarship_type, prize_type, allocation_time_status, 
+      need_grade_check, student_begin_date, college_end_date, 
+      allocation_time_date)
     values (#{flowTemplateId,jdbcType=BIGINT}, #{requirement,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, 
-      #{createDate,jdbcType=TIMESTAMP}, #{primaryTeachingInstitutionId,jdbcType=BIGINT}, 
-      #{scholarshipName,jdbcType=VARCHAR}, #{scholarshipType,jdbcType=INTEGER}, #{prizeType,jdbcType=INTEGER}, 
-      #{allocationTimeStatus,jdbcType=BIT}, #{needGradeCheck,jdbcType=BIT}, #{studentBeginDate,jdbcType=TIMESTAMP}, 
-      #{collegeEndDate,jdbcType=TIMESTAMP}, #{allocationTimeDate,jdbcType=TIMESTAMP})
+      #{createDate,jdbcType=TIMESTAMP}, #{collegeId,jdbcType=BIGINT}, #{scholarshipName,jdbcType=VARCHAR}, 
+      #{scholarshipType,jdbcType=INTEGER}, #{prizeType,jdbcType=INTEGER}, #{allocationTimeStatus,jdbcType=BIT}, 
+      #{needGradeCheck,jdbcType=BIT}, #{studentBeginDate,jdbcType=TIMESTAMP}, #{collegeEndDate,jdbcType=TIMESTAMP}, 
+      #{allocationTimeDate,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.liwj.asem.model.Scholarship">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -146,8 +146,8 @@
       <if test="createDate != null">
         create_date,
       </if>
-      <if test="primaryTeachingInstitutionId != null">
-        primary_teaching_institution_id,
+      <if test="collegeId != null">
+        college_id,
       </if>
       <if test="scholarshipName != null">
         scholarship_name,
@@ -187,8 +187,8 @@
       <if test="createDate != null">
         #{createDate,jdbcType=TIMESTAMP},
       </if>
-      <if test="primaryTeachingInstitutionId != null">
-        #{primaryTeachingInstitutionId,jdbcType=BIGINT},
+      <if test="collegeId != null">
+        #{collegeId,jdbcType=BIGINT},
       </if>
       <if test="scholarshipName != null">
         #{scholarshipName,jdbcType=VARCHAR},
@@ -240,8 +240,8 @@
       <if test="record.createDate != null">
         create_date = #{record.createDate,jdbcType=TIMESTAMP},
       </if>
-      <if test="record.primaryTeachingInstitutionId != null">
-        primary_teaching_institution_id = #{record.primaryTeachingInstitutionId,jdbcType=BIGINT},
+      <if test="record.collegeId != null">
+        college_id = #{record.collegeId,jdbcType=BIGINT},
       </if>
       <if test="record.scholarshipName != null">
         scholarship_name = #{record.scholarshipName,jdbcType=VARCHAR},
@@ -279,7 +279,7 @@
       requirement = #{record.requirement,jdbcType=VARCHAR},
       status = #{record.status,jdbcType=INTEGER},
       create_date = #{record.createDate,jdbcType=TIMESTAMP},
-      primary_teaching_institution_id = #{record.primaryTeachingInstitutionId,jdbcType=BIGINT},
+      college_id = #{record.collegeId,jdbcType=BIGINT},
       scholarship_name = #{record.scholarshipName,jdbcType=VARCHAR},
       scholarship_type = #{record.scholarshipType,jdbcType=INTEGER},
       prize_type = #{record.prizeType,jdbcType=INTEGER},
@@ -307,8 +307,8 @@
       <if test="createDate != null">
         create_date = #{createDate,jdbcType=TIMESTAMP},
       </if>
-      <if test="primaryTeachingInstitutionId != null">
-        primary_teaching_institution_id = #{primaryTeachingInstitutionId,jdbcType=BIGINT},
+      <if test="collegeId != null">
+        college_id = #{collegeId,jdbcType=BIGINT},
       </if>
       <if test="scholarshipName != null">
         scholarship_name = #{scholarshipName,jdbcType=VARCHAR},
@@ -343,7 +343,7 @@
       requirement = #{requirement,jdbcType=VARCHAR},
       status = #{status,jdbcType=INTEGER},
       create_date = #{createDate,jdbcType=TIMESTAMP},
-      primary_teaching_institution_id = #{primaryTeachingInstitutionId,jdbcType=BIGINT},
+      college_id = #{collegeId,jdbcType=BIGINT},
       scholarship_name = #{scholarshipName,jdbcType=VARCHAR},
       scholarship_type = #{scholarshipType,jdbcType=INTEGER},
       prize_type = #{prizeType,jdbcType=INTEGER},

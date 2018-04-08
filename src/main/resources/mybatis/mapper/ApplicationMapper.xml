@@ -11,8 +11,8 @@
       <arg column="prize_status" javaType="java.lang.Integer" jdbcType="INTEGER" />
       <arg column="user_id" javaType="java.lang.Long" jdbcType="BIGINT" />
       <arg column="create_date" javaType="java.util.Date" jdbcType="TIMESTAMP" />
-      <arg column="primary_teaching_institution_id" javaType="java.lang.Long" jdbcType="BIGINT" />
-      <arg column="grade_id" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="college_id" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="grade" javaType="java.lang.String" jdbcType="VARCHAR" />
       <arg column="prize_info_id" javaType="java.lang.Long" jdbcType="BIGINT" />
       <arg column="college_publicity" javaType="java.lang.Boolean" jdbcType="BIT" />
       <arg column="school_publicity" javaType="java.lang.Boolean" jdbcType="BIT" />
@@ -28,8 +28,8 @@
       <arg column="prize_status" javaType="java.lang.Integer" jdbcType="INTEGER" />
       <arg column="user_id" javaType="java.lang.Long" jdbcType="BIGINT" />
       <arg column="create_date" javaType="java.util.Date" jdbcType="TIMESTAMP" />
-      <arg column="primary_teaching_institution_id" javaType="java.lang.Long" jdbcType="BIGINT" />
-      <arg column="grade_id" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="college_id" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="grade" javaType="java.lang.String" jdbcType="VARCHAR" />
       <arg column="prize_info_id" javaType="java.lang.Long" jdbcType="BIGINT" />
       <arg column="college_publicity" javaType="java.lang.Boolean" jdbcType="BIT" />
       <arg column="school_publicity" javaType="java.lang.Boolean" jdbcType="BIT" />
@@ -96,7 +96,7 @@
   </sql>
   <sql id="Base_Column_List">
     id, prize_id, scholarship_id, status, file_status, prize_status, user_id, create_date, 
-    primary_teaching_institution_id, grade_id, prize_info_id, college_publicity, school_publicity
+    college_id, grade, prize_info_id, college_publicity, school_publicity
   </sql>
   <sql id="Blob_Column_List">
     evaluation
@@ -157,14 +157,14 @@
     </selectKey>
     insert into application (prize_id, scholarship_id, status, 
       file_status, prize_status, user_id, 
-      create_date, primary_teaching_institution_id, 
-      grade_id, prize_info_id, college_publicity, 
-      school_publicity, evaluation)
+      create_date, college_id, grade, 
+      prize_info_id, college_publicity, school_publicity, 
+      evaluation)
     values (#{prizeId,jdbcType=BIGINT}, #{scholarshipId,jdbcType=BIGINT}, #{status,jdbcType=INTEGER}, 
       #{fileStatus,jdbcType=INTEGER}, #{prizeStatus,jdbcType=INTEGER}, #{userId,jdbcType=BIGINT}, 
-      #{createDate,jdbcType=TIMESTAMP}, #{primaryTeachingInstitutionId,jdbcType=BIGINT}, 
-      #{gradeId,jdbcType=BIGINT}, #{prizeInfoId,jdbcType=BIGINT}, #{collegePublicity,jdbcType=BIT}, 
-      #{schoolPublicity,jdbcType=BIT}, #{evaluation,jdbcType=LONGVARCHAR})
+      #{createDate,jdbcType=TIMESTAMP}, #{collegeId,jdbcType=BIGINT}, #{grade,jdbcType=VARCHAR}, 
+      #{prizeInfoId,jdbcType=BIGINT}, #{collegePublicity,jdbcType=BIT}, #{schoolPublicity,jdbcType=BIT}, 
+      #{evaluation,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.liwj.asem.model.Application">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -193,11 +193,11 @@
       <if test="createDate != null">
         create_date,
       </if>
-      <if test="primaryTeachingInstitutionId != null">
-        primary_teaching_institution_id,
+      <if test="collegeId != null">
+        college_id,
       </if>
-      <if test="gradeId != null">
-        grade_id,
+      <if test="grade != null">
+        grade,
       </if>
       <if test="prizeInfoId != null">
         prize_info_id,
@@ -234,11 +234,11 @@
       <if test="createDate != null">
         #{createDate,jdbcType=TIMESTAMP},
       </if>
-      <if test="primaryTeachingInstitutionId != null">
-        #{primaryTeachingInstitutionId,jdbcType=BIGINT},
+      <if test="collegeId != null">
+        #{collegeId,jdbcType=BIGINT},
       </if>
-      <if test="gradeId != null">
-        #{gradeId,jdbcType=BIGINT},
+      <if test="grade != null">
+        #{grade,jdbcType=VARCHAR},
       </if>
       <if test="prizeInfoId != null">
         #{prizeInfoId,jdbcType=BIGINT},
@@ -287,11 +287,11 @@
       <if test="record.createDate != null">
         create_date = #{record.createDate,jdbcType=TIMESTAMP},
       </if>
-      <if test="record.primaryTeachingInstitutionId != null">
-        primary_teaching_institution_id = #{record.primaryTeachingInstitutionId,jdbcType=BIGINT},
+      <if test="record.collegeId != null">
+        college_id = #{record.collegeId,jdbcType=BIGINT},
       </if>
-      <if test="record.gradeId != null">
-        grade_id = #{record.gradeId,jdbcType=BIGINT},
+      <if test="record.grade != null">
+        grade = #{record.grade,jdbcType=VARCHAR},
       </if>
       <if test="record.prizeInfoId != null">
         prize_info_id = #{record.prizeInfoId,jdbcType=BIGINT},
@@ -320,8 +320,8 @@
       prize_status = #{record.prizeStatus,jdbcType=INTEGER},
       user_id = #{record.userId,jdbcType=BIGINT},
       create_date = #{record.createDate,jdbcType=TIMESTAMP},
-      primary_teaching_institution_id = #{record.primaryTeachingInstitutionId,jdbcType=BIGINT},
-      grade_id = #{record.gradeId,jdbcType=BIGINT},
+      college_id = #{record.collegeId,jdbcType=BIGINT},
+      grade = #{record.grade,jdbcType=VARCHAR},
       prize_info_id = #{record.prizeInfoId,jdbcType=BIGINT},
       college_publicity = #{record.collegePublicity,jdbcType=BIT},
       school_publicity = #{record.schoolPublicity,jdbcType=BIT},
@@ -340,8 +340,8 @@
       prize_status = #{record.prizeStatus,jdbcType=INTEGER},
       user_id = #{record.userId,jdbcType=BIGINT},
       create_date = #{record.createDate,jdbcType=TIMESTAMP},
-      primary_teaching_institution_id = #{record.primaryTeachingInstitutionId,jdbcType=BIGINT},
-      grade_id = #{record.gradeId,jdbcType=BIGINT},
+      college_id = #{record.collegeId,jdbcType=BIGINT},
+      grade = #{record.grade,jdbcType=VARCHAR},
       prize_info_id = #{record.prizeInfoId,jdbcType=BIGINT},
       college_publicity = #{record.collegePublicity,jdbcType=BIT},
       school_publicity = #{record.schoolPublicity,jdbcType=BIT}
@@ -373,11 +373,11 @@
       <if test="createDate != null">
         create_date = #{createDate,jdbcType=TIMESTAMP},
       </if>
-      <if test="primaryTeachingInstitutionId != null">
-        primary_teaching_institution_id = #{primaryTeachingInstitutionId,jdbcType=BIGINT},
+      <if test="collegeId != null">
+        college_id = #{collegeId,jdbcType=BIGINT},
       </if>
-      <if test="gradeId != null">
-        grade_id = #{gradeId,jdbcType=BIGINT},
+      <if test="grade != null">
+        grade = #{grade,jdbcType=VARCHAR},
       </if>
       <if test="prizeInfoId != null">
         prize_info_id = #{prizeInfoId,jdbcType=BIGINT},
@@ -403,8 +403,8 @@
       prize_status = #{prizeStatus,jdbcType=INTEGER},
       user_id = #{userId,jdbcType=BIGINT},
       create_date = #{createDate,jdbcType=TIMESTAMP},
-      primary_teaching_institution_id = #{primaryTeachingInstitutionId,jdbcType=BIGINT},
-      grade_id = #{gradeId,jdbcType=BIGINT},
+      college_id = #{collegeId,jdbcType=BIGINT},
+      grade = #{grade,jdbcType=VARCHAR},
       prize_info_id = #{prizeInfoId,jdbcType=BIGINT},
       college_publicity = #{collegePublicity,jdbcType=BIT},
       school_publicity = #{schoolPublicity,jdbcType=BIT},
@@ -420,8 +420,8 @@
       prize_status = #{prizeStatus,jdbcType=INTEGER},
       user_id = #{userId,jdbcType=BIGINT},
       create_date = #{createDate,jdbcType=TIMESTAMP},
-      primary_teaching_institution_id = #{primaryTeachingInstitutionId,jdbcType=BIGINT},
-      grade_id = #{gradeId,jdbcType=BIGINT},
+      college_id = #{collegeId,jdbcType=BIGINT},
+      grade = #{grade,jdbcType=VARCHAR},
       prize_info_id = #{prizeInfoId,jdbcType=BIGINT},
       college_publicity = #{collegePublicity,jdbcType=BIT},
       school_publicity = #{schoolPublicity,jdbcType=BIT}

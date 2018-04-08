@@ -10,6 +10,7 @@ import com.liwj.asem.dto.UserDTO;
 import com.liwj.asem.enums.ApplicationFileStatusEnum;
 import com.liwj.asem.enums.ApplicationPrizeStatusEnum;
 import com.liwj.asem.exception.WSPException;
+import com.liwj.asem.remote.RemoteException;
 import com.liwj.asem.service.IApplicationService;
 import com.liwj.asem.service.IPublicityService;
 import com.liwj.asem.service.IUserService;
@@ -52,12 +53,12 @@ public class ApplicationCheckController {
                                                    @RequestParam(value = "prizeId") Long prizeId,
                                                    @RequestParam(value = "collegeId", required = false) Long collegeId,
                                                    @RequestParam(value = "majorId", required = false) Long majorId,
-                                                   @RequestParam(value = "gradeId", required = false) Long gradeId,
+                                                   @RequestParam(value = "gradeId", required = false) String grade,
                                                    @RequestParam(value = "classId", required = false) Long classId,
                                                    @RequestParam(value = "content", required = false) String content,
-                                                   @RequestParam(value = "status", required = false) Integer status) throws WSPException {
+                                                   @RequestParam(value = "status", required = false) Integer status) throws WSPException, RemoteException {
         UserDTO user = userService.getUserByToken(token);
-        List<Long> studentIds = userService.selectStudentsByFilters(collegeId, majorId, gradeId, classId, content);
+        List<Long> studentIds = userService.selectStudentsByFilters(collegeId, majorId, grade, classId, content);
         List<Integer> statusCodes = new ArrayList<>();
         switch (status) {
             case 0:
@@ -109,17 +110,18 @@ public class ApplicationCheckController {
                                                     @RequestParam(value = "prizeId") Long prizeId,
                                                     @RequestParam(value = "collegeId", required = false) Long collegeId,
                                                     @RequestParam(value = "majorId", required = false) Long majorId,
-                                                    @RequestParam(value = "gradeId", required = false) Long gradeId,
+                                                    @RequestParam(value = "gradeId", required = false) String grade,
                                                     @RequestParam(value = "classId", required = false) Long classId,
                                                     @RequestParam(value = "content", required = false) String content,
                                                     @RequestParam(value = "fileStatus", required = false) Integer fileStatus,
-                                                    @RequestParam(value = "prizeStatus", required = false) Integer prizeStatus) throws WSPException {
+                                                    @RequestParam(value = "prizeStatus", required = false) Integer prizeStatus) throws WSPException, RemoteException {
         UserDTO user = userService.getUserByToken(token);
-        List<Long> ids = userService.selectStudentsByFilters(collegeId, majorId, gradeId, classId, content);
+        List<Long> ids = userService.selectStudentsByFilters(collegeId, majorId, grade, classId, content);
         List<Integer> fileStatusCodes = new ArrayList<>();
         switch (fileStatus) {
             case 0:
                 fileStatusCodes.add(0);
+                break;
             case 1:
                 fileStatusCodes.add(ApplicationFileStatusEnum.SUBMIT.code);
                 fileStatusCodes.add(ApplicationFileStatusEnum.RESUBMIT.code);
@@ -135,12 +137,13 @@ public class ApplicationCheckController {
         switch (prizeStatus) {
             case 0:
                 prizeStatusCodes.add(0);
+                break;
             case 1:
                 prizeStatusCodes.add(ApplicationPrizeStatusEnum.SUBMIT.code);
                 break;
             case 2:
                 prizeStatusCodes.add(ApplicationPrizeStatusEnum.PASS.code);
-                prizeStatusCodes.add(ApplicationPrizeStatusEnum.WAIT_PASS.code);
+//                prizeStatusCodes.add(ApplicationPrizeStatusEnum.WAIT_PASS.code);
                 break;
             case 3:
                 prizeStatusCodes.add(ApplicationPrizeStatusEnum.REJECT.code);
@@ -166,7 +169,7 @@ public class ApplicationCheckController {
     @RequestMapping(value = "/close_submit", method = RequestMethod.POST)
     public ResponseData closeSubmit(@RequestParam(value = "token") String token,
                                     @RequestParam(value = "id") Long id,
-                                    @RequestParam(value = "manageUnit", required = false) Long unitId) throws WSPException {
+                                    @RequestParam(value = "unitId", required = false) Long unitId) throws WSPException {
         UserDTO user = userService.getUserByToken(token);
         applicationService.closeSubmit(user, id, unitId);
         ResponseData responseData = new ResponseData();
@@ -178,7 +181,7 @@ public class ApplicationCheckController {
     public ResponseData getCollegePrizeForAwardCheck(@RequestParam(value = "token") String token,
                                                      @RequestParam(value = "pageSize") Integer pageSize,
                                                      @RequestParam(value = "pageNum") Integer pageNum,
-                                                     @RequestParam(value = "prizeId") Long prizeId) throws WSPException {
+                                                     @RequestParam(value = "prizeId") Long prizeId) throws WSPException, RemoteException {
         UserDTO user = userService.getUserByToken(token);
         PageInfo pageInfo = applicationService.getCollegePrizeForAwardCheck(user, prizeId, pageNum, pageSize);
         ResponseData responseData = new ResponseData();
@@ -194,14 +197,14 @@ public class ApplicationCheckController {
                                                 @RequestParam(value = "manageUnit", required = false) Long unitId,
                                                 @RequestParam(value = "collegeId", required = false) Long collegeId,
                                                 @RequestParam(value = "majorId", required = false) Long majorId,
-                                                @RequestParam(value = "gradeId", required = false) Long gradeId,
+                                                @RequestParam(value = "gradeId", required = false) String grade,
                                                 @RequestParam(value = "classId", required = false) Long classId,
                                                 @RequestParam(value = "content", required = false) String content,
                                                 @RequestParam(value = "prizeId", required = false) Long prizeId,
                                                 @RequestParam(value = "scholarshipId", required = false) Long scholarshipId
-    ) throws WSPException {
+    ) throws WSPException, RemoteException {
         UserDTO user = userService.getUserByToken(token);
-        List<Long> studentIds = userService.selectStudentsByFilters(collegeId, majorId, gradeId, classId, content);
+        List<Long> studentIds = userService.selectStudentsByFilters(collegeId, majorId, grade, classId, content);
         PageInfo pageInfo = publicityService.getCollegePublicityList(user, unitId, studentIds, scholarshipId, prizeId, pageNum, pageSize);
         ResponseData responseData = new ResponseData();
         responseData.setSuccessData(pageInfo);
@@ -214,14 +217,14 @@ public class ApplicationCheckController {
                                                @RequestParam(value = "pageNum") Integer pageNum,
                                                @RequestParam(value = "collegeId", required = false) Long collegeId,
                                                @RequestParam(value = "majorId", required = false) Long majorId,
-                                               @RequestParam(value = "gradeId", required = false) Long gradeId,
+                                               @RequestParam(value = "gradeId", required = false) String grade,
                                                @RequestParam(value = "classId", required = false) Long classId,
                                                @RequestParam(value = "content", required = false) String content,
                                                @RequestParam(value = "prizeId", required = false) Long prizeId,
                                                @RequestParam(value = "scholarshipId", required = false) Long scholarshipId
-    ) throws WSPException {
+    ) throws WSPException, RemoteException {
         UserDTO user = userService.getUserByToken(token);
-        List<Long> studentIds = userService.selectStudentsByFilters(collegeId, majorId, gradeId, classId, content);
+        List<Long> studentIds = userService.selectStudentsByFilters(collegeId, majorId, grade, classId, content);
         PageInfo pageInfo = publicityService.getSchoolPublicityList(user, studentIds, scholarshipId, prizeId, pageNum, pageSize);
         ResponseData responseData = new ResponseData();
         responseData.setSuccessData(pageInfo);
@@ -271,7 +274,7 @@ public class ApplicationCheckController {
     public ResponseData getCollegeMangePublicityList(@RequestParam(value = "token") String token,
                                                      @RequestParam(value = "pageSize") Integer pageSize,
                                                      @RequestParam(value = "pageNum") Integer pageNum,
-                                                     @RequestParam(value = "manageUnit", required = false) Long unitId) throws WSPException {
+                                                     @RequestParam(value = "manageUnit", required = false) Long unitId) throws WSPException, RemoteException {
         UserDTO user = userService.getUserByToken(token);
         PageInfo pageInfo = publicityService.getCollegeMangePublicityList(user, unitId, pageSize, pageNum);
         ResponseData responseData = new ResponseData();
@@ -294,7 +297,7 @@ public class ApplicationCheckController {
     public ResponseData getCollegeMangePublicityDetailList(@RequestParam(value = "token") String token,
                                                            @RequestParam(value = "pageSize") Integer pageSize,
                                                            @RequestParam(value = "pageNum") Integer pageNum,
-                                                           @RequestParam(value = "publicityId") Long publicityId) throws WSPException {
+                                                           @RequestParam(value = "publicityId") Long publicityId) throws WSPException, RemoteException {
         UserDTO user = userService.getUserByToken(token);
         PageInfo pageInfo = publicityService.getMangePublicityDetailList(user, publicityId, pageSize, pageNum);
         ResponseData responseData = new ResponseData();
@@ -305,7 +308,7 @@ public class ApplicationCheckController {
     @RequestMapping(value = "/student_manage_publicity_list", method = RequestMethod.GET)
     public ResponseData getStudentMangePublicityList(@RequestParam(value = "token") String token,
                                                      @RequestParam(value = "pageSize") Integer pageSize,
-                                                     @RequestParam(value = "pageNum") Integer pageNum) throws WSPException {
+                                                     @RequestParam(value = "pageNum") Integer pageNum) throws WSPException, RemoteException {
         UserDTO user = userService.getUserByToken(token);
         PageInfo pageInfo = publicityService.getStudentMangePublicityList(user, pageSize, pageNum);
         ResponseData responseData = new ResponseData();
@@ -314,7 +317,7 @@ public class ApplicationCheckController {
     }
 
     @RequestMapping(value = "/all_student_manage_publicity_list", method = RequestMethod.GET)
-    public ResponseData getAllStudentMangePublicityList(@RequestParam(value = "token") String token) throws WSPException {
+    public ResponseData getAllStudentMangePublicityList(@RequestParam(value = "token") String token) throws WSPException, RemoteException {
         UserDTO user = userService.getUserByToken(token);
         List<PublicityScholarshipBO> res = publicityService.getAllStudentMangePublicityList(user);
         ResponseData responseData = new ResponseData();
@@ -336,7 +339,7 @@ public class ApplicationCheckController {
     @RequestMapping(value = "/student_objection", method = RequestMethod.GET)
     public ResponseData getStudentObjections(@RequestParam(value = "token") String token,
                                              @RequestParam(value = "pageSize") Integer pageSize,
-                                             @RequestParam(value = "pageNum") Integer pageNum) throws WSPException {
+                                             @RequestParam(value = "pageNum") Integer pageNum) throws WSPException, RemoteException {
         UserDTO user = userService.getUserByToken(token);
         PageInfo pageInfo = publicityService.getStudentObjections(user, pageSize, pageNum);
         ResponseData responseData = new ResponseData();
@@ -359,7 +362,7 @@ public class ApplicationCheckController {
     public ResponseData getCollegeObjections(@RequestParam(value = "token") String token,
                                              @RequestParam(value = "pageSize") Integer pageSize,
                                              @RequestParam(value = "pageNum") Integer pageNum,
-                                             @RequestParam(value = "manageUnit", required = false) Long unitId) throws WSPException {
+                                             @RequestParam(value = "manageUnit", required = false) Long unitId) throws WSPException, RemoteException {
         UserDTO user = userService.getUserByToken(token);
         PageInfo pageInfo = publicityService.getCollegeObjections(user, unitId, pageSize, pageNum);
         ResponseData responseData = new ResponseData();
@@ -370,7 +373,7 @@ public class ApplicationCheckController {
     @RequestMapping(value = "/school_objection", method = RequestMethod.GET)
     public ResponseData getSchoolObjections(@RequestParam(value = "token") String token,
                                             @RequestParam(value = "pageSize") Integer pageSize,
-                                            @RequestParam(value = "pageNum") Integer pageNum) throws WSPException {
+                                            @RequestParam(value = "pageNum") Integer pageNum) throws WSPException, RemoteException {
         UserDTO user = userService.getUserByToken(token);
         PageInfo pageInfo = publicityService.getSchoolObjections(user, pageSize, pageNum);
         ResponseData responseData = new ResponseData();

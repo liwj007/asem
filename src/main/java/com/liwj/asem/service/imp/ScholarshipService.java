@@ -12,8 +12,10 @@ import com.liwj.asem.dto.UserDTO;
 import com.liwj.asem.enums.*;
 import com.liwj.asem.exception.WSPException;
 import com.liwj.asem.model.*;
+import com.liwj.asem.remote.RemoteException;
+import com.liwj.asem.remote.RemoteService;
+import com.liwj.asem.remote.bo.College;
 import com.liwj.asem.service.IScholarshipService;
-import com.liwj.asem.service.IUserService;
 import com.liwj.asem.utils.PackingUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,14 +50,10 @@ public class ScholarshipService implements IScholarshipService {
     @Autowired
     private FlowTemplateMapper flowTemplateMapper;
 
-    @Autowired
-    private IUserService userService;
 
     @Autowired
     private ApplicationMapper applicationMapper;
 
-    @Autowired
-    private PrimaryTeachingInstitutionMapper primaryTeachingInstitutionMapper;
 
     @Autowired
     private PrizeCollegeLimitTimeMapper prizeCollegeLimitTimeMapper;
@@ -70,6 +68,11 @@ public class ScholarshipService implements IScholarshipService {
     @Autowired
     private ApplicationStepMapper applicationStepMapper;
 
+    /**
+     * 创建奖学金，包括奖学金Scholarship，奖学金等级信息PrizeInfo，学院奖学金等级CollegePrize，学校奖学金SchoolPrize
+     * @param user
+     * @param scholarshipBO
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void createNewScholarship(UserDTO user, EntireScholarshipForm scholarshipBO) {
@@ -81,7 +84,7 @@ public class ScholarshipService implements IScholarshipService {
         Double avgMoney = scholarshipBO.getAvgMoney();
         Integer avgNumber = scholarshipBO.getAvgNumber();
         List<FileBO> files = scholarshipBO.getFiles();
-        Long primaryTeachingInstitutionId = scholarshipBO.getPrimaryTeachingInstitutionId();
+        Long collegeId = scholarshipBO.getPrimaryTeachingInstitutionId();
 
         FlowTemplate flowTemplate = flowTemplateMapper.selectByPrimaryKey(templateId);
         Integer flowType = flowTemplate.getFlowType();
@@ -94,7 +97,7 @@ public class ScholarshipService implements IScholarshipService {
         scholarship.setStatus(StatusEnum.NEW.code);
         scholarship.setScholarshipType(flowType);
         if (flowType == ScholarshipTypeEnum.COLLEGE.code) {
-            scholarship.setPrimaryTeachingInstitutionId(scholarshipBO.getPrimaryTeachingInstitutionId());
+            scholarship.setCollegeId(collegeId);
         }
         scholarship.setNeedGradeCheck(flowTemplate.getNeedGradeCheck());
         scholarship.setCreateDate(new Date());
@@ -136,7 +139,7 @@ public class ScholarshipService implements IScholarshipService {
                 collegePrize.setAllocationNumberStatus(false);
                 collegePrize.setPrizeInfoId(prizeInfo.getId());
                 collegePrize.setNumber(avgNumber);
-                collegePrize.setPrimaryTeachingInstitutionId(primaryTeachingInstitutionId);
+                collegePrize.setCollegeId(collegeId);
                 collegePrize.setRestNumber(0);
                 collegePrize.setCreateDate(scholarship.getCreateDate());
                 collegePrize.setScholarshipId(prizeInfo.getScholarshipId());
@@ -144,7 +147,7 @@ public class ScholarshipService implements IScholarshipService {
                 collegePrizeMapper.insertSelective(collegePrize);
 
                 PrizeCollegeLimitTime prizeCollegeLimitTime = new PrizeCollegeLimitTime();
-                prizeCollegeLimitTime.setPrimaryTeachingInstitutionId(primaryTeachingInstitutionId);
+                prizeCollegeLimitTime.setCollegeId(collegeId);
                 prizeCollegeLimitTime.setScholarshipId(scholarship.getId());
                 prizeCollegeLimitTime.setAllocationTimeStatus(false);
                 prizeCollegeLimitTimeMapper.insertSelective(prizeCollegeLimitTime);
@@ -181,16 +184,16 @@ public class ScholarshipService implements IScholarshipService {
                     collegePrize.setCreateDate(scholarship.getCreateDate());
                     collegePrize.setScholarshipId(prizeInfo.getScholarshipId());
                     collegePrize.setScholarshipType(prizeInfo.getScholarshipType());
-                    collegePrize.setPrimaryTeachingInstitutionId(primaryTeachingInstitutionId);
+                    collegePrize.setCollegeId(collegeId);
                     collegePrizeMapper.insertSelective(collegePrize);
 
                     PrizeCollegeLimitTimeExample limitTimeExample = new PrizeCollegeLimitTimeExample();
                     limitTimeExample.createCriteria().andScholarshipIdEqualTo(scholarship.getId())
-                            .andPrimaryTeachingInstitutionIdEqualTo(primaryTeachingInstitutionId);
+                            .andCollegeIdEqualTo(collegeId);
                     Long tmp = prizeCollegeLimitTimeMapper.countByExample(limitTimeExample);
                     if (tmp == 0) {
                         PrizeCollegeLimitTime prizeCollegeLimitTime = new PrizeCollegeLimitTime();
-                        prizeCollegeLimitTime.setPrimaryTeachingInstitutionId(primaryTeachingInstitutionId);
+                        prizeCollegeLimitTime.setCollegeId(collegeId);
                         prizeCollegeLimitTime.setScholarshipId(scholarship.getId());
                         prizeCollegeLimitTime.setAllocationTimeStatus(false);
                         prizeCollegeLimitTimeMapper.insertSelective(prizeCollegeLimitTime);
@@ -202,7 +205,8 @@ public class ScholarshipService implements IScholarshipService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public EntireScholarshipForm getScholarshipDetailInfo(UserDTO user, Long id, Long unitId) throws WSPException {
+    public EntireScholarshipForm getScholarshipDetailInfo(UserDTO user, Long id, Long unitId)
+            throws WSPException, RemoteException {
         Scholarship scholarship = scholarshipMapper.selectByPrimaryKey(id);
         if (scholarship == null) {
             throw new WSPException(ErrorInfo.PARAMS_ERROR);
@@ -215,13 +219,10 @@ public class ScholarshipService implements IScholarshipService {
         bo.setRequirement(scholarship.getRequirement());
         bo.setTemplateId(scholarship.getFlowTemplateId());
         bo.setScholarshipTypeName(ScholarshipTypeEnum.getNameByCode(scholarship.getScholarshipType()));
-        bo.setPrimaryTeachingInstitutionId(scholarship.getPrimaryTeachingInstitutionId());
+        bo.setPrimaryTeachingInstitutionId(scholarship.getCollegeId());
         bo.setScholarshipType(ScholarshipTypeEnum.getByCode(scholarship.getScholarshipType()));
 
-        PrimaryTeachingInstitution institution = primaryTeachingInstitutionMapper.selectByPrimaryKey(scholarship.getPrimaryTeachingInstitutionId());
-        if (institution != null) {
-            bo.setUnitName(institution.getName());
-        }
+
 
         ScholarshipFileExample fileExample = new ScholarshipFileExample();
         fileExample.createCriteria().andScholarshipIdEqualTo(scholarship.getId());
@@ -252,6 +253,12 @@ public class ScholarshipService implements IScholarshipService {
                 bo.setPrizes(prizeItems);
             }
         } else if (scholarship.getScholarshipType() == ScholarshipTypeEnum.COLLEGE.code) {
+            RemoteService rs = new RemoteService();
+            String collegeName = rs.findCollegeNameById(scholarship.getCollegeId());
+            if (collegeName != null) {
+                bo.setUnitName(collegeName);
+            }
+
             CollegePrizeExample collegePrizeExample = new CollegePrizeExample();
             collegePrizeExample.createCriteria().andScholarshipIdEqualTo(scholarship.getId());
             List<CollegePrize> collegePrizes = collegePrizeMapper.selectByExample(collegePrizeExample);
@@ -307,7 +314,7 @@ public class ScholarshipService implements IScholarshipService {
 
                 PrizeCollegeLimitTimeExample timeExample = new PrizeCollegeLimitTimeExample();
                 timeExample.createCriteria().andScholarshipIdEqualTo(scholarship.getId())
-                        .andPrimaryTeachingInstitutionIdEqualTo(scholarship.getPrimaryTeachingInstitutionId());
+                        .andCollegeIdEqualTo(scholarship.getCollegeId());
                 prizeCollegeLimitTimeMapper.deleteByExample(timeExample);
 
                 collegePrizeMapper.deleteByPrimaryKey(collegePrize.getId());
@@ -353,11 +360,27 @@ public class ScholarshipService implements IScholarshipService {
 
                 CollegePrizeExample collegePrizeExample = new CollegePrizeExample();
                 collegePrizeExample.createCriteria().andScholarshipIdEqualTo(scholarshipId);
+                List<CollegePrize> collegePrizes = collegePrizeMapper.selectByExample(collegePrizeExample);
+                for (CollegePrize collegePrize: collegePrizes){
+                    collegePrize.setStatus(StatusEnum.OPEN.code);
+                    collegePrizeMapper.updateByPrimaryKeySelective(collegePrize);
 
-                CollegePrize collegePrize = new CollegePrize();
-                collegePrize.setStatus(StatusEnum.OPEN.code);
-
-                collegePrizeMapper.updateByExampleSelective(collegePrize, collegePrizeExample);
+                    PrizeCollegeLimitTimeExample limitTimeExample = new PrizeCollegeLimitTimeExample();
+                    limitTimeExample.createCriteria().andScholarshipIdEqualTo(collegePrize.getScholarshipId())
+                            .andCollegeIdEqualTo(collegePrize.getCollegeId());
+                    Long tmp = prizeCollegeLimitTimeMapper.countByExample(limitTimeExample);
+                    if (tmp == 0) {
+                        PrizeCollegeLimitTime limitTime = new PrizeCollegeLimitTime();
+                        limitTime.setAllocationTimeStatus(true);
+                        limitTime.setScholarshipId(collegePrize.getScholarshipId());
+                        limitTime.setCollegeId(collegePrize.getCollegeId());
+                        limitTime.setStudentEndDate(scholarship.getCollegeEndDate());
+                        if (scholarship.getNeedGradeCheck()){
+                            limitTime.setGradeEndDate(scholarship.getCollegeEndDate());
+                        }
+                        prizeCollegeLimitTimeMapper.insertSelective(limitTime);
+                    }
+                }
 
                 GradePrizeExample gradePrizeExample = new GradePrizeExample();
                 gradePrizeExample.createCriteria().andScholarshipIdEqualTo(scholarshipId);
@@ -449,7 +472,7 @@ public class ScholarshipService implements IScholarshipService {
                     stepIds.add(step.getId());
                 }
                 RFlowTemplateStepAndUserRoleExample roleExample = new RFlowTemplateStepAndUserRoleExample();
-                roleExample.createCriteria().andRoleTypeEqualTo(RoleTypeEnum.SCHOOL_USER.code)
+                roleExample.createCriteria().andRoleTypeEqualTo(RoleTypeEnum.SCHOOL.code)
                         .andFlowTemplateStepIdIn(stepIds);
                 List<RFlowTemplateStepAndUserRole> rFlowTemplateStepAndUserRoles = rFlowTemplateStepAndUserRoleMapper
                         .selectByExample(roleExample);
@@ -457,7 +480,7 @@ public class ScholarshipService implements IScholarshipService {
                     RFlowTemplateStepAndUserRole role = rFlowTemplateStepAndUserRoles.get(0);
                     List<Integer> status = new ArrayList<>();
                     status.add(ApplicationPrizeStatusEnum.SUBMIT.code);
-                    status.add(ApplicationPrizeStatusEnum.WAIT_PASS.code);
+//                    status.add(ApplicationPrizeStatusEnum.WAIT_PASS.code);
                     ApplicationStepExample applicationStepExample = new ApplicationStepExample();
                     applicationStepExample.createCriteria().andFlowTemplateStepIdEqualTo(role.getFlowTemplateStepId())
                             .andStatusIn(status);
@@ -495,7 +518,7 @@ public class ScholarshipService implements IScholarshipService {
                 stepIds.add(step.getId());
             }
             RFlowTemplateStepAndUserRoleExample roleExample = new RFlowTemplateStepAndUserRoleExample();
-            roleExample.createCriteria().andRoleTypeEqualTo(RoleTypeEnum.SPECIAL_ADVISER.code)
+            roleExample.createCriteria().andRoleTypeEqualTo(RoleTypeEnum.COLLEGE.code)
                     .andFlowTemplateStepIdIn(stepIds);
             List<RFlowTemplateStepAndUserRole> rFlowTemplateStepAndUserRoles = rFlowTemplateStepAndUserRoleMapper
                     .selectByExample(roleExample);
@@ -503,7 +526,7 @@ public class ScholarshipService implements IScholarshipService {
                 RFlowTemplateStepAndUserRole role = rFlowTemplateStepAndUserRoles.get(0);
                 List<Integer> status = new ArrayList<>();
                 status.add(ApplicationPrizeStatusEnum.SUBMIT.code);
-                status.add(ApplicationPrizeStatusEnum.WAIT_PASS.code);
+//                status.add(ApplicationPrizeStatusEnum.WAIT_PASS.code);
                 ApplicationStepExample applicationStepExample = new ApplicationStepExample();
                 applicationStepExample.createCriteria().andFlowTemplateStepIdEqualTo(role.getFlowTemplateStepId())
                         .andStatusIn(status);

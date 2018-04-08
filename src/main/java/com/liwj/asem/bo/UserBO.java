@@ -1,7 +1,6 @@
 package com.liwj.asem.bo;
 
-import com.liwj.asem.model.Grade;
-import com.liwj.asem.model.PrimaryTeachingInstitution;
+import com.liwj.asem.remote.bo.College;
 
 import java.util.List;
 
@@ -16,23 +15,23 @@ public class UserBO {
     private String email;
     private Long id;
 
-    private List<PrimaryTeachingInstitution> managePrimaryTeachingInstitutions;
-    private List<Grade> manageGrades;
+    private List<Unit> manageColleges;
+    private List<String> manageGrades;
 
-    public List<Grade> getManageGrades() {
+    public List<Unit> getManageColleges() {
+        return manageColleges;
+    }
+
+    public void setManageColleges(List<Unit> manageColleges) {
+        this.manageColleges = manageColleges;
+    }
+
+    public List<String> getManageGrades() {
         return manageGrades;
     }
 
-    public void setManageGrades(List<Grade> manageGrades) {
+    public void setManageGrades(List<String> manageGrades) {
         this.manageGrades = manageGrades;
-    }
-
-    public List<PrimaryTeachingInstitution> getManagePrimaryTeachingInstitutions() {
-        return managePrimaryTeachingInstitutions;
-    }
-
-    public void setManagePrimaryTeachingInstitutions(List<PrimaryTeachingInstitution> managePrimaryTeachingInstitutions) {
-        this.managePrimaryTeachingInstitutions = managePrimaryTeachingInstitutions;
     }
 
     public UserBO() {

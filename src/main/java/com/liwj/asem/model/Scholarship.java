@@ -14,7 +14,7 @@ public class Scholarship implements Serializable {
 
     private Date createDate;
 
-    private Long primaryTeachingInstitutionId;
+    private Long collegeId;
 
     private String scholarshipName;
 
@@ -34,13 +34,13 @@ public class Scholarship implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public Scholarship(Long id, Long flowTemplateId, String requirement, Integer status, Date createDate, Long primaryTeachingInstitutionId, String scholarshipName, Integer scholarshipType, Integer prizeType, Boolean allocationTimeStatus, Boolean needGradeCheck, Date studentBeginDate, Date collegeEndDate, Date allocationTimeDate) {
+    public Scholarship(Long id, Long flowTemplateId, String requirement, Integer status, Date createDate, Long collegeId, String scholarshipName, Integer scholarshipType, Integer prizeType, Boolean allocationTimeStatus, Boolean needGradeCheck, Date studentBeginDate, Date collegeEndDate, Date allocationTimeDate) {
         this.id = id;
         this.flowTemplateId = flowTemplateId;
         this.requirement = requirement;
         this.status = status;
         this.createDate = createDate;
-        this.primaryTeachingInstitutionId = primaryTeachingInstitutionId;
+        this.collegeId = collegeId;
         this.scholarshipName = scholarshipName;
         this.scholarshipType = scholarshipType;
         this.prizeType = prizeType;
@@ -95,12 +95,12 @@ public class Scholarship implements Serializable {
         this.createDate = createDate;
     }
 
-    public Long getPrimaryTeachingInstitutionId() {
-        return primaryTeachingInstitutionId;
+    public Long getCollegeId() {
+        return collegeId;
     }
 
-    public void setPrimaryTeachingInstitutionId(Long primaryTeachingInstitutionId) {
-        this.primaryTeachingInstitutionId = primaryTeachingInstitutionId;
+    public void setCollegeId(Long collegeId) {
+        this.collegeId = collegeId;
     }
 
     public String getScholarshipName() {
@@ -184,7 +184,7 @@ public class Scholarship implements Serializable {
             && (this.getRequirement() == null ? other.getRequirement() == null : this.getRequirement().equals(other.getRequirement()))
             && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()))
             && (this.getCreateDate() == null ? other.getCreateDate() == null : this.getCreateDate().equals(other.getCreateDate()))
-            && (this.getPrimaryTeachingInstitutionId() == null ? other.getPrimaryTeachingInstitutionId() == null : this.getPrimaryTeachingInstitutionId().equals(other.getPrimaryTeachingInstitutionId()))
+            && (this.getCollegeId() == null ? other.getCollegeId() == null : this.getCollegeId().equals(other.getCollegeId()))
             && (this.getScholarshipName() == null ? other.getScholarshipName() == null : this.getScholarshipName().equals(other.getScholarshipName()))
             && (this.getScholarshipType() == null ? other.getScholarshipType() == null : this.getScholarshipType().equals(other.getScholarshipType()))
             && (this.getPrizeType() == null ? other.getPrizeType() == null : this.getPrizeType().equals(other.getPrizeType()))
@@ -204,7 +204,7 @@ public class Scholarship implements Serializable {
         result = prime * result + ((getRequirement() == null) ? 0 : getRequirement().hashCode());
         result = prime * result + ((getStatus() == null) ? 0 : getStatus().hashCode());
         result = prime * result + ((getCreateDate() == null) ? 0 : getCreateDate().hashCode());
-        result = prime * result + ((getPrimaryTeachingInstitutionId() == null) ? 0 : getPrimaryTeachingInstitutionId().hashCode());
+        result = prime * result + ((getCollegeId() == null) ? 0 : getCollegeId().hashCode());
         result = prime * result + ((getScholarshipName() == null) ? 0 : getScholarshipName().hashCode());
         result = prime * result + ((getScholarshipType() == null) ? 0 : getScholarshipType().hashCode());
         result = prime * result + ((getPrizeType() == null) ? 0 : getPrizeType().hashCode());

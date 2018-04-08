@@ -9,6 +9,7 @@ import com.liwj.asem.dto.UserDTO;
 import com.liwj.asem.enums.FeedbackStatusEnum;
 import com.liwj.asem.enums.FeedbackTypeEnum;
 import com.liwj.asem.exception.WSPException;
+import com.liwj.asem.remote.RemoteException;
 import com.liwj.asem.service.IFeedbackService;
 import com.liwj.asem.service.IPrizeService;
 import com.liwj.asem.service.IUserService;
@@ -106,7 +107,7 @@ public class PrizeController {
     @RequestMapping(value = "/all_quota_back_list", method = RequestMethod.GET)
     public ResponseData getAllBackQuotaList(@RequestParam(value = "token") String token,
                                             @RequestParam(value = "pageSize") Integer pageSize,
-                                            @RequestParam(value = "pageNum") Integer pageNum) throws WSPException {
+                                            @RequestParam(value = "pageNum") Integer pageNum) throws WSPException, RemoteException {
         UserDTO user = userService.getUserByToken(token);
         PageInfo pageInfo = feedbackService.getAllQuotaList(user, FeedbackTypeEnum.BACK, pageSize, pageNum);
         ResponseData responseData = new ResponseData();
@@ -117,7 +118,7 @@ public class PrizeController {
     @RequestMapping(value = "/all_quota_apply_list", method = RequestMethod.GET)
     public ResponseData getAllApplyQuotaList(@RequestParam(value = "token") String token,
                                              @RequestParam(value = "pageSize") Integer pageSize,
-                                             @RequestParam(value = "pageNum") Integer pageNum) throws WSPException {
+                                             @RequestParam(value = "pageNum") Integer pageNum) throws WSPException, RemoteException {
         UserDTO user = userService.getUserByToken(token);
         PageInfo pageInfo = feedbackService.getAllQuotaList(user, FeedbackTypeEnum.APPLY, pageSize, pageNum);
         ResponseData responseData = new ResponseData();

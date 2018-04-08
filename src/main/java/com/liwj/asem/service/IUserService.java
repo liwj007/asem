@@ -13,11 +13,7 @@ public interface IUserService {
 
     UserDTO getUserByToken(String token) throws WSPException;
 
-    UserDTO login(String nickName, String password) throws WSPException;
-
-    List<User> getStudents(Long primaryTeachingInstitutionId, List<Long> grades);
-
-    List<User> getStudents(List<Long> primaryTeachingInstitutions, List<Long> grades);
+    UserDTO login(String nickName, String password, int type) throws WSPException;
 
     Boolean isSchoolUser(UserDTO user);
 
@@ -25,6 +21,5 @@ public interface IUserService {
 
     Boolean isGradeManger(UserDTO user);
 
-
-    List<Long> selectStudentsByFilters(Long collegeId, Long majorId, Long gradeId, Long classId, String content);
+    List<Long> selectStudentsByFilters(Long collegeId, Long majorId, String grade, Long classId, String content);
 }

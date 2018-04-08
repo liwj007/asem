@@ -5,6 +5,7 @@ import com.liwj.asem.bo.EntireScholarshipForm;
 import com.liwj.asem.bo.SelectOfScholarshipBO;
 import com.liwj.asem.dto.UserDTO;
 import com.liwj.asem.exception.WSPException;
+import com.liwj.asem.remote.RemoteException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.List;
 public interface IScholarshipService {
     void createNewScholarship(UserDTO user, EntireScholarshipForm scholarshipBO);
 
-    EntireScholarshipForm getScholarshipDetailInfo(UserDTO user, Long scholarshipId, Long unitId) throws WSPException;
+    EntireScholarshipForm getScholarshipDetailInfo(UserDTO user, Long scholarshipId, Long unitId) throws WSPException, RemoteException;
 
     void deleteScholarship(Long id) throws WSPException;
 

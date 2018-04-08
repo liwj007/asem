@@ -6,7 +6,7 @@ import java.util.Date;
 public class QuotaFeedback implements Serializable {
     private Long id;
 
-    private Long primaryTeachingInstitutionId;
+    private Long collegeId;
 
     private Long applyUserId;
 
@@ -26,9 +26,9 @@ public class QuotaFeedback implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public QuotaFeedback(Long id, Long primaryTeachingInstitutionId, Long applyUserId, Date applyDate, Long scholarshipId, Long prizeId, Integer allocationNumber, Integer applyNumber, Integer status, Integer applyType) {
+    public QuotaFeedback(Long id, Long collegeId, Long applyUserId, Date applyDate, Long scholarshipId, Long prizeId, Integer allocationNumber, Integer applyNumber, Integer status, Integer applyType) {
         this.id = id;
-        this.primaryTeachingInstitutionId = primaryTeachingInstitutionId;
+        this.collegeId = collegeId;
         this.applyUserId = applyUserId;
         this.applyDate = applyDate;
         this.scholarshipId = scholarshipId;
@@ -51,12 +51,12 @@ public class QuotaFeedback implements Serializable {
         this.id = id;
     }
 
-    public Long getPrimaryTeachingInstitutionId() {
-        return primaryTeachingInstitutionId;
+    public Long getCollegeId() {
+        return collegeId;
     }
 
-    public void setPrimaryTeachingInstitutionId(Long primaryTeachingInstitutionId) {
-        this.primaryTeachingInstitutionId = primaryTeachingInstitutionId;
+    public void setCollegeId(Long collegeId) {
+        this.collegeId = collegeId;
     }
 
     public Long getApplyUserId() {
@@ -136,7 +136,7 @@ public class QuotaFeedback implements Serializable {
         }
         QuotaFeedback other = (QuotaFeedback) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-            && (this.getPrimaryTeachingInstitutionId() == null ? other.getPrimaryTeachingInstitutionId() == null : this.getPrimaryTeachingInstitutionId().equals(other.getPrimaryTeachingInstitutionId()))
+            && (this.getCollegeId() == null ? other.getCollegeId() == null : this.getCollegeId().equals(other.getCollegeId()))
             && (this.getApplyUserId() == null ? other.getApplyUserId() == null : this.getApplyUserId().equals(other.getApplyUserId()))
             && (this.getApplyDate() == null ? other.getApplyDate() == null : this.getApplyDate().equals(other.getApplyDate()))
             && (this.getScholarshipId() == null ? other.getScholarshipId() == null : this.getScholarshipId().equals(other.getScholarshipId()))
@@ -152,7 +152,7 @@ public class QuotaFeedback implements Serializable {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
-        result = prime * result + ((getPrimaryTeachingInstitutionId() == null) ? 0 : getPrimaryTeachingInstitutionId().hashCode());
+        result = prime * result + ((getCollegeId() == null) ? 0 : getCollegeId().hashCode());
         result = prime * result + ((getApplyUserId() == null) ? 0 : getApplyUserId().hashCode());
         result = prime * result + ((getApplyDate() == null) ? 0 : getApplyDate().hashCode());
         result = prime * result + ((getScholarshipId() == null) ? 0 : getScholarshipId().hashCode());

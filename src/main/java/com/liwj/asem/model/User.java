@@ -5,11 +5,13 @@ import java.io.Serializable;
 public class User implements Serializable {
     private Long id;
 
+    private Integer userId;
+
     private String sn;
 
     private String password;
 
-    private Integer userType;
+    private Integer userRole;
 
     private String name;
 
@@ -21,33 +23,34 @@ public class User implements Serializable {
 
     private String token;
 
-    private Long primaryTeachingInstitutionId;
+    private Long expire;
 
-    private Long secondaryTeachingInstitutionId;
+    private Long collegeId;
 
-    private Long gradeId;
+    private Long majorId;
 
     private Long classesId;
 
-    private Long expire;
+    private String grade;
 
     private static final long serialVersionUID = 1L;
 
-    public User(Long id, String sn, String password, Integer userType, String name, String email, String phone, Integer gender, String token, Long primaryTeachingInstitutionId, Long secondaryTeachingInstitutionId, Long gradeId, Long classesId, Long expire) {
+    public User(Long id, Integer userId, String sn, String password, Integer userRole, String name, String email, String phone, Integer gender, String token, Long expire, Long collegeId, Long majorId, Long classesId, String grade) {
         this.id = id;
+        this.userId = userId;
         this.sn = sn;
         this.password = password;
-        this.userType = userType;
+        this.userRole = userRole;
         this.name = name;
         this.email = email;
         this.phone = phone;
         this.gender = gender;
         this.token = token;
-        this.primaryTeachingInstitutionId = primaryTeachingInstitutionId;
-        this.secondaryTeachingInstitutionId = secondaryTeachingInstitutionId;
-        this.gradeId = gradeId;
-        this.classesId = classesId;
         this.expire = expire;
+        this.collegeId = collegeId;
+        this.majorId = majorId;
+        this.classesId = classesId;
+        this.grade = grade;
     }
 
     public User() {
@@ -60,6 +63,14 @@ public class User implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 
     public String getSn() {
@@ -78,12 +89,12 @@ public class User implements Serializable {
         this.password = password == null ? null : password.trim();
     }
 
-    public Integer getUserType() {
-        return userType;
+    public Integer getUserRole() {
+        return userRole;
     }
 
-    public void setUserType(Integer userType) {
-        this.userType = userType;
+    public void setUserRole(Integer userRole) {
+        this.userRole = userRole;
     }
 
     public String getName() {
@@ -126,28 +137,28 @@ public class User implements Serializable {
         this.token = token == null ? null : token.trim();
     }
 
-    public Long getPrimaryTeachingInstitutionId() {
-        return primaryTeachingInstitutionId;
+    public Long getExpire() {
+        return expire;
     }
 
-    public void setPrimaryTeachingInstitutionId(Long primaryTeachingInstitutionId) {
-        this.primaryTeachingInstitutionId = primaryTeachingInstitutionId;
+    public void setExpire(Long expire) {
+        this.expire = expire;
     }
 
-    public Long getSecondaryTeachingInstitutionId() {
-        return secondaryTeachingInstitutionId;
+    public Long getCollegeId() {
+        return collegeId;
     }
 
-    public void setSecondaryTeachingInstitutionId(Long secondaryTeachingInstitutionId) {
-        this.secondaryTeachingInstitutionId = secondaryTeachingInstitutionId;
+    public void setCollegeId(Long collegeId) {
+        this.collegeId = collegeId;
     }
 
-    public Long getGradeId() {
-        return gradeId;
+    public Long getMajorId() {
+        return majorId;
     }
 
-    public void setGradeId(Long gradeId) {
-        this.gradeId = gradeId;
+    public void setMajorId(Long majorId) {
+        this.majorId = majorId;
     }
 
     public Long getClassesId() {
@@ -158,12 +169,12 @@ public class User implements Serializable {
         this.classesId = classesId;
     }
 
-    public Long getExpire() {
-        return expire;
+    public String getGrade() {
+        return grade;
     }
 
-    public void setExpire(Long expire) {
-        this.expire = expire;
+    public void setGrade(String grade) {
+        this.grade = grade == null ? null : grade.trim();
     }
 
     @Override
@@ -179,19 +190,20 @@ public class User implements Serializable {
         }
         User other = (User) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
+            && (this.getUserId() == null ? other.getUserId() == null : this.getUserId().equals(other.getUserId()))
             && (this.getSn() == null ? other.getSn() == null : this.getSn().equals(other.getSn()))
             && (this.getPassword() == null ? other.getPassword() == null : this.getPassword().equals(other.getPassword()))
-            && (this.getUserType() == null ? other.getUserType() == null : this.getUserType().equals(other.getUserType()))
+            && (this.getUserRole() == null ? other.getUserRole() == null : this.getUserRole().equals(other.getUserRole()))
             && (this.getName() == null ? other.getName() == null : this.getName().equals(other.getName()))
             && (this.getEmail() == null ? other.getEmail() == null : this.getEmail().equals(other.getEmail()))
             && (this.getPhone() == null ? other.getPhone() == null : this.getPhone().equals(other.getPhone()))
             && (this.getGender() == null ? other.getGender() == null : this.getGender().equals(other.getGender()))
             && (this.getToken() == null ? other.getToken() == null : this.getToken().equals(other.getToken()))
-            && (this.getPrimaryTeachingInstitutionId() == null ? other.getPrimaryTeachingInstitutionId() == null : this.getPrimaryTeachingInstitutionId().equals(other.getPrimaryTeachingInstitutionId()))
-            && (this.getSecondaryTeachingInstitutionId() == null ? other.getSecondaryTeachingInstitutionId() == null : this.getSecondaryTeachingInstitutionId().equals(other.getSecondaryTeachingInstitutionId()))
-            && (this.getGradeId() == null ? other.getGradeId() == null : this.getGradeId().equals(other.getGradeId()))
+            && (this.getExpire() == null ? other.getExpire() == null : this.getExpire().equals(other.getExpire()))
+            && (this.getCollegeId() == null ? other.getCollegeId() == null : this.getCollegeId().equals(other.getCollegeId()))
+            && (this.getMajorId() == null ? other.getMajorId() == null : this.getMajorId().equals(other.getMajorId()))
             && (this.getClassesId() == null ? other.getClassesId() == null : this.getClassesId().equals(other.getClassesId()))
-            && (this.getExpire() == null ? other.getExpire() == null : this.getExpire().equals(other.getExpire()));
+            && (this.getGrade() == null ? other.getGrade() == null : this.getGrade().equals(other.getGrade()));
     }
 
     @Override
@@ -199,19 +211,20 @@ public class User implements Serializable {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
+        result = prime * result + ((getUserId() == null) ? 0 : getUserId().hashCode());
         result = prime * result + ((getSn() == null) ? 0 : getSn().hashCode());
         result = prime * result + ((getPassword() == null) ? 0 : getPassword().hashCode());
-        result = prime * result + ((getUserType() == null) ? 0 : getUserType().hashCode());
+        result = prime * result + ((getUserRole() == null) ? 0 : getUserRole().hashCode());
         result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
         result = prime * result + ((getEmail() == null) ? 0 : getEmail().hashCode());
         result = prime * result + ((getPhone() == null) ? 0 : getPhone().hashCode());
         result = prime * result + ((getGender() == null) ? 0 : getGender().hashCode());
         result = prime * result + ((getToken() == null) ? 0 : getToken().hashCode());
-        result = prime * result + ((getPrimaryTeachingInstitutionId() == null) ? 0 : getPrimaryTeachingInstitutionId().hashCode());
-        result = prime * result + ((getSecondaryTeachingInstitutionId() == null) ? 0 : getSecondaryTeachingInstitutionId().hashCode());
-        result = prime * result + ((getGradeId() == null) ? 0 : getGradeId().hashCode());
-        result = prime * result + ((getClassesId() == null) ? 0 : getClassesId().hashCode());
         result = prime * result + ((getExpire() == null) ? 0 : getExpire().hashCode());
+        result = prime * result + ((getCollegeId() == null) ? 0 : getCollegeId().hashCode());
+        result = prime * result + ((getMajorId() == null) ? 0 : getMajorId().hashCode());
+        result = prime * result + ((getClassesId() == null) ? 0 : getClassesId().hashCode());
+        result = prime * result + ((getGrade() == null) ? 0 : getGrade().hashCode());
         return result;
     }
 }

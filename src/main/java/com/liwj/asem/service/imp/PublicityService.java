@@ -7,6 +7,9 @@ import com.liwj.asem.dao.*;
 import com.liwj.asem.dto.UserDTO;
 import com.liwj.asem.enums.*;
 import com.liwj.asem.model.*;
+import com.liwj.asem.remote.RemoteException;
+import com.liwj.asem.remote.RemoteService;
+import com.liwj.asem.remote.bo.NewStudent;
 import com.liwj.asem.service.IPublicityService;
 import com.liwj.asem.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,9 +25,6 @@ public class PublicityService implements IPublicityService {
 
     @Autowired
     private CollegePrizeMapper collegePrizeMapper;
-
-    @Autowired
-    private GradePrizeMapper gradePrizeMapper;
 
     @Autowired
     private ScholarshipMapper scholarshipMapper;
@@ -43,20 +43,7 @@ public class PublicityService implements IPublicityService {
     private IUserService userService;
 
     @Autowired
-    private GradeMapper gradeMapper;
-
-    @Autowired
-    private ClassesMapper classesMapper;
-
-    @Autowired
-    private SecondaryTeachingInstitutionMapper secondaryTeachingInstitutionMapper;
-
-    @Autowired
     private RFlowTemplateStepAndUserRoleMapper rFlowTemplateStepAndUserRoleMapper;
-
-
-    @Autowired
-    private PrimaryTeachingInstitutionMapper primaryTeachingInstitutionMapper;
 
     @Autowired
     private PublicityMapper publicityMapper;
@@ -68,13 +55,16 @@ public class PublicityService implements IPublicityService {
     private SchoolPrizeMapper schoolPrizeMapper;
 
     @Override
-    public PageInfo getCollegePublicityList(UserDTO user, Long unitId, List<Long> studentIds, Long scholarshipId, Long prizeId, Integer pageNum, Integer pageSize) {
+    public PageInfo getCollegePublicityList(UserDTO user, Long unitId, List<Long> studentIds, Long scholarshipId, Long prizeId, Integer pageNum, Integer pageSize) throws RemoteException {
+        if (studentIds.size() == 0) {
+            return new PageInfo();
+        }
         List<Integer> status = new ArrayList<>();
         status.add(StatusEnum.OPEN.code);
         status.add(StatusEnum.CLOSE.code);
         CollegePrizeExample collegePrizeExample = new CollegePrizeExample();
         CollegePrizeExample.Criteria criteria = collegePrizeExample.createCriteria();
-        criteria.andPrimaryTeachingInstitutionIdEqualTo(unitId)
+        criteria.andCollegeIdEqualTo(unitId)
                 .andStatusIn(status);
         if (prizeId != null && prizeId > 0) {
             criteria.andPrizeInfoIdEqualTo(prizeId);
@@ -84,12 +74,12 @@ public class PublicityService implements IPublicityService {
         for (CollegePrize collegePrize : collegePrizes) {
             scholarshipIds.add(collegePrize.getScholarshipId());
         }
-        if(scholarshipIds.size()==0){
+        if (scholarshipIds.size() == 0) {
             return new PageInfo();
         }
 
         RFlowTemplateStepAndUserRoleExample roleExample = new RFlowTemplateStepAndUserRoleExample();
-        roleExample.createCriteria().andRoleTypeEqualTo(RoleTypeEnum.SPECIAL_ADVISER.code);
+        roleExample.createCriteria().andRoleTypeEqualTo(RoleTypeEnum.COLLEGE.code);
         List<RFlowTemplateStepAndUserRole> rFlowTemplateStepAndUserRoles = rFlowTemplateStepAndUserRoleMapper
                 .selectByExample(roleExample);
         List<Long> flowTemplateStepIds = new ArrayList<>();
@@ -101,7 +91,7 @@ public class PublicityService implements IPublicityService {
         ApplicationExample.Criteria criteria1 = applicationExample.createCriteria();
         criteria1.andScholarshipIdIn(scholarshipIds)
                 .andCollegePublicityEqualTo(false)
-                .andPrimaryTeachingInstitutionIdEqualTo(unitId);
+                .andCollegeIdEqualTo(unitId);
         if (studentIds.size() > 0) {
             criteria1.andUserIdIn(studentIds);
         }
@@ -118,7 +108,7 @@ public class PublicityService implements IPublicityService {
         }
         List<Integer> tmp = new ArrayList<>();
         tmp.add(ApplicationPrizeStatusEnum.PASS.code);
-        tmp.add(ApplicationPrizeStatusEnum.WAIT_PASS.code);
+//        tmp.add(ApplicationPrizeStatusEnum.WAIT_PASS.code);
         ApplicationStepExample stepExample = new ApplicationStepExample();
         stepExample.createCriteria().andApplicationIdIn(applicationIds)
                 .andStatusIn(tmp)
@@ -127,6 +117,7 @@ public class PublicityService implements IPublicityService {
         List<ApplicationStep> applicationSteps = applicationStepMapper.selectByExample(stepExample);
         PageInfo pageInfo = new PageInfo(applicationSteps);
         List<PublicityBO> res = new ArrayList<>();
+        RemoteService rs = new RemoteService();
         for (ApplicationStep applicationStep : applicationSteps) {
             PublicityBO bo = new PublicityBO();
             bo.setApplicationId(applicationStep.getApplicationId());
@@ -144,22 +135,11 @@ public class PublicityService implements IPublicityService {
             if (student != null) {
                 bo.setName(student.getName());
                 bo.setSn(student.getSn());
-            }
 
-            if (student.getSecondaryTeachingInstitutionId() != null) {
-                SecondaryTeachingInstitution secondaryTeachingInstitution = secondaryTeachingInstitutionMapper
-                        .selectByPrimaryKey(student.getSecondaryTeachingInstitutionId());
-                bo.setMajorName(secondaryTeachingInstitution.getName());
-            }
-
-            if (student.getGradeId() != null) {
-                Grade grade = gradeMapper.selectByPrimaryKey(student.getGradeId());
-                bo.setGradeName(grade.getName());
-            }
-
-            if (student.getClassesId() != null) {
-                Classes classes = classesMapper.selectByPrimaryKey(student.getClassesId());
-                bo.setClassName(classes.getName());
+                NewStudent temp = rs.findStudentInfoBySn(student.getSn());
+                bo.setMajorName(temp.getMajorName());
+                bo.setGradeName(temp.getGrade());
+                bo.setClassName(temp.getClassName());
             }
 
             ApplicationExample applicationRecordsExample = new ApplicationExample();
@@ -191,18 +171,18 @@ public class PublicityService implements IPublicityService {
         status.add(StatusEnum.CLOSE.code);
         CollegePrizeExample collegePrizeExample = new CollegePrizeExample();
         collegePrizeExample.createCriteria()
-                .andPrimaryTeachingInstitutionIdEqualTo(unitId)
+                .andCollegeIdEqualTo(unitId)
                 .andStatusIn(status);
         List<CollegePrize> collegePrizes = collegePrizeMapper.selectByExample(collegePrizeExample);
         List<Long> scholarshipIds = new ArrayList<>();
         for (CollegePrize collegePrize : collegePrizes) {
             scholarshipIds.add(collegePrize.getScholarshipId());
         }
-        if(scholarshipIds.size()==0){
+        if (scholarshipIds.size() == 0) {
             return null;
         }
         RFlowTemplateStepAndUserRoleExample roleExample = new RFlowTemplateStepAndUserRoleExample();
-        roleExample.createCriteria().andRoleTypeEqualTo(RoleTypeEnum.SPECIAL_ADVISER.code);
+        roleExample.createCriteria().andRoleTypeEqualTo(RoleTypeEnum.COLLEGE.code);
         List<RFlowTemplateStepAndUserRole> rFlowTemplateStepAndUserRoles = rFlowTemplateStepAndUserRoleMapper
                 .selectByExample(roleExample);
         List<Long> flowTemplateStepIds = new ArrayList<>();
@@ -213,7 +193,7 @@ public class PublicityService implements IPublicityService {
         ApplicationExample applicationExample = new ApplicationExample();
         applicationExample.createCriteria().andScholarshipIdIn(scholarshipIds)
                 .andCollegePublicityEqualTo(false)
-                .andPrimaryTeachingInstitutionIdEqualTo(unitId);
+                .andCollegeIdEqualTo(unitId);
         List<Application> applications = applicationMapper.selectByExampleWithBLOBs(applicationExample);
         if (applications.size() == 0) {
             return null;
@@ -224,13 +204,13 @@ public class PublicityService implements IPublicityService {
         }
         List<Integer> tmp = new ArrayList<>();
         tmp.add(ApplicationPrizeStatusEnum.PASS.code);
-        tmp.add(ApplicationPrizeStatusEnum.WAIT_PASS.code);
+//        tmp.add(ApplicationPrizeStatusEnum.WAIT_PASS.code);
         ApplicationStepExample stepExample = new ApplicationStepExample();
         stepExample.createCriteria().andApplicationIdIn(applicationIds)
                 .andStatusIn(tmp)
                 .andFlowTemplateStepIdIn(flowTemplateStepIds);
         List<ApplicationStep> applicationSteps = applicationStepMapper.selectByExample(stepExample);
-        if (applicationSteps.size()==0)
+        if (applicationSteps.size() == 0)
             return null;
         scholarshipIds.clear();
         for (ApplicationStep applicationStep : applicationSteps) {
@@ -269,12 +249,12 @@ public class PublicityService implements IPublicityService {
             publicity.setNeedPrizeNumber(publicityApplyBO.getPrizeNumber());
             publicity.setScholarshipName(publicityApplyBO.getScholarshipName());
             publicity.setScholarshipType(ScholarshipTypeEnum.COLLEGE.code);
-            publicity.setPrimaryTeachingInstitutionId(publicityApplyBO.getUnitId());
+            publicity.setCollegeId(publicityApplyBO.getUnitId());
             publicity.setStatus(PublicityStatusEnum.OPEN.code);
             publicityMapper.insertSelective(publicity);
         }
         RFlowTemplateStepAndUserRoleExample roleExample = new RFlowTemplateStepAndUserRoleExample();
-        roleExample.createCriteria().andRoleTypeEqualTo(RoleTypeEnum.SPECIAL_ADVISER.code);
+        roleExample.createCriteria().andRoleTypeEqualTo(RoleTypeEnum.COLLEGE.code);
         List<RFlowTemplateStepAndUserRole> rFlowTemplateStepAndUserRoles = rFlowTemplateStepAndUserRoleMapper
                 .selectByExample(roleExample);
         List<Long> flowTemplateStepIds = new ArrayList<>();
@@ -285,7 +265,7 @@ public class PublicityService implements IPublicityService {
         ApplicationExample applicationExample = new ApplicationExample();
         applicationExample.createCriteria().andScholarshipIdIn(publicityApplyBO.getScholarshipIds())
                 .andCollegePublicityEqualTo(false)
-                .andPrimaryTeachingInstitutionIdEqualTo(publicityApplyBO.getUnitId());
+                .andCollegeIdEqualTo(publicityApplyBO.getUnitId());
         List<Application> applications = applicationMapper.selectByExampleWithBLOBs(applicationExample);
 
         List<Long> applicationIds = new ArrayList<>();
@@ -294,7 +274,7 @@ public class PublicityService implements IPublicityService {
         }
         List<Integer> tmp = new ArrayList<>();
         tmp.add(ApplicationPrizeStatusEnum.PASS.code);
-        tmp.add(ApplicationPrizeStatusEnum.WAIT_PASS.code);
+//        tmp.add(ApplicationPrizeStatusEnum.WAIT_PASS.code);
         ApplicationStepExample stepExample = new ApplicationStepExample();
         stepExample.createCriteria().andApplicationIdIn(applicationIds)
                 .andStatusIn(tmp)
@@ -308,7 +288,7 @@ public class PublicityService implements IPublicityService {
     }
 
     @Override
-    public PageInfo getCollegeMangePublicityList(UserDTO user, Long unitId, Integer pageSize, Integer pageNum) {
+    public PageInfo getCollegeMangePublicityList(UserDTO user, Long unitId, Integer pageSize, Integer pageNum) throws RemoteException {
         PublicityExample publicityExample = new PublicityExample();
         List<Integer> status = new ArrayList<>();
         status.add(PublicityStatusEnum.OPEN.code);
@@ -316,12 +296,13 @@ public class PublicityService implements IPublicityService {
 //        PublicityExample.Criteria criteria1 = publicityExample.createCriteria();
 //        criteria1.andPrimaryTeachingInstitutionIdIsNull().andStatusIn(status);
         PublicityExample.Criteria criteria2 = publicityExample.createCriteria();
-        criteria2.andPrimaryTeachingInstitutionIdEqualTo(unitId).andStatusIn(status);
+        criteria2.andCollegeIdEqualTo(unitId).andStatusIn(status);
 //        publicityExample.or(criteria2);
         PageHelper.startPage(pageNum, pageSize);
         List<Publicity> res = publicityMapper.selectByExample(publicityExample);
         PageInfo pageInfo = new PageInfo(res);
         List<PublicityScholarshipBO> list = new ArrayList<>();
+        RemoteService rs = new RemoteService();
         for (Publicity publicity : res) {
             PublicityScholarshipBO bo = new PublicityScholarshipBO();
             bo.setId(publicity.getId());
@@ -329,8 +310,8 @@ public class PublicityService implements IPublicityService {
             bo.setEndDate(publicity.getEndDate());
             Scholarship scholarship = scholarshipMapper.selectByPrimaryKey(publicity.getScholarshipId());
             bo.setScholarshipName(scholarship.getScholarshipName());
-            PrimaryTeachingInstitution primaryTeachingInstitution = primaryTeachingInstitutionMapper.selectByPrimaryKey(publicity.getPrimaryTeachingInstitutionId());
-            bo.setUnitName(primaryTeachingInstitution.getName());
+            String name = rs.findCollegeNameById(publicity.getCollegeId());
+            bo.setUnitName(name);
             list.add(bo);
         }
         pageInfo.setList(list);
@@ -339,10 +320,10 @@ public class PublicityService implements IPublicityService {
 
     @Override
     public PageInfo getMangePublicityDetailList(UserDTO user, Long publicityId,
-                                                Integer pageSize, Integer pageNum) {
+                                                Integer pageSize, Integer pageNum) throws RemoteException {
         Publicity publicity = publicityMapper.selectByPrimaryKey(publicityId);
         Long scholarshipId = publicity.getScholarshipId();
-        Long primaryTeachingInstitutionId = publicity.getPrimaryTeachingInstitutionId();
+        Long primaryTeachingInstitutionId = publicity.getCollegeId();
 
         Scholarship scholarship = scholarshipMapper.selectByPrimaryKey(scholarshipId);
 
@@ -353,7 +334,7 @@ public class PublicityService implements IPublicityService {
         } else if (userService.isCollegeManger(user)) {
             applicationExample.createCriteria().andScholarshipIdEqualTo(scholarshipId)
                     .andCollegePublicityEqualTo(true)
-                    .andPrimaryTeachingInstitutionIdEqualTo(primaryTeachingInstitutionId);
+                    .andCollegeIdEqualTo(primaryTeachingInstitutionId);
         } else {
             if (primaryTeachingInstitutionId == null) {
                 applicationExample.createCriteria().andScholarshipIdEqualTo(scholarshipId)
@@ -361,7 +342,7 @@ public class PublicityService implements IPublicityService {
             } else {
                 applicationExample.createCriteria().andScholarshipIdEqualTo(scholarshipId)
                         .andCollegePublicityEqualTo(true)
-                        .andPrimaryTeachingInstitutionIdEqualTo(primaryTeachingInstitutionId);
+                        .andCollegeIdEqualTo(primaryTeachingInstitutionId);
             }
         }
 
@@ -369,6 +350,7 @@ public class PublicityService implements IPublicityService {
         List<Application> applications = applicationMapper.selectByExampleWithBLOBs(applicationExample);
         PageInfo pageInfo = new PageInfo(applications);
         List<PublicityBO> res = new ArrayList<>();
+        RemoteService rs = new RemoteService();
         for (Application application : applications) {
             PublicityBO bo = new PublicityBO();
 
@@ -384,34 +366,23 @@ public class PublicityService implements IPublicityService {
                 }
                 if (publicity.getNeedSn())
                     bo.setSn(student.getSn());
-            }
 
-            if (student.getSecondaryTeachingInstitutionId() != null) {
+                NewStudent temp = rs.findStudentInfoBySn(student.getSn());
                 if (publicity.getNeedMajor()) {
-                    SecondaryTeachingInstitution secondaryTeachingInstitution = secondaryTeachingInstitutionMapper
-                            .selectByPrimaryKey(student.getSecondaryTeachingInstitutionId());
-                    bo.setMajorName(secondaryTeachingInstitution.getName());
+                    bo.setMajorName(temp.getMajorName());
                 }
-            }
-
-            if (student.getGradeId() != null) {
                 if (publicity.getNeedGrade()) {
-                    Grade grade = gradeMapper.selectByPrimaryKey(student.getGradeId());
-                    bo.setGradeName(grade.getName());
+                    bo.setGradeName(temp.getGrade());
                 }
-            }
-
-            if (student.getClassesId() != null) {
                 if (publicity.getNeedClasses()) {
-                    Classes classes = classesMapper.selectByPrimaryKey(student.getClassesId());
-                    bo.setClassName(classes.getName());
+                    bo.setClassName(temp.getClassName());
+                }
+
+                if (publicity.getNeedCollege()) {
+                    bo.setCollegeName(temp.getCollegeName());
                 }
             }
 
-            if (publicity.getNeedCollege()) {
-                PrimaryTeachingInstitution unit = primaryTeachingInstitutionMapper.selectByPrimaryKey(application.getPrimaryTeachingInstitutionId());
-                bo.setCollegeName(unit.getName());
-            }
 
             List<String> records = new ArrayList<>();
             if (publicity.getNeedPrizeNumber()) {
@@ -444,7 +415,7 @@ public class PublicityService implements IPublicityService {
     }
 
     @Override
-    public PageInfo getStudentMangePublicityList(UserDTO user, Integer pageSize, Integer pageNum) {
+    public PageInfo getStudentMangePublicityList(UserDTO user, Integer pageSize, Integer pageNum) throws RemoteException {
         PublicityExample publicityExample = new PublicityExample();
         List<Integer> status = new ArrayList<>();
         status.add(PublicityStatusEnum.OPEN.code);
@@ -454,6 +425,7 @@ public class PublicityService implements IPublicityService {
         List<Publicity> res = publicityMapper.selectByExample(publicityExample);
         PageInfo pageInfo = new PageInfo(res);
         List<PublicityScholarshipBO> list = new ArrayList<>();
+        RemoteService rs = new RemoteService();
         for (Publicity publicity : res) {
             PublicityScholarshipBO bo = new PublicityScholarshipBO();
             bo.setId(publicity.getId());
@@ -462,9 +434,9 @@ public class PublicityService implements IPublicityService {
             Scholarship scholarship = scholarshipMapper.selectByPrimaryKey(publicity.getScholarshipId());
             bo.setScholarshipName(scholarship.getScholarshipName());
 
-            if (publicity.getPrimaryTeachingInstitutionId() != null) {
-                PrimaryTeachingInstitution primaryTeachingInstitution = primaryTeachingInstitutionMapper.selectByPrimaryKey(publicity.getPrimaryTeachingInstitutionId());
-                bo.setUnitName(primaryTeachingInstitution.getName());
+            if (publicity.getCollegeId() != null) {
+                String name = rs.findCollegeNameById(publicity.getCollegeId());
+                bo.setUnitName(name);
             } else {
                 bo.setUnitName("学校");
             }
@@ -486,7 +458,7 @@ public class PublicityService implements IPublicityService {
     }
 
     @Override
-    public List<PublicityScholarshipBO> getAllStudentMangePublicityList(UserDTO user) {
+    public List<PublicityScholarshipBO> getAllStudentMangePublicityList(UserDTO user) throws RemoteException {
         PublicityExample publicityExample = new PublicityExample();
         List<Integer> status = new ArrayList<>();
         status.add(PublicityStatusEnum.OPEN.code);
@@ -494,14 +466,15 @@ public class PublicityService implements IPublicityService {
         publicityExample.createCriteria().andStatusIn(status);
         List<Publicity> res = publicityMapper.selectByExample(publicityExample);
         List<PublicityScholarshipBO> list = new ArrayList<>();
+        RemoteService rs = new RemoteService();
         for (Publicity publicity : res) {
             PublicityScholarshipBO bo = new PublicityScholarshipBO();
             bo.setId(publicity.getId());
             Scholarship scholarship = scholarshipMapper.selectByPrimaryKey(publicity.getScholarshipId());
 
-            if (publicity.getPrimaryTeachingInstitutionId() != null) {
-                PrimaryTeachingInstitution primaryTeachingInstitution = primaryTeachingInstitutionMapper.selectByPrimaryKey(publicity.getPrimaryTeachingInstitutionId());
-                bo.setScholarshipName(scholarship.getScholarshipName() + "-" + primaryTeachingInstitution.getName());
+            if (publicity.getCollegeId() != null) {
+                String name = rs.findCollegeNameById(publicity.getCollegeId());
+                bo.setScholarshipName(scholarship.getScholarshipName() + "-" + name);
             } else {
                 bo.setScholarshipName(scholarship.getScholarshipName() + "-学校");
             }
@@ -512,13 +485,14 @@ public class PublicityService implements IPublicityService {
     }
 
     @Override
-    public PageInfo getStudentObjections(UserDTO user, Integer pageSize, Integer pageNum) {
+    public PageInfo getStudentObjections(UserDTO user, Integer pageSize, Integer pageNum) throws RemoteException {
         PublicityObjectionExample example = new PublicityObjectionExample();
         example.createCriteria().andUserIdEqualTo(user.getId());
         PageHelper.startPage(pageNum, pageSize);
         List<PublicityObjectionWithBLOBs> list = publicityObjectionMapper.selectByExampleWithBLOBs(example);
         PageInfo pageInfo = new PageInfo(list);
         List<PublicityObjectionBO> res = new ArrayList<>();
+        RemoteService rs = new RemoteService();
         for (PublicityObjectionWithBLOBs objection : list) {
             PublicityObjectionBO bo = new PublicityObjectionBO();
             bo.setContent(objection.getContent());
@@ -530,23 +504,14 @@ public class PublicityService implements IPublicityService {
             if (myself != null) {
                 bo.setName(myself.getName());
                 bo.setSn(myself.getSn());
+
+                NewStudent temp = rs.findStudentInfoBySn(myself.getSn());
+                bo.setMajorName(temp.getMajorName());
+                bo.setGradeName(temp.getGrade());
+                bo.setClassName(temp.getClassName());
+                bo.setCollegeName(temp.getCollegeName());
             }
 
-            if (myself.getSecondaryTeachingInstitutionId() != null) {
-                SecondaryTeachingInstitution secondaryTeachingInstitution = secondaryTeachingInstitutionMapper
-                        .selectByPrimaryKey(myself.getSecondaryTeachingInstitutionId());
-                bo.setMajorName(secondaryTeachingInstitution.getName());
-            }
-
-            if (myself.getGradeId() != null) {
-                Grade grade = gradeMapper.selectByPrimaryKey(myself.getGradeId());
-                bo.setGradeName(grade.getName());
-            }
-
-            if (myself.getClassesId() != null) {
-                Classes classes = classesMapper.selectByPrimaryKey(myself.getClassesId());
-                bo.setClassName(classes.getName());
-            }
 
             res.add(bo);
         }
@@ -563,15 +528,18 @@ public class PublicityService implements IPublicityService {
     }
 
     @Override
-    public PageInfo getCollegeObjections(UserDTO user, Long unitId, Integer pageSize, Integer pageNum) {
+    public PageInfo getCollegeObjections(UserDTO user, Long unitId, Integer pageSize, Integer pageNum) throws RemoteException {
         PublicityExample publicityExample = new PublicityExample();
         List<Integer> status = new ArrayList<>();
         status.add(PublicityStatusEnum.OPEN.code);
         status.add(PublicityStatusEnum.CLOSE.code);
-        publicityExample.createCriteria().andPrimaryTeachingInstitutionIdEqualTo(unitId)
+        publicityExample.createCriteria().andCollegeIdEqualTo(unitId)
                 .andStatusIn(status);
         List<Publicity> publicities = publicityMapper.selectByExample(publicityExample);
         List<Long> publicityIds = new ArrayList<>();
+        if (publicityIds.size()==0){
+            return  new PageInfo();
+        }
         for (Publicity publicity : publicities) {
             publicityIds.add(publicity.getId());
         }
@@ -581,6 +549,7 @@ public class PublicityService implements IPublicityService {
         List<PublicityObjectionWithBLOBs> list = publicityObjectionMapper.selectByExampleWithBLOBs(example);
         PageInfo pageInfo = new PageInfo(list);
         List<PublicityObjectionBO> res = new ArrayList<>();
+        RemoteService rs = new RemoteService();
         for (PublicityObjectionWithBLOBs objection : list) {
             PublicityObjectionBO bo = new PublicityObjectionBO();
             bo.setContent(objection.getContent());
@@ -592,22 +561,11 @@ public class PublicityService implements IPublicityService {
             if (myself != null) {
                 bo.setName(myself.getName());
                 bo.setSn(myself.getSn());
-            }
 
-            if (myself.getSecondaryTeachingInstitutionId() != null) {
-                SecondaryTeachingInstitution secondaryTeachingInstitution = secondaryTeachingInstitutionMapper
-                        .selectByPrimaryKey(myself.getSecondaryTeachingInstitutionId());
-                bo.setMajorName(secondaryTeachingInstitution.getName());
-            }
-
-            if (myself.getGradeId() != null) {
-                Grade grade = gradeMapper.selectByPrimaryKey(myself.getGradeId());
-                bo.setGradeName(grade.getName());
-            }
-
-            if (myself.getClassesId() != null) {
-                Classes classes = classesMapper.selectByPrimaryKey(myself.getClassesId());
-                bo.setClassName(classes.getName());
+                NewStudent temp = rs.findStudentInfoBySn(myself.getSn());
+                bo.setMajorName(temp.getMajorName());
+                bo.setGradeName(temp.getGrade());
+                bo.setClassName(temp.getClassName());
             }
 
             res.add(bo);
@@ -617,18 +575,18 @@ public class PublicityService implements IPublicityService {
     }
 
     @Override
-    public PageInfo getSchoolPublicityList(UserDTO user, List<Long> studentIds, Long scholarshipId, Long prizeId, Integer pageNum, Integer pageSize) {
+    public PageInfo getSchoolPublicityList(UserDTO user, List<Long> studentIds, Long scholarshipId, Long prizeId, Integer pageNum, Integer pageSize) throws RemoteException {
         List<Integer> status = new ArrayList<>();
         status.add(StatusEnum.OPEN.code);
         status.add(StatusEnum.CLOSE.code);
         SchoolPrizeExample schoolPrizeExample = new SchoolPrizeExample();
         SchoolPrizeExample.Criteria criteria = schoolPrizeExample.createCriteria();
         criteria.andStatusIn(status);
-        if (prizeId!=null&& prizeId>0){
+        if (prizeId != null && prizeId > 0) {
             criteria.andPrizeInfoIdEqualTo(prizeId);
         }
         List<SchoolPrize> schoolPrizes = schoolPrizeMapper.selectByExample(schoolPrizeExample);
-        if (schoolPrizes.size()==0){
+        if (schoolPrizes.size() == 0) {
             return new PageInfo();
         }
         List<Long> scholarshipIds = new ArrayList<>();
@@ -637,7 +595,7 @@ public class PublicityService implements IPublicityService {
         }
 
         RFlowTemplateStepAndUserRoleExample roleExample = new RFlowTemplateStepAndUserRoleExample();
-        roleExample.createCriteria().andRoleTypeEqualTo(RoleTypeEnum.SCHOOL_USER.code);
+        roleExample.createCriteria().andRoleTypeEqualTo(RoleTypeEnum.SCHOOL.code);
         List<RFlowTemplateStepAndUserRole> rFlowTemplateStepAndUserRoles = rFlowTemplateStepAndUserRoleMapper
                 .selectByExample(roleExample);
         List<Long> flowTemplateStepIds = new ArrayList<>();
@@ -649,14 +607,14 @@ public class PublicityService implements IPublicityService {
         ApplicationExample.Criteria criteria1 = applicationExample.createCriteria();
         criteria1.andScholarshipIdIn(scholarshipIds)
                 .andSchoolPublicityEqualTo(false);
-        if (prizeId!=null&& prizeId>0){
+        if (prizeId != null && prizeId > 0) {
             criteria1.andPrizeInfoIdEqualTo(prizeId);
         }
-        if (studentIds.size()>0){
+        if (studentIds.size() > 0) {
             criteria1.andUserIdIn(studentIds);
         }
         List<Application> applications = applicationMapper.selectByExampleWithBLOBs(applicationExample);
-        if (applications.size()==0){
+        if (applications.size() == 0) {
             return new PageInfo();
         }
         List<Long> applicationIds = new ArrayList<>();
@@ -665,7 +623,7 @@ public class PublicityService implements IPublicityService {
         }
         List<Integer> tmp = new ArrayList<>();
         tmp.add(ApplicationPrizeStatusEnum.PASS.code);
-        tmp.add(ApplicationPrizeStatusEnum.WAIT_PASS.code);
+//        tmp.add(ApplicationPrizeStatusEnum.WAIT_PASS.code);
         ApplicationStepExample stepExample = new ApplicationStepExample();
         stepExample.createCriteria().andApplicationIdIn(applicationIds)
                 .andStatusIn(tmp)
@@ -674,6 +632,7 @@ public class PublicityService implements IPublicityService {
         List<ApplicationStep> applicationSteps = applicationStepMapper.selectByExample(stepExample);
         PageInfo pageInfo = new PageInfo(applicationSteps);
         List<PublicityBO> res = new ArrayList<>();
+        RemoteService rs = new RemoteService();
         for (ApplicationStep applicationStep : applicationSteps) {
             PublicityBO bo = new PublicityBO();
             bo.setApplicationId(applicationStep.getApplicationId());
@@ -691,28 +650,12 @@ public class PublicityService implements IPublicityService {
             if (student != null) {
                 bo.setName(student.getName());
                 bo.setSn(student.getSn());
-            }
 
-            if (student.getPrimaryTeachingInstitutionId() != null) {
-                PrimaryTeachingInstitution primaryTeachingInstitution = primaryTeachingInstitutionMapper
-                        .selectByPrimaryKey(student.getPrimaryTeachingInstitutionId());
-                bo.setCollegeName(primaryTeachingInstitution.getName());
-            }
-
-            if (student.getSecondaryTeachingInstitutionId() != null) {
-                SecondaryTeachingInstitution secondaryTeachingInstitution = secondaryTeachingInstitutionMapper
-                        .selectByPrimaryKey(student.getSecondaryTeachingInstitutionId());
-                bo.setMajorName(secondaryTeachingInstitution.getName());
-            }
-
-            if (student.getGradeId() != null) {
-                Grade grade = gradeMapper.selectByPrimaryKey(student.getGradeId());
-                bo.setGradeName(grade.getName());
-            }
-
-            if (student.getClassesId() != null) {
-                Classes classes = classesMapper.selectByPrimaryKey(student.getClassesId());
-                bo.setClassName(classes.getName());
+                NewStudent temp = rs.findStudentInfoBySn(student.getSn());
+                bo.setMajorName(temp.getMajorName());
+                bo.setGradeName(temp.getGrade());
+                bo.setClassName(temp.getClassName());
+                bo.setCollegeName(temp.getCollegeName());
             }
 
             ApplicationExample applicationRecordsExample = new ApplicationExample();
@@ -750,12 +693,12 @@ public class PublicityService implements IPublicityService {
         for (SchoolPrize schoolPrize : schoolPrizes) {
             scholarshipIds.add(schoolPrize.getScholarshipId());
         }
-        if(scholarshipIds.size()==0){
+        if (scholarshipIds.size() == 0) {
             return null;
         }
 
         RFlowTemplateStepAndUserRoleExample roleExample = new RFlowTemplateStepAndUserRoleExample();
-        roleExample.createCriteria().andRoleTypeEqualTo(RoleTypeEnum.SCHOOL_USER.code);
+        roleExample.createCriteria().andRoleTypeEqualTo(RoleTypeEnum.SCHOOL.code);
         List<RFlowTemplateStepAndUserRole> rFlowTemplateStepAndUserRoles = rFlowTemplateStepAndUserRoleMapper
                 .selectByExample(roleExample);
         List<Long> flowTemplateStepIds = new ArrayList<>();
@@ -776,13 +719,15 @@ public class PublicityService implements IPublicityService {
         }
         List<Integer> tmp = new ArrayList<>();
         tmp.add(ApplicationPrizeStatusEnum.PASS.code);
-        tmp.add(ApplicationPrizeStatusEnum.WAIT_PASS.code);
+//        tmp.add(ApplicationPrizeStatusEnum.WAIT_PASS.code);
         ApplicationStepExample stepExample = new ApplicationStepExample();
         stepExample.createCriteria().andApplicationIdIn(applicationIds)
                 .andStatusIn(tmp)
                 .andFlowTemplateStepIdIn(flowTemplateStepIds);
         List<ApplicationStep> applicationSteps = applicationStepMapper.selectByExample(stepExample);
-
+        if (applicationSteps.size()==0){
+            return null;
+        }
         scholarshipIds.clear();
         for (ApplicationStep applicationStep : applicationSteps) {
             Application application = applicationMapper.selectByPrimaryKey(applicationStep.getApplicationId());
@@ -823,7 +768,7 @@ public class PublicityService implements IPublicityService {
             publicityMapper.insertSelective(publicity);
         }
         RFlowTemplateStepAndUserRoleExample roleExample = new RFlowTemplateStepAndUserRoleExample();
-        roleExample.createCriteria().andRoleTypeEqualTo(RoleTypeEnum.SCHOOL_USER.code);
+        roleExample.createCriteria().andRoleTypeEqualTo(RoleTypeEnum.SCHOOL.code);
         List<RFlowTemplateStepAndUserRole> rFlowTemplateStepAndUserRoles = rFlowTemplateStepAndUserRoleMapper
                 .selectByExample(roleExample);
         List<Long> flowTemplateStepIds = new ArrayList<>();
@@ -842,7 +787,7 @@ public class PublicityService implements IPublicityService {
         }
         List<Integer> tmp = new ArrayList<>();
         tmp.add(ApplicationPrizeStatusEnum.PASS.code);
-        tmp.add(ApplicationPrizeStatusEnum.WAIT_PASS.code);
+//        tmp.add(ApplicationPrizeStatusEnum.WAIT_PASS.code);
         ApplicationStepExample stepExample = new ApplicationStepExample();
         stepExample.createCriteria().andApplicationIdIn(applicationIds)
                 .andStatusIn(tmp)
@@ -862,7 +807,7 @@ public class PublicityService implements IPublicityService {
         status.add(PublicityStatusEnum.OPEN.code);
         status.add(PublicityStatusEnum.CLOSE.code);
         PublicityExample.Criteria criteria1 = publicityExample.createCriteria();
-        criteria1.andPrimaryTeachingInstitutionIdIsNull().andStatusIn(status);
+        criteria1.andCollegeIdIsNull().andStatusIn(status);
         PageHelper.startPage(pageNum, pageSize);
         List<Publicity> res = publicityMapper.selectByExample(publicityExample);
         PageInfo pageInfo = new PageInfo(res);
@@ -873,7 +818,7 @@ public class PublicityService implements IPublicityService {
             bo.setBeginDate(publicity.getBeginDate());
             bo.setEndDate(publicity.getEndDate());
             Scholarship scholarship = scholarshipMapper.selectByPrimaryKey(publicity.getScholarshipId());
-            if (scholarship==null)
+            if (scholarship == null)
                 continue;
             bo.setScholarshipName(scholarship.getScholarshipName());
             bo.setUnitName("学校");
@@ -884,12 +829,12 @@ public class PublicityService implements IPublicityService {
     }
 
     @Override
-    public PageInfo getSchoolObjections(UserDTO user, Integer pageSize, Integer pageNum) {
+    public PageInfo getSchoolObjections(UserDTO user, Integer pageSize, Integer pageNum) throws RemoteException {
         PublicityExample publicityExample = new PublicityExample();
         List<Integer> status = new ArrayList<>();
         status.add(PublicityStatusEnum.OPEN.code);
         status.add(PublicityStatusEnum.CLOSE.code);
-        publicityExample.createCriteria().andPrimaryTeachingInstitutionIdIsNull()
+        publicityExample.createCriteria().andCollegeIdIsNull()
                 .andStatusIn(status);
         List<Publicity> publicities = publicityMapper.selectByExample(publicityExample);
         if (publicities.size() == 0) {
@@ -905,6 +850,7 @@ public class PublicityService implements IPublicityService {
         List<PublicityObjectionWithBLOBs> list = publicityObjectionMapper.selectByExampleWithBLOBs(example);
         PageInfo pageInfo = new PageInfo(list);
         List<PublicityObjectionBO> res = new ArrayList<>();
+        RemoteService rs = new RemoteService();
         for (PublicityObjectionWithBLOBs objection : list) {
             PublicityObjectionBO bo = new PublicityObjectionBO();
             bo.setContent(objection.getContent());
@@ -916,23 +862,14 @@ public class PublicityService implements IPublicityService {
             if (myself != null) {
                 bo.setName(myself.getName());
                 bo.setSn(myself.getSn());
+
+                NewStudent temp = rs.findStudentInfoBySn(myself.getSn());
+                bo.setMajorName(temp.getMajorName());
+                bo.setGradeName(temp.getGrade());
+                bo.setClassName(temp.getClassName());
             }
 
-            if (myself.getSecondaryTeachingInstitutionId() != null) {
-                SecondaryTeachingInstitution secondaryTeachingInstitution = secondaryTeachingInstitutionMapper
-                        .selectByPrimaryKey(myself.getSecondaryTeachingInstitutionId());
-                bo.setMajorName(secondaryTeachingInstitution.getName());
-            }
 
-            if (myself.getGradeId() != null) {
-                Grade grade = gradeMapper.selectByPrimaryKey(myself.getGradeId());
-                bo.setGradeName(grade.getName());
-            }
-
-            if (myself.getClassesId() != null) {
-                Classes classes = classesMapper.selectByPrimaryKey(myself.getClassesId());
-                bo.setClassName(classes.getName());
-            }
 
             res.add(bo);
         }

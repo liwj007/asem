@@ -9,8 +9,8 @@
       <arg column="operator_id" javaType="java.lang.Long" jdbcType="BIGINT" />
       <arg column="operation_date" javaType="java.util.Date" jdbcType="TIMESTAMP" />
       <arg column="status" javaType="java.lang.Integer" jdbcType="INTEGER" />
-      <arg column="primary_teaching_institution_id" javaType="java.lang.Long" jdbcType="BIGINT" />
-      <arg column="grade_id" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="college_id" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="grade" javaType="java.lang.String" jdbcType="VARCHAR" />
       <arg column="prize_id" javaType="java.lang.Long" jdbcType="BIGINT" />
       <arg column="create_date" javaType="java.util.Date" jdbcType="TIMESTAMP" />
     </constructor>
@@ -74,8 +74,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, flow_template_step_id, application_id, operator_id, operation_date, status, primary_teaching_institution_id, 
-    grade_id, prize_id, create_date
+    id, flow_template_step_id, application_id, operator_id, operation_date, status, college_id, 
+    grade, prize_id, create_date
   </sql>
   <select id="selectByExample" parameterType="com.liwj.asem.model.ApplicationStepExample" resultMap="BaseResultMap">
     select
@@ -114,11 +114,11 @@
     </selectKey>
     insert into application_step (flow_template_step_id, application_id, 
       operator_id, operation_date, status, 
-      primary_teaching_institution_id, grade_id, prize_id, 
+      college_id, grade, prize_id, 
       create_date)
     values (#{flowTemplateStepId,jdbcType=BIGINT}, #{applicationId,jdbcType=BIGINT}, 
       #{operatorId,jdbcType=BIGINT}, #{operationDate,jdbcType=TIMESTAMP}, #{status,jdbcType=INTEGER}, 
-      #{primaryTeachingInstitutionId,jdbcType=BIGINT}, #{gradeId,jdbcType=BIGINT}, #{prizeId,jdbcType=BIGINT}, 
+      #{collegeId,jdbcType=BIGINT}, #{grade,jdbcType=VARCHAR}, #{prizeId,jdbcType=BIGINT}, 
       #{createDate,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.liwj.asem.model.ApplicationStep">
@@ -142,11 +142,11 @@
       <if test="status != null">
         status,
       </if>
-      <if test="primaryTeachingInstitutionId != null">
-        primary_teaching_institution_id,
+      <if test="collegeId != null">
+        college_id,
       </if>
-      <if test="gradeId != null">
-        grade_id,
+      <if test="grade != null">
+        grade,
       </if>
       <if test="prizeId != null">
         prize_id,
@@ -171,11 +171,11 @@
       <if test="status != null">
         #{status,jdbcType=INTEGER},
       </if>
-      <if test="primaryTeachingInstitutionId != null">
-        #{primaryTeachingInstitutionId,jdbcType=BIGINT},
+      <if test="collegeId != null">
+        #{collegeId,jdbcType=BIGINT},
       </if>
-      <if test="gradeId != null">
-        #{gradeId,jdbcType=BIGINT},
+      <if test="grade != null">
+        #{grade,jdbcType=VARCHAR},
       </if>
       <if test="prizeId != null">
         #{prizeId,jdbcType=BIGINT},
@@ -212,11 +212,11 @@
       <if test="record.status != null">
         status = #{record.status,jdbcType=INTEGER},
       </if>
-      <if test="record.primaryTeachingInstitutionId != null">
-        primary_teaching_institution_id = #{record.primaryTeachingInstitutionId,jdbcType=BIGINT},
+      <if test="record.collegeId != null">
+        college_id = #{record.collegeId,jdbcType=BIGINT},
       </if>
-      <if test="record.gradeId != null">
-        grade_id = #{record.gradeId,jdbcType=BIGINT},
+      <if test="record.grade != null">
+        grade = #{record.grade,jdbcType=VARCHAR},
       </if>
       <if test="record.prizeId != null">
         prize_id = #{record.prizeId,jdbcType=BIGINT},
@@ -237,8 +237,8 @@
       operator_id = #{record.operatorId,jdbcType=BIGINT},
       operation_date = #{record.operationDate,jdbcType=TIMESTAMP},
       status = #{record.status,jdbcType=INTEGER},
-      primary_teaching_institution_id = #{record.primaryTeachingInstitutionId,jdbcType=BIGINT},
-      grade_id = #{record.gradeId,jdbcType=BIGINT},
+      college_id = #{record.collegeId,jdbcType=BIGINT},
+      grade = #{record.grade,jdbcType=VARCHAR},
       prize_id = #{record.prizeId,jdbcType=BIGINT},
       create_date = #{record.createDate,jdbcType=TIMESTAMP}
     <if test="_parameter != null">
@@ -263,11 +263,11 @@
       <if test="status != null">
         status = #{status,jdbcType=INTEGER},
       </if>
-      <if test="primaryTeachingInstitutionId != null">
-        primary_teaching_institution_id = #{primaryTeachingInstitutionId,jdbcType=BIGINT},
+      <if test="collegeId != null">
+        college_id = #{collegeId,jdbcType=BIGINT},
       </if>
-      <if test="gradeId != null">
-        grade_id = #{gradeId,jdbcType=BIGINT},
+      <if test="grade != null">
+        grade = #{grade,jdbcType=VARCHAR},
       </if>
       <if test="prizeId != null">
         prize_id = #{prizeId,jdbcType=BIGINT},
@@ -285,8 +285,8 @@
       operator_id = #{operatorId,jdbcType=BIGINT},
       operation_date = #{operationDate,jdbcType=TIMESTAMP},
       status = #{status,jdbcType=INTEGER},
-      primary_teaching_institution_id = #{primaryTeachingInstitutionId,jdbcType=BIGINT},
-      grade_id = #{gradeId,jdbcType=BIGINT},
+      college_id = #{collegeId,jdbcType=BIGINT},
+      grade = #{grade,jdbcType=VARCHAR},
       prize_id = #{prizeId,jdbcType=BIGINT},
       create_date = #{createDate,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}

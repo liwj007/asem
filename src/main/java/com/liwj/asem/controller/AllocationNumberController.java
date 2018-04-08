@@ -8,6 +8,7 @@ import com.liwj.asem.data.ResponseData;
 import com.liwj.asem.dto.UserDTO;
 import com.liwj.asem.exception.WSPException;
 import com.liwj.asem.model.User;
+import com.liwj.asem.remote.RemoteException;
 import com.liwj.asem.service.IPrizeService;
 import com.liwj.asem.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,7 +65,7 @@ public class AllocationNumberController {
     //读取已分配名额的奖项的详细信息
     @RequestMapping(value = "/allocated_number_detail", method = RequestMethod.GET)
     public ResponseData getAwardDetailOfAllocatedNumber(@RequestParam(value = "token") String token,
-                                                  @RequestParam(value = "prizeId") Long prizeId) throws WSPException {
+                                                  @RequestParam(value = "prizeId") Long prizeId) throws WSPException, RemoteException {
         UserDTO user = userService.getUserByToken(token);
         EntireUnitPrizeForm res = prizeService.getAwardDetailOfAllocatedNumber(user, prizeId);
         ResponseData responseData = new ResponseData();

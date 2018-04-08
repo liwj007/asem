@@ -4,19 +4,20 @@
   <resultMap id="BaseResultMap" type="com.liwj.asem.model.User">
     <constructor>
       <idArg column="id" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="user_id" javaType="java.lang.Integer" jdbcType="INTEGER" />
       <arg column="sn" javaType="java.lang.String" jdbcType="VARCHAR" />
       <arg column="password" javaType="java.lang.String" jdbcType="VARCHAR" />
-      <arg column="user_type" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="user_role" javaType="java.lang.Integer" jdbcType="INTEGER" />
       <arg column="name" javaType="java.lang.String" jdbcType="VARCHAR" />
       <arg column="email" javaType="java.lang.String" jdbcType="VARCHAR" />
       <arg column="phone" javaType="java.lang.String" jdbcType="VARCHAR" />
       <arg column="gender" javaType="java.lang.Integer" jdbcType="INTEGER" />
       <arg column="token" javaType="java.lang.String" jdbcType="VARCHAR" />
-      <arg column="primary_teaching_institution_id" javaType="java.lang.Long" jdbcType="BIGINT" />
-      <arg column="secondary_teaching_institution_id" javaType="java.lang.Long" jdbcType="BIGINT" />
-      <arg column="grade_id" javaType="java.lang.Long" jdbcType="BIGINT" />
-      <arg column="classes_id" javaType="java.lang.Long" jdbcType="BIGINT" />
       <arg column="expire" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="college_id" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="major_id" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="classes_id" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="grade" javaType="java.lang.String" jdbcType="VARCHAR" />
     </constructor>
   </resultMap>
   <sql id="Example_Where_Clause">
@@ -78,8 +79,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, sn, password, user_type, name, email, phone, gender, token, primary_teaching_institution_id, 
-    secondary_teaching_institution_id, grade_id, classes_id, expire
+    id, user_id, sn, password, user_role, name, email, phone, gender, token, expire, 
+    college_id, major_id, classes_id, grade
   </sql>
   <select id="selectByExample" parameterType="com.liwj.asem.model.UserExample" resultMap="BaseResultMap">
     select
@@ -116,16 +117,16 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into user (sn, password, user_type, 
-      name, email, phone, 
-      gender, token, primary_teaching_institution_id, 
-      secondary_teaching_institution_id, grade_id, 
-      classes_id, expire)
-    values (#{sn,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{userType,jdbcType=INTEGER}, 
-      #{name,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, 
-      #{gender,jdbcType=INTEGER}, #{token,jdbcType=VARCHAR}, #{primaryTeachingInstitutionId,jdbcType=BIGINT}, 
-      #{secondaryTeachingInstitutionId,jdbcType=BIGINT}, #{gradeId,jdbcType=BIGINT}, 
-      #{classesId,jdbcType=BIGINT}, #{expire,jdbcType=BIGINT})
+    insert into user (user_id, sn, password, 
+      user_role, name, email, 
+      phone, gender, token, 
+      expire, college_id, major_id, 
+      classes_id, grade)
+    values (#{userId,jdbcType=INTEGER}, #{sn,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
+      #{userRole,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, 
+      #{phone,jdbcType=VARCHAR}, #{gender,jdbcType=INTEGER}, #{token,jdbcType=VARCHAR}, 
+      #{expire,jdbcType=BIGINT}, #{collegeId,jdbcType=BIGINT}, #{majorId,jdbcType=BIGINT}, 
+      #{classesId,jdbcType=BIGINT}, #{grade,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.liwj.asem.model.User">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -133,14 +134,17 @@
     </selectKey>
     insert into user
     <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="userId != null">
+        user_id,
+      </if>
       <if test="sn != null">
         sn,
       </if>
       <if test="password != null">
         password,
       </if>
-      <if test="userType != null">
-        user_type,
+      <if test="userRole != null">
+        user_role,
       </if>
       <if test="name != null">
         name,
@@ -157,31 +161,34 @@
       <if test="token != null">
         token,
       </if>
-      <if test="primaryTeachingInstitutionId != null">
-        primary_teaching_institution_id,
+      <if test="expire != null">
+        expire,
       </if>
-      <if test="secondaryTeachingInstitutionId != null">
-        secondary_teaching_institution_id,
+      <if test="collegeId != null">
+        college_id,
       </if>
-      <if test="gradeId != null">
-        grade_id,
+      <if test="majorId != null">
+        major_id,
       </if>
       <if test="classesId != null">
         classes_id,
       </if>
-      <if test="expire != null">
-        expire,
+      <if test="grade != null">
+        grade,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
       <if test="sn != null">
         #{sn,jdbcType=VARCHAR},
       </if>
       <if test="password != null">
         #{password,jdbcType=VARCHAR},
       </if>
-      <if test="userType != null">
-        #{userType,jdbcType=INTEGER},
+      <if test="userRole != null">
+        #{userRole,jdbcType=INTEGER},
       </if>
       <if test="name != null">
         #{name,jdbcType=VARCHAR},
@@ -198,20 +205,20 @@
       <if test="token != null">
         #{token,jdbcType=VARCHAR},
       </if>
-      <if test="primaryTeachingInstitutionId != null">
-        #{primaryTeachingInstitutionId,jdbcType=BIGINT},
+      <if test="expire != null">
+        #{expire,jdbcType=BIGINT},
       </if>
-      <if test="secondaryTeachingInstitutionId != null">
-        #{secondaryTeachingInstitutionId,jdbcType=BIGINT},
+      <if test="collegeId != null">
+        #{collegeId,jdbcType=BIGINT},
       </if>
-      <if test="gradeId != null">
-        #{gradeId,jdbcType=BIGINT},
+      <if test="majorId != null">
+        #{majorId,jdbcType=BIGINT},
       </if>
       <if test="classesId != null">
         #{classesId,jdbcType=BIGINT},
       </if>
-      <if test="expire != null">
-        #{expire,jdbcType=BIGINT},
+      <if test="grade != null">
+        #{grade,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -227,14 +234,17 @@
       <if test="record.id != null">
         id = #{record.id,jdbcType=BIGINT},
       </if>
+      <if test="record.userId != null">
+        user_id = #{record.userId,jdbcType=INTEGER},
+      </if>
       <if test="record.sn != null">
         sn = #{record.sn,jdbcType=VARCHAR},
       </if>
       <if test="record.password != null">
         password = #{record.password,jdbcType=VARCHAR},
       </if>
-      <if test="record.userType != null">
-        user_type = #{record.userType,jdbcType=INTEGER},
+      <if test="record.userRole != null">
+        user_role = #{record.userRole,jdbcType=INTEGER},
       </if>
       <if test="record.name != null">
         name = #{record.name,jdbcType=VARCHAR},
@@ -251,20 +261,20 @@
       <if test="record.token != null">
         token = #{record.token,jdbcType=VARCHAR},
       </if>
-      <if test="record.primaryTeachingInstitutionId != null">
-        primary_teaching_institution_id = #{record.primaryTeachingInstitutionId,jdbcType=BIGINT},
+      <if test="record.expire != null">
+        expire = #{record.expire,jdbcType=BIGINT},
       </if>
-      <if test="record.secondaryTeachingInstitutionId != null">
-        secondary_teaching_institution_id = #{record.secondaryTeachingInstitutionId,jdbcType=BIGINT},
+      <if test="record.collegeId != null">
+        college_id = #{record.collegeId,jdbcType=BIGINT},
       </if>
-      <if test="record.gradeId != null">
-        grade_id = #{record.gradeId,jdbcType=BIGINT},
+      <if test="record.majorId != null">
+        major_id = #{record.majorId,jdbcType=BIGINT},
       </if>
       <if test="record.classesId != null">
         classes_id = #{record.classesId,jdbcType=BIGINT},
       </if>
-      <if test="record.expire != null">
-        expire = #{record.expire,jdbcType=BIGINT},
+      <if test="record.grade != null">
+        grade = #{record.grade,jdbcType=VARCHAR},
       </if>
     </set>
     <if test="_parameter != null">
@@ -274,19 +284,20 @@
   <update id="updateByExample" parameterType="map">
     update user
     set id = #{record.id,jdbcType=BIGINT},
+      user_id = #{record.userId,jdbcType=INTEGER},
       sn = #{record.sn,jdbcType=VARCHAR},
       password = #{record.password,jdbcType=VARCHAR},
-      user_type = #{record.userType,jdbcType=INTEGER},
+      user_role = #{record.userRole,jdbcType=INTEGER},
       name = #{record.name,jdbcType=VARCHAR},
       email = #{record.email,jdbcType=VARCHAR},
       phone = #{record.phone,jdbcType=VARCHAR},
       gender = #{record.gender,jdbcType=INTEGER},
       token = #{record.token,jdbcType=VARCHAR},
-      primary_teaching_institution_id = #{record.primaryTeachingInstitutionId,jdbcType=BIGINT},
-      secondary_teaching_institution_id = #{record.secondaryTeachingInstitutionId,jdbcType=BIGINT},
-      grade_id = #{record.gradeId,jdbcType=BIGINT},
+      expire = #{record.expire,jdbcType=BIGINT},
+      college_id = #{record.collegeId,jdbcType=BIGINT},
+      major_id = #{record.majorId,jdbcType=BIGINT},
       classes_id = #{record.classesId,jdbcType=BIGINT},
-      expire = #{record.expire,jdbcType=BIGINT}
+      grade = #{record.grade,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -294,14 +305,17 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.liwj.asem.model.User">
     update user
     <set>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
       <if test="sn != null">
         sn = #{sn,jdbcType=VARCHAR},
       </if>
       <if test="password != null">
         password = #{password,jdbcType=VARCHAR},
       </if>
-      <if test="userType != null">
-        user_type = #{userType,jdbcType=INTEGER},
+      <if test="userRole != null">
+        user_role = #{userRole,jdbcType=INTEGER},
       </if>
       <if test="name != null">
         name = #{name,jdbcType=VARCHAR},
@@ -318,39 +332,40 @@
       <if test="token != null">
         token = #{token,jdbcType=VARCHAR},
       </if>
-      <if test="primaryTeachingInstitutionId != null">
-        primary_teaching_institution_id = #{primaryTeachingInstitutionId,jdbcType=BIGINT},
+      <if test="expire != null">
+        expire = #{expire,jdbcType=BIGINT},
       </if>
-      <if test="secondaryTeachingInstitutionId != null">
-        secondary_teaching_institution_id = #{secondaryTeachingInstitutionId,jdbcType=BIGINT},
+      <if test="collegeId != null">
+        college_id = #{collegeId,jdbcType=BIGINT},
       </if>
-      <if test="gradeId != null">
-        grade_id = #{gradeId,jdbcType=BIGINT},
+      <if test="majorId != null">
+        major_id = #{majorId,jdbcType=BIGINT},
       </if>
       <if test="classesId != null">
         classes_id = #{classesId,jdbcType=BIGINT},
       </if>
-      <if test="expire != null">
-        expire = #{expire,jdbcType=BIGINT},
+      <if test="grade != null">
+        grade = #{grade,jdbcType=VARCHAR},
       </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.liwj.asem.model.User">
     update user
-    set sn = #{sn,jdbcType=VARCHAR},
+    set user_id = #{userId,jdbcType=INTEGER},
+      sn = #{sn,jdbcType=VARCHAR},
       password = #{password,jdbcType=VARCHAR},
-      user_type = #{userType,jdbcType=INTEGER},
+      user_role = #{userRole,jdbcType=INTEGER},
       name = #{name,jdbcType=VARCHAR},
       email = #{email,jdbcType=VARCHAR},
       phone = #{phone,jdbcType=VARCHAR},
       gender = #{gender,jdbcType=INTEGER},
       token = #{token,jdbcType=VARCHAR},
-      primary_teaching_institution_id = #{primaryTeachingInstitutionId,jdbcType=BIGINT},
-      secondary_teaching_institution_id = #{secondaryTeachingInstitutionId,jdbcType=BIGINT},
-      grade_id = #{gradeId,jdbcType=BIGINT},
+      expire = #{expire,jdbcType=BIGINT},
+      college_id = #{collegeId,jdbcType=BIGINT},
+      major_id = #{majorId,jdbcType=BIGINT},
       classes_id = #{classesId,jdbcType=BIGINT},
-      expire = #{expire,jdbcType=BIGINT}
+      grade = #{grade,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

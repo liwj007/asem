@@ -59,7 +59,23 @@ public class FlowTemplateService implements IFlowTemplateService {
         return null;
     }
 
-
+    @Override
+    public FlowTemplateStep findTheFrontStep(Long flowTemplateId, Long toStepTemplateId) {
+        FlowTemplateLinkExample example = new FlowTemplateLinkExample();
+        if (toStepTemplateId == null) {
+            example.createCriteria().andFlowTemplateIdEqualTo(flowTemplateId).andToStepIdIsNull();
+        } else {
+            example.createCriteria().andFlowTemplateIdEqualTo(flowTemplateId).andToStepIdEqualTo(toStepTemplateId);
+        }
+        List<FlowTemplateLink> list = flowTemplateLinkMapper.selectByExample(example);
+        if (list.size() == 1) {
+            FlowTemplateLink flowLink = list.get(0);
+            Long fromStepId = flowLink.getFromStepId();
+            FlowTemplateStep stepTemplate = flowTemplateStepMapper.selectByPrimaryKey(fromStepId);
+            return stepTemplate;
+        }
+        return null;
+    }
 
     @Override
     @Transactional(rollbackFor=Exception.class)
@@ -87,9 +103,9 @@ public class FlowTemplateService implements IFlowTemplateService {
 
         if (needGradeCheck) {
             stepId2 = insertNewStepTemplate("年级审核", templateId);
-            addStepRight(stepId2, RoleTypeEnum.GRADE_ADVISER.code);
+            addStepRight(stepId2, RoleTypeEnum.GRADE.code);
             if (gradeStudent) {
-                addStepRight(stepId2, RoleTypeEnum.SCHOOL_ASSISTANT.code);
+                addStepRight(stepId2, RoleTypeEnum.SCHOOL.code);
             }
             addFlowLink(templateId, stepId1, stepId2);
             stepId1 = stepId2;
@@ -97,9 +113,9 @@ public class FlowTemplateService implements IFlowTemplateService {
         }
 
         stepId2 = insertNewStepTemplate("学院审核", templateId);
-        addStepRight(stepId2, RoleTypeEnum.SPECIAL_ADVISER.code);
+        addStepRight(stepId2, RoleTypeEnum.COLLEGE.code);
         if (collegeStudent) {
-            addStepRight(stepId2, RoleTypeEnum.SCHOOL_ASSISTANT.code);
+            addStepRight(stepId2, RoleTypeEnum.SCHOOL.code);
         }
         addFlowLink(templateId, stepId1, stepId2);
         stepId1 = stepId2;
@@ -107,7 +123,7 @@ public class FlowTemplateService implements IFlowTemplateService {
 
         if (type == ScholarshipTypeEnum.SCHOOL) {
             stepId2 = insertNewStepTemplate("学校审核", templateId);
-            addStepRight(stepId2, RoleTypeEnum.SCHOOL_USER.code);
+            addStepRight(stepId2, RoleTypeEnum.SCHOOL.code);
             addFlowLink(templateId, stepId1, stepId2);
             stepId1 = stepId2;
             stepId2 = null;

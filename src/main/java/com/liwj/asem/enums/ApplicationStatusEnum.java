@@ -6,7 +6,7 @@ import java.util.Map;
 public enum ApplicationStatusEnum {
     NO(0, " 未提交"),
     SUBMIT(1, "已提交"),
-    RESUBMIT(2, "重新提交"),
+//    RESUBMIT(2, "重新提交"),
     PASS(3, "通过"),
     REJECT(4, "被驳回");
 

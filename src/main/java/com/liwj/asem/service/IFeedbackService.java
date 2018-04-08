@@ -7,6 +7,7 @@ import com.liwj.asem.dto.UserDTO;
 import com.liwj.asem.enums.FeedbackStatusEnum;
 import com.liwj.asem.enums.FeedbackTypeEnum;
 import com.liwj.asem.exception.WSPException;
+import com.liwj.asem.remote.RemoteException;
 
 import java.util.List;
 
@@ -19,7 +20,7 @@ public interface IFeedbackService {
 
     PageInfo getQuotaList(UserDTO user, FeedbackTypeEnum feedbackType, Integer pageSize, Integer pageNum);
 
-    PageInfo getAllQuotaList(UserDTO user, FeedbackTypeEnum feedbackType, Integer pageSize, Integer pageNum);
+    PageInfo getAllQuotaList(UserDTO user, FeedbackTypeEnum feedbackType, Integer pageSize, Integer pageNum) throws RemoteException;
 
     void checkApplyBatch(List<Long> ids, FeedbackStatusEnum result);
 

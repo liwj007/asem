@@ -34,7 +34,7 @@ public class Publicity implements Serializable {
 
     private Date endDate;
 
-    private Long primaryTeachingInstitutionId;
+    private Long collegeId;
 
     private Integer status;
 
@@ -42,7 +42,7 @@ public class Publicity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public Publicity(Long id, Long scholarshipId, Integer scholarshipType, Boolean scholarshipName, Boolean prizeName, Boolean needName, Boolean needSn, Boolean needClasses, Boolean needGrade, Boolean needMajor, Boolean needCollege, Boolean needPrizeNumber, Boolean needFiles, Date beginDate, Date endDate, Long primaryTeachingInstitutionId, Integer status, Date createDate) {
+    public Publicity(Long id, Long scholarshipId, Integer scholarshipType, Boolean scholarshipName, Boolean prizeName, Boolean needName, Boolean needSn, Boolean needClasses, Boolean needGrade, Boolean needMajor, Boolean needCollege, Boolean needPrizeNumber, Boolean needFiles, Date beginDate, Date endDate, Long collegeId, Integer status, Date createDate) {
         this.id = id;
         this.scholarshipId = scholarshipId;
         this.scholarshipType = scholarshipType;
@@ -58,7 +58,7 @@ public class Publicity implements Serializable {
         this.needFiles = needFiles;
         this.beginDate = beginDate;
         this.endDate = endDate;
-        this.primaryTeachingInstitutionId = primaryTeachingInstitutionId;
+        this.collegeId = collegeId;
         this.status = status;
         this.createDate = createDate;
     }
@@ -187,12 +187,12 @@ public class Publicity implements Serializable {
         this.endDate = endDate;
     }
 
-    public Long getPrimaryTeachingInstitutionId() {
-        return primaryTeachingInstitutionId;
+    public Long getCollegeId() {
+        return collegeId;
     }
 
-    public void setPrimaryTeachingInstitutionId(Long primaryTeachingInstitutionId) {
-        this.primaryTeachingInstitutionId = primaryTeachingInstitutionId;
+    public void setCollegeId(Long collegeId) {
+        this.collegeId = collegeId;
     }
 
     public Integer getStatus() {
@@ -238,7 +238,7 @@ public class Publicity implements Serializable {
             && (this.getNeedFiles() == null ? other.getNeedFiles() == null : this.getNeedFiles().equals(other.getNeedFiles()))
             && (this.getBeginDate() == null ? other.getBeginDate() == null : this.getBeginDate().equals(other.getBeginDate()))
             && (this.getEndDate() == null ? other.getEndDate() == null : this.getEndDate().equals(other.getEndDate()))
-            && (this.getPrimaryTeachingInstitutionId() == null ? other.getPrimaryTeachingInstitutionId() == null : this.getPrimaryTeachingInstitutionId().equals(other.getPrimaryTeachingInstitutionId()))
+            && (this.getCollegeId() == null ? other.getCollegeId() == null : this.getCollegeId().equals(other.getCollegeId()))
             && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()))
             && (this.getCreateDate() == null ? other.getCreateDate() == null : this.getCreateDate().equals(other.getCreateDate()));
     }
@@ -262,7 +262,7 @@ public class Publicity implements Serializable {
         result = prime * result + ((getNeedFiles() == null) ? 0 : getNeedFiles().hashCode());
         result = prime * result + ((getBeginDate() == null) ? 0 : getBeginDate().hashCode());
         result = prime * result + ((getEndDate() == null) ? 0 : getEndDate().hashCode());
-        result = prime * result + ((getPrimaryTeachingInstitutionId() == null) ? 0 : getPrimaryTeachingInstitutionId().hashCode());
+        result = prime * result + ((getCollegeId() == null) ? 0 : getCollegeId().hashCode());
         result = prime * result + ((getStatus() == null) ? 0 : getStatus().hashCode());
         result = prime * result + ((getCreateDate() == null) ? 0 : getCreateDate().hashCode());
         return result;

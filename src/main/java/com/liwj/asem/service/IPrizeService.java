@@ -5,6 +5,7 @@ import com.liwj.asem.bo.*;
 import com.liwj.asem.dto.UserDTO;
 import com.liwj.asem.enums.ScholarshipTypeEnum;
 import com.liwj.asem.exception.WSPException;
+import com.liwj.asem.remote.RemoteException;
 
 
 import java.util.List;
@@ -18,7 +19,7 @@ public interface IPrizeService {
 
     PageInfo getAllocatedNumberPrizes(UserDTO user, Integer pageNum, Integer pageSize, Long unitId);
 
-    EntireUnitPrizeForm getAwardDetailOfAllocatedNumber(UserDTO user, Long prizeId) throws WSPException;
+    EntireUnitPrizeForm getAwardDetailOfAllocatedNumber(UserDTO user, Long prizeId) throws WSPException, RemoteException;
 
     void updateAllocationNumber(UserDTO user, EntireUnitPrizeForm entireUnitPrizeForm);
 

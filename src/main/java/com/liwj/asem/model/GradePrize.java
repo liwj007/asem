@@ -6,7 +6,7 @@ import java.util.Date;
 public class GradePrize implements Serializable {
     private Long id;
 
-    private Long primaryTeachingInstitutionId;
+    private Long collegeId;
 
     private Integer number;
 
@@ -16,7 +16,7 @@ public class GradePrize implements Serializable {
 
     private Integer scholarshipType;
 
-    private Long gradeId;
+    private String grade;
 
     private Integer status;
 
@@ -26,14 +26,14 @@ public class GradePrize implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public GradePrize(Long id, Long primaryTeachingInstitutionId, Integer number, Long prizeInfoId, Long scholarshipId, Integer scholarshipType, Long gradeId, Integer status, Long collegePrizeId, Date createDate) {
+    public GradePrize(Long id, Long collegeId, Integer number, Long prizeInfoId, Long scholarshipId, Integer scholarshipType, String grade, Integer status, Long collegePrizeId, Date createDate) {
         this.id = id;
-        this.primaryTeachingInstitutionId = primaryTeachingInstitutionId;
+        this.collegeId = collegeId;
         this.number = number;
         this.prizeInfoId = prizeInfoId;
         this.scholarshipId = scholarshipId;
         this.scholarshipType = scholarshipType;
-        this.gradeId = gradeId;
+        this.grade = grade;
         this.status = status;
         this.collegePrizeId = collegePrizeId;
         this.createDate = createDate;
@@ -51,12 +51,12 @@ public class GradePrize implements Serializable {
         this.id = id;
     }
 
-    public Long getPrimaryTeachingInstitutionId() {
-        return primaryTeachingInstitutionId;
+    public Long getCollegeId() {
+        return collegeId;
     }
 
-    public void setPrimaryTeachingInstitutionId(Long primaryTeachingInstitutionId) {
-        this.primaryTeachingInstitutionId = primaryTeachingInstitutionId;
+    public void setCollegeId(Long collegeId) {
+        this.collegeId = collegeId;
     }
 
     public Integer getNumber() {
@@ -91,12 +91,12 @@ public class GradePrize implements Serializable {
         this.scholarshipType = scholarshipType;
     }
 
-    public Long getGradeId() {
-        return gradeId;
+    public String getGrade() {
+        return grade;
     }
 
-    public void setGradeId(Long gradeId) {
-        this.gradeId = gradeId;
+    public void setGrade(String grade) {
+        this.grade = grade == null ? null : grade.trim();
     }
 
     public Integer getStatus() {
@@ -136,12 +136,12 @@ public class GradePrize implements Serializable {
         }
         GradePrize other = (GradePrize) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-            && (this.getPrimaryTeachingInstitutionId() == null ? other.getPrimaryTeachingInstitutionId() == null : this.getPrimaryTeachingInstitutionId().equals(other.getPrimaryTeachingInstitutionId()))
+            && (this.getCollegeId() == null ? other.getCollegeId() == null : this.getCollegeId().equals(other.getCollegeId()))
             && (this.getNumber() == null ? other.getNumber() == null : this.getNumber().equals(other.getNumber()))
             && (this.getPrizeInfoId() == null ? other.getPrizeInfoId() == null : this.getPrizeInfoId().equals(other.getPrizeInfoId()))
             && (this.getScholarshipId() == null ? other.getScholarshipId() == null : this.getScholarshipId().equals(other.getScholarshipId()))
             && (this.getScholarshipType() == null ? other.getScholarshipType() == null : this.getScholarshipType().equals(other.getScholarshipType()))
-            && (this.getGradeId() == null ? other.getGradeId() == null : this.getGradeId().equals(other.getGradeId()))
+            && (this.getGrade() == null ? other.getGrade() == null : this.getGrade().equals(other.getGrade()))
             && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()))
             && (this.getCollegePrizeId() == null ? other.getCollegePrizeId() == null : this.getCollegePrizeId().equals(other.getCollegePrizeId()))
             && (this.getCreateDate() == null ? other.getCreateDate() == null : this.getCreateDate().equals(other.getCreateDate()));
@@ -152,12 +152,12 @@ public class GradePrize implements Serializable {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
-        result = prime * result + ((getPrimaryTeachingInstitutionId() == null) ? 0 : getPrimaryTeachingInstitutionId().hashCode());
+        result = prime * result + ((getCollegeId() == null) ? 0 : getCollegeId().hashCode());
         result = prime * result + ((getNumber() == null) ? 0 : getNumber().hashCode());
         result = prime * result + ((getPrizeInfoId() == null) ? 0 : getPrizeInfoId().hashCode());
         result = prime * result + ((getScholarshipId() == null) ? 0 : getScholarshipId().hashCode());
         result = prime * result + ((getScholarshipType() == null) ? 0 : getScholarshipType().hashCode());
-        result = prime * result + ((getGradeId() == null) ? 0 : getGradeId().hashCode());
+        result = prime * result + ((getGrade() == null) ? 0 : getGrade().hashCode());
         result = prime * result + ((getStatus() == null) ? 0 : getStatus().hashCode());
         result = prime * result + ((getCollegePrizeId() == null) ? 0 : getCollegePrizeId().hashCode());
         result = prime * result + ((getCreateDate() == null) ? 0 : getCreateDate().hashCode());

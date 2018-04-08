@@ -32,7 +32,7 @@ public class ScheduleTask {
     private IApplicationService applicationService;
 
 
-    @Scheduled(cron = "0 0/30 * * * ?")
+    @Scheduled(cron = "0 0/15 * * * ?")
 //    @Scheduled(cron = "*/5 * * * * ?")
     public void executeUploadTask() {
         System.out.println("test schedule");
@@ -56,11 +56,11 @@ public class ScheduleTask {
             List<PrizeCollegeLimitTime> prizeCollegeLimitTimes = prizeCollegeLimitTimeMapper.selectByExample(limitTimeExample);
             for (PrizeCollegeLimitTime limitTime : prizeCollegeLimitTimes) {
                 if (limitTime.getGradeEndDate() != null && now.getTime()>=limitTime.getGradeEndDate().getTime()) {
-                    applicationService.closeGradeSubmitForSchedule(scholarship.getId(), limitTime.getPrimaryTeachingInstitutionId());
+                    applicationService.closeGradeSubmitForSchedule(scholarship.getId(), limitTime.getCollegeId());
                 }
 
                 if (limitTime.getStudentEndDate()!= null && now.getTime()>=limitTime.getStudentEndDate().getTime()){
-                    applicationService.closeApplyForSchedule(scholarship.getId(), limitTime.getPrimaryTeachingInstitutionId());
+                    applicationService.closeApplyForSchedule(scholarship.getId(), limitTime.getCollegeId());
                 }
             }
         }

@@ -9,6 +9,9 @@ import com.liwj.asem.dto.UserDTO;
 import com.liwj.asem.enums.*;
 import com.liwj.asem.exception.WSPException;
 import com.liwj.asem.model.*;
+import com.liwj.asem.remote.RemoteException;
+import com.liwj.asem.remote.RemoteService;
+import com.liwj.asem.remote.bo.NewStudent;
 import com.liwj.asem.service.IApplicationService;
 import com.liwj.asem.service.IFlowTemplateService;
 import com.liwj.asem.service.IUserService;
@@ -16,6 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.rmi.Remote;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -60,15 +65,6 @@ public class ApplicationService implements IApplicationService {
     private SchoolPrizeMapper schoolPrizeMapper;
 
     @Autowired
-    private GradeMapper gradeMapper;
-
-    @Autowired
-    private ClassesMapper classesMapper;
-
-    @Autowired
-    private SecondaryTeachingInstitutionMapper secondaryTeachingInstitutionMapper;
-
-    @Autowired
     private RFlowTemplateStepAndUserRoleMapper rFlowTemplateStepAndUserRoleMapper;
 
     @Autowired
@@ -76,9 +72,6 @@ public class ApplicationService implements IApplicationService {
 
     @Autowired
     private FlowTemplateStepMapper flowTemplateStepMapper;
-
-    @Autowired
-    private PrimaryTeachingInstitutionMapper primaryTeachingInstitutionMapper;
 
 
     @Override
@@ -99,8 +92,8 @@ public class ApplicationService implements IApplicationService {
             application.setCreateDate(new Date());
             application.setEvaluation(applicationForm.getEvaluation());
             application.setPrizeInfoId(collegePrize.getPrizeInfoId());
-            application.setPrimaryTeachingInstitutionId(user.getPrimaryTeachingInstitution().getId());
-            application.setGradeId(user.getGrade().getId());
+            application.setCollegeId(user.getCollegeId());
+            application.setGrade(user.getGrade());
             applicationMapper.insertSelective(application);
 
             for (ApplicationReasonBO reason : applicationForm.getReasons()) {
@@ -124,8 +117,8 @@ public class ApplicationService implements IApplicationService {
             ApplicationStep applicationStep = new ApplicationStep();
             applicationStep.setApplicationId(application.getId());
             applicationStep.setPrizeId(collegePrize.getId());
-            applicationStep.setPrimaryTeachingInstitutionId(user.getPrimaryTeachingInstitution().getId());
-            applicationStep.setGradeId(user.getGrade().getId());
+            applicationStep.setCollegeId(user.getCollegeId());
+            applicationStep.setGrade(user.getGrade());
             applicationStep.setFlowTemplateStepId(firstStep.getId());
             applicationStep.setStatus(ApplicationPrizeStatusEnum.SUBMIT.code);
             applicationStepMapper.insertSelective(applicationStep);
@@ -138,7 +131,7 @@ public class ApplicationService implements IApplicationService {
         Long applicationId = applicationForm.getId();
         Application application = applicationMapper.selectByPrimaryKey(applicationId);
         application.setFileStatus(ApplicationFileStatusEnum.RESUBMIT.code);
-        application.setStatus(ApplicationStatusEnum.RESUBMIT.code);
+//        application.setStatus(ApplicationStatusEnum.RESUBMIT.code);
         application.setEvaluation(applicationForm.getEvaluation());
         applicationMapper.updateByPrimaryKeySelective(application);
 
@@ -171,7 +164,7 @@ public class ApplicationService implements IApplicationService {
         CollegePrizeExample collegePrizeExample = new CollegePrizeExample();
         collegePrizeExample.createCriteria().andStatusEqualTo(StatusEnum.OPEN.code)
 //                .andApplyStatusEqualTo(true)
-                .andPrimaryTeachingInstitutionIdEqualTo(user.getPrimaryTeachingInstitution().getId());
+                .andCollegeIdEqualTo(user.getCollegeId());
         PageHelper.startPage(pageNum, pageSize);
         List<CollegePrize> collegePrizes = collegePrizeMapper.selectByExample(collegePrizeExample);
         PageInfo pageInfo = new PageInfo(collegePrizes);
@@ -203,7 +196,7 @@ public class ApplicationService implements IApplicationService {
             }
             PrizeCollegeLimitTimeExample prizeCollegeLimitTimeExample = new PrizeCollegeLimitTimeExample();
             prizeCollegeLimitTimeExample.createCriteria().andScholarshipIdEqualTo(scholarship.getId())
-                    .andPrimaryTeachingInstitutionIdEqualTo(user.getPrimaryTeachingInstitution().getId());
+                    .andCollegeIdEqualTo(user.getCollegeId());
             List<PrizeCollegeLimitTime> prizeCollegeLimitTimes = prizeCollegeLimitTimeMapper.selectByExample(prizeCollegeLimitTimeExample);
             if (prizeCollegeLimitTimes.size() == 1) {
                 PrizeCollegeLimitTime limitTime = prizeCollegeLimitTimes.get(0);
@@ -295,8 +288,8 @@ public class ApplicationService implements IApplicationService {
             List<Integer> status = new ArrayList<>();
             status.add(StatusEnum.OPEN.code);
             GradePrizeExample gradePrizeExample = new GradePrizeExample();
-            gradePrizeExample.createCriteria().andGradeIdIn(user.getMangeGradeId())
-                    .andPrimaryTeachingInstitutionIdEqualTo(user.getPrimaryTeachingInstitution().getId())
+            gradePrizeExample.createCriteria().andGradeIn(user.getManageGrades())
+                    .andCollegeIdEqualTo(unitId)
                     .andStatusIn(status)
                     .andScholarshipIdIn(scholarshipIds);
             List<GradePrize> gradePrizes = gradePrizeMapper.selectByExample(gradePrizeExample);
@@ -322,7 +315,7 @@ public class ApplicationService implements IApplicationService {
                 bo.setPrizeName(prizeInfo.getPrizeName());
 
                 CollegePrizeExample collegePrizeExample = new CollegePrizeExample();
-                collegePrizeExample.createCriteria().andPrimaryTeachingInstitutionIdEqualTo(user.getPrimaryTeachingInstitution().getId())
+                collegePrizeExample.createCriteria().andCollegeIdEqualTo(unitId)
                         .andPrizeInfoIdEqualTo(prizeInfo.getId());
                 List<CollegePrize> collegePrizes = collegePrizeMapper.selectByExample(collegePrizeExample);
                 CollegePrize collegePrize;
@@ -336,7 +329,7 @@ public class ApplicationService implements IApplicationService {
 
                 ApplicationExample applicationExample = new ApplicationExample();
                 applicationExample.createCriteria().andPrizeIdEqualTo(collegePrize.getId())
-                        .andGradeIdIn(user.getMangeGradeId());
+                        .andGradeIn(user.getManageGrades());
                 Long num1 = applicationMapper.countByExample(applicationExample);
                 bo.setApplyNumber(num1);
 
@@ -346,7 +339,7 @@ public class ApplicationService implements IApplicationService {
                 statuses.add(ApplicationFileStatusEnum.RESUBMIT.code);
                 applicationExample.createCriteria().andPrizeIdEqualTo(collegePrize.getId())
                         .andFileStatusIn(statuses)
-                        .andGradeIdIn(user.getMangeGradeId());
+                        .andGradeIn(user.getManageGrades());
                 Long num2 = applicationMapper.countByExample(applicationExample);
                 bo.setRejectNumber(num2);
 
@@ -354,7 +347,7 @@ public class ApplicationService implements IApplicationService {
 
                 applicationExample.createCriteria().andPrizeIdEqualTo(collegePrize.getId())
                         .andFileStatusEqualTo(ApplicationFileStatusEnum.RESUBMIT.code)
-                        .andGradeIdIn(user.getMangeGradeId());
+                        .andGradeIn(user.getManageGrades());
                 Long num3 = applicationMapper.countByExample(applicationExample);
                 bo.setReSubmitNumber(num3);
                 res.add(bo);
@@ -363,7 +356,7 @@ public class ApplicationService implements IApplicationService {
             return pageInfo;
         } else if (userService.isCollegeManger(user)) {
             RFlowTemplateStepAndUserRoleExample roleExample = new RFlowTemplateStepAndUserRoleExample();
-            roleExample.createCriteria().andRoleTypeEqualTo(RoleTypeEnum.SPECIAL_ADVISER.code);
+            roleExample.createCriteria().andRoleTypeEqualTo(RoleTypeEnum.COLLEGE.code);
             List<RFlowTemplateStepAndUserRole> rFlowTemplateStepAndUserRoles = rFlowTemplateStepAndUserRoleMapper
                     .selectByExample(roleExample);
             List<Long> flowTemplateStepIds = new ArrayList<>();
@@ -376,7 +369,7 @@ public class ApplicationService implements IApplicationService {
 
             CollegePrizeExample collegePrizeExample = new CollegePrizeExample();
             collegePrizeExample.createCriteria().andStatusEqualTo(StatusEnum.OPEN.code)
-                    .andPrimaryTeachingInstitutionIdEqualTo(unitId);
+                    .andCollegeIdEqualTo(unitId);
             PageHelper.startPage(pageNum, pageSize);
             List<CollegePrize> collegePrizes = collegePrizeMapper.selectByExample(collegePrizeExample);
             if (collegePrizes.size() == 0) {
@@ -397,7 +390,7 @@ public class ApplicationService implements IApplicationService {
 
                 ApplicationExample applicationExample = new ApplicationExample();
                 applicationExample.createCriteria().andPrizeInfoIdEqualTo(prizeInfo.getId())
-                        .andPrimaryTeachingInstitutionIdEqualTo(unitId);
+                        .andCollegeIdEqualTo(unitId);
                 List<Application> applications = applicationMapper.selectByExampleWithBLOBs(applicationExample);
                 if (applications.size() == 0) {
                     bo.setApplyNumber(0L);
@@ -449,7 +442,7 @@ public class ApplicationService implements IApplicationService {
             return pageInfo;
         } else if (userService.isSchoolUser(user)) {
             RFlowTemplateStepAndUserRoleExample roleExample = new RFlowTemplateStepAndUserRoleExample();
-            roleExample.createCriteria().andRoleTypeEqualTo(RoleTypeEnum.SCHOOL_USER.code);
+            roleExample.createCriteria().andRoleTypeEqualTo(RoleTypeEnum.SCHOOL.code);
             List<RFlowTemplateStepAndUserRole> rFlowTemplateStepAndUserRoles = rFlowTemplateStepAndUserRoleMapper
                     .selectByExample(roleExample);
             List<Long> flowTemplateStepIds = new ArrayList<>();
@@ -545,7 +538,7 @@ public class ApplicationService implements IApplicationService {
     }
 
     @Override
-    public PageInfo getPrizeDetailForFileCheck(UserDTO user, Long prizeId, List<Long> studentIds, List<Integer> status, Integer pageNum, Integer pageSize) {
+    public PageInfo getPrizeDetailForFileCheck(UserDTO user, Long prizeId, List<Long> studentIds, List<Integer> status, Integer pageNum, Integer pageSize) throws RemoteException {
         if (studentIds.size() == 0) {
             return new PageInfo();
         }
@@ -569,10 +562,10 @@ public class ApplicationService implements IApplicationService {
         } else {
             CollegePrize collegePrize = collegePrizeMapper.selectByPrimaryKey(prizeId);
             applicationExample.createCriteria().andPrizeInfoIdEqualTo(prizeInfo.getId())
-                    .andPrimaryTeachingInstitutionIdEqualTo(collegePrize.getPrimaryTeachingInstitutionId())
+                    .andCollegeIdEqualTo(collegePrize.getCollegeId())
                     .andUserIdIn(studentIds);
-            if (userService.isGradeManger(user)){
-                applicationExample.getOredCriteria().get(0).andGradeIdIn(user.getMangeGradeId());
+            if (userService.isGradeManger(user)) {
+                applicationExample.getOredCriteria().get(0).andGradeIn(user.getManageGrades());
             }
             if (status != null && !status.contains(0)) {
                 applicationExample.getOredCriteria().get(0).andFileStatusIn(status);
@@ -598,13 +591,13 @@ public class ApplicationService implements IApplicationService {
 
         RFlowTemplateStepAndUserRoleExample roleExample = new RFlowTemplateStepAndUserRoleExample();
         if (userService.isGradeManger(user)) {
-            roleExample.createCriteria().andRoleTypeEqualTo(RoleTypeEnum.GRADE_ADVISER.code)
+            roleExample.createCriteria().andRoleTypeEqualTo(RoleTypeEnum.GRADE.code)
                     .andFlowTemplateStepIdIn(stepIds);
         } else if (userService.isCollegeManger(user)) {
-            roleExample.createCriteria().andRoleTypeEqualTo(RoleTypeEnum.SPECIAL_ADVISER.code)
+            roleExample.createCriteria().andRoleTypeEqualTo(RoleTypeEnum.COLLEGE.code)
                     .andFlowTemplateStepIdIn(stepIds);
         } else if (userService.isSchoolUser(user)) {
-            roleExample.createCriteria().andRoleTypeEqualTo(RoleTypeEnum.SCHOOL_USER.code)
+            roleExample.createCriteria().andRoleTypeEqualTo(RoleTypeEnum.SCHOOL.code)
                     .andFlowTemplateStepIdIn(stepIds);
         }
 
@@ -617,7 +610,7 @@ public class ApplicationService implements IApplicationService {
             if (!userService.isSchoolUser(user)) {
                 CollegePrize collegePrize = collegePrizeMapper.selectByPrimaryKey(prizeId);
                 applicationStepExample.createCriteria().andFlowTemplateStepIdEqualTo(role.getFlowTemplateStepId())
-                        .andPrimaryTeachingInstitutionIdEqualTo(collegePrize.getPrimaryTeachingInstitutionId())
+                        .andCollegeIdEqualTo(collegePrize.getCollegeId())
                         .andApplicationIdIn(applicationIds);
             } else {
                 applicationStepExample.createCriteria().andFlowTemplateStepIdEqualTo(role.getFlowTemplateStepId())
@@ -627,6 +620,7 @@ public class ApplicationService implements IApplicationService {
             List<ApplicationStep> applicationSteps = applicationStepMapper.selectByExample(applicationStepExample);
             PageInfo pageInfo = new PageInfo(applicationSteps);
             List<ApplicationFileCheckDetailBO> res = new ArrayList<>();
+            RemoteService rs = new RemoteService();
             for (ApplicationStep applicationStep : applicationSteps) {
                 Application application = applicationMapper.selectByPrimaryKey(applicationStep.getApplicationId());
                 ApplicationFileCheckDetailBO bo = new ApplicationFileCheckDetailBO();
@@ -637,22 +631,11 @@ public class ApplicationService implements IApplicationService {
                 if (student != null) {
                     bo.setName(student.getName());
                     bo.setSn(student.getSn());
-                }
 
-                if (student.getSecondaryTeachingInstitutionId() != null) {
-                    SecondaryTeachingInstitution secondaryTeachingInstitution = secondaryTeachingInstitutionMapper
-                            .selectByPrimaryKey(student.getSecondaryTeachingInstitutionId());
-                    bo.setMajorName(secondaryTeachingInstitution.getName());
-                }
-
-                if (student.getGradeId() != null) {
-                    Grade grade = gradeMapper.selectByPrimaryKey(student.getGradeId());
-                    bo.setGradeName(grade.getName());
-                }
-
-                if (student.getClassesId() != null) {
-                    Classes classes = classesMapper.selectByPrimaryKey(student.getClassesId());
-                    bo.setClassName(classes.getName());
+                    NewStudent tmp = rs.findStudentInfoBySn(student.getSn());
+                    bo.setMajorName(tmp.getMajorName());
+                    bo.setClassName(tmp.getClassName());
+                    bo.setGradeName(student.getGrade());
                 }
 
                 res.add(bo);
@@ -691,7 +674,7 @@ public class ApplicationService implements IApplicationService {
     }
 
     @Override
-    public PageInfo getPrizeDetailForAwardCheck(UserDTO user, Long prizeId, List<Long> studentIds, List<Integer> fileStatus, List<Integer> prizeStatus, Integer pageNum, Integer pageSize) {
+    public PageInfo getPrizeDetailForAwardCheck(UserDTO user, Long prizeId, List<Long> studentIds, List<Integer> fileStatus, List<Integer> prizeStatus, Integer pageNum, Integer pageSize) throws RemoteException {
         if (studentIds.size() == 0) {
             return new PageInfo();
         }
@@ -709,10 +692,10 @@ public class ApplicationService implements IApplicationService {
             }
         } else {
             applicationExample.createCriteria().andPrizeInfoIdEqualTo(prizeInfo.getId())
-                    .andPrimaryTeachingInstitutionIdEqualTo(collegePrize.getPrimaryTeachingInstitutionId())
+                    .andCollegeIdEqualTo(collegePrize.getCollegeId())
                     .andUserIdIn(studentIds);
-            if (userService.isGradeManger(user)){
-                applicationExample.getOredCriteria().get(0).andGradeIdIn(user.getMangeGradeId());
+            if (userService.isGradeManger(user)) {
+                applicationExample.getOredCriteria().get(0).andGradeIn(user.getManageGrades());
             }
             if (fileStatus != null && !fileStatus.contains(0)) {
                 applicationExample.getOredCriteria().get(0).andFileStatusIn(fileStatus);
@@ -737,13 +720,13 @@ public class ApplicationService implements IApplicationService {
 
         RFlowTemplateStepAndUserRoleExample roleExample = new RFlowTemplateStepAndUserRoleExample();
         if (userService.isGradeManger(user)) {
-            roleExample.createCriteria().andRoleTypeEqualTo(RoleTypeEnum.GRADE_ADVISER.code)
+            roleExample.createCriteria().andRoleTypeEqualTo(RoleTypeEnum.GRADE.code)
                     .andFlowTemplateStepIdIn(stepIds);
         } else if (userService.isCollegeManger(user)) {
-            roleExample.createCriteria().andRoleTypeEqualTo(RoleTypeEnum.SPECIAL_ADVISER.code)
+            roleExample.createCriteria().andRoleTypeEqualTo(RoleTypeEnum.COLLEGE.code)
                     .andFlowTemplateStepIdIn(stepIds);
         } else if (userService.isSchoolUser(user)) {
-            roleExample.createCriteria().andRoleTypeEqualTo(RoleTypeEnum.SCHOOL_USER.code)
+            roleExample.createCriteria().andRoleTypeEqualTo(RoleTypeEnum.SCHOOL.code)
                     .andFlowTemplateStepIdIn(stepIds);
         }
 
@@ -754,7 +737,7 @@ public class ApplicationService implements IApplicationService {
 
             ApplicationStepExample applicationStepExample = new ApplicationStepExample();
             applicationStepExample.createCriteria().andFlowTemplateStepIdEqualTo(role.getFlowTemplateStepId())
-                    .andPrimaryTeachingInstitutionIdEqualTo(collegePrize.getPrimaryTeachingInstitutionId())
+                    .andCollegeIdEqualTo(collegePrize.getCollegeId())
                     .andApplicationIdIn(applicationIds);
             if (prizeStatus != null && !prizeStatus.contains(0)) {
                 applicationStepExample.getOredCriteria().get(0).andStatusIn(prizeStatus);
@@ -763,6 +746,7 @@ public class ApplicationService implements IApplicationService {
             List<ApplicationStep> applicationSteps = applicationStepMapper.selectByExample(applicationStepExample);
             PageInfo pageInfo = new PageInfo(applicationSteps);
             List<ApplicationAwardCheckDetailBO> res = new ArrayList<>();
+            RemoteService rs = new RemoteService();
             for (ApplicationStep applicationStep : applicationSteps) {
                 Application application = applicationMapper.selectByPrimaryKey(applicationStep.getApplicationId());
                 ApplicationAwardCheckDetailBO bo = new ApplicationAwardCheckDetailBO();
@@ -774,22 +758,11 @@ public class ApplicationService implements IApplicationService {
                 if (student != null) {
                     bo.setName(student.getName());
                     bo.setSn(student.getSn());
-                }
 
-                if (student.getSecondaryTeachingInstitutionId() != null) {
-                    SecondaryTeachingInstitution secondaryTeachingInstitution = secondaryTeachingInstitutionMapper
-                            .selectByPrimaryKey(student.getSecondaryTeachingInstitutionId());
-                    bo.setMajorName(secondaryTeachingInstitution.getName());
-                }
-
-                if (student.getGradeId() != null) {
-                    Grade grade = gradeMapper.selectByPrimaryKey(student.getGradeId());
-                    bo.setGradeName(grade.getName());
-                }
-
-                if (student.getClassesId() != null) {
-                    Classes classes = classesMapper.selectByPrimaryKey(student.getClassesId());
-                    bo.setClassName(classes.getName());
+                    NewStudent tmp = rs.findStudentInfoBySn(student.getSn());
+                    bo.setMajorName(tmp.getMajorName());
+                    bo.setClassName(tmp.getClassName());
+                    bo.setGradeName(student.getGrade());
                 }
 
                 ApplicationExample applicationExample2 = new ApplicationExample();
@@ -838,75 +811,50 @@ public class ApplicationService implements IApplicationService {
                 ApplicationStep step = applicationStepMapper.selectByPrimaryKey(id);
                 Application application = applicationMapper.selectByPrimaryKey(step.getApplicationId());
                 if (userService.isGradeManger(user)) {
-                    CollegePrizeExample collegePrizeExample = new CollegePrizeExample();
-                    collegePrizeExample.createCriteria().andPrimaryTeachingInstitutionIdEqualTo(step.getPrimaryTeachingInstitutionId())
-                            .andPrizeInfoIdEqualTo(application.getPrizeInfoId());
-                    List<CollegePrize> tmp = collegePrizeMapper.selectByExample(collegePrizeExample);
-                    if (tmp.size() == 1) {
-                        CollegePrize collegePrize = tmp.get(0);
-                        if (collegePrize.getSubmitStatus() == false) {
-                            throw new WSPException(ErrorInfo.CLOSE_COLLEGE_SUBMIT);
-                        }
-                    } else {
-                        throw new WSPException(ErrorInfo.PARAMS_ERROR);
-                    }
-                } else if (userService.isCollegeManger(user)) {
-                    SchoolPrizeExample schoolPrizeExample = new SchoolPrizeExample();
-                    schoolPrizeExample.createCriteria().andPrizeInfoIdEqualTo(application.getPrizeInfoId());
-                    List<SchoolPrize> tmp = schoolPrizeMapper.selectByExample(schoolPrizeExample);
-                    if (tmp.size() == 1) {
-                        SchoolPrize schoolPrize = tmp.get(0);
-                        if (schoolPrize.getSubmitStatus() == false) {
-                            throw new WSPException(ErrorInfo.CLOSE_COLLEGE_SUBMIT);
-                        }
-                    } else {
-                        throw new WSPException(ErrorInfo.PARAMS_ERROR);
-                    }
-                }
-            } else {
-                return;
-            }
-            for (Long id : ids) {
-                ApplicationStep step = applicationStepMapper.selectByPrimaryKey(id);
-                FlowTemplateStep flowTemplateStep = flowTemplateStepMapper.selectByPrimaryKey(step.getFlowTemplateStepId());
-                FlowTemplateStep nextStep = flowTemplateService.findTheNextStep(flowTemplateStep.getFlowTemplateId(),
-                        flowTemplateStep.getId());
-
-                Application application = applicationMapper.selectByPrimaryKey(step.getApplicationId());
-                if (userService.isGradeManger(user)) {
                     GradePrizeExample gradePrizeExample = new GradePrizeExample();
-                    gradePrizeExample.createCriteria().andPrizeInfoIdEqualTo(application.getPrizeInfoId())
-                            .andPrimaryTeachingInstitutionIdEqualTo(application.getPrimaryTeachingInstitutionId())
-                            .andGradeIdEqualTo(application.getGradeId());
-                    List<GradePrize> gradePrizes = gradePrizeMapper.selectByExample(gradePrizeExample);
-                    if (gradePrizes.size() == 1) {
-                        GradePrize gradePrize = gradePrizes.get(0);
+                    gradePrizeExample.createCriteria().andCollegeIdEqualTo(step.getCollegeId())
+                            .andGradeEqualTo(application.getGrade())
+                            .andPrizeInfoIdEqualTo(application.getPrizeInfoId());
+                    List<GradePrize> tmp = gradePrizeMapper.selectByExample(gradePrizeExample);
+                    if (tmp.size() == 1) {
+                        GradePrize gradePrize = tmp.get(0);
+                        if (gradePrize.getStatus() == StatusEnum.CLOSE.code) {
+                            throw new WSPException(ErrorInfo.CLOSE_GRADE_SUBMIT);
+                        }
 
-                        List<Integer> tmp = new ArrayList<>();
-                        tmp.add(ApplicationPrizeStatusEnum.PASS.code);
-                        tmp.add(ApplicationPrizeStatusEnum.WAIT_PASS.code);
+                        List<Integer> used = new ArrayList<>();
+                        used.add(ApplicationPrizeStatusEnum.PASS.code);
+//                        tmp.add(ApplicationPrizeStatusEnum.WAIT_PASS.code);
                         ApplicationStepExample stepExample = new ApplicationStepExample();
                         stepExample.createCriteria().andFlowTemplateStepIdEqualTo(step.getFlowTemplateStepId())
-                                .andPrimaryTeachingInstitutionIdEqualTo(step.getPrimaryTeachingInstitutionId())
-                                .andGradeIdEqualTo(step.getGradeId())
+                                .andCollegeIdEqualTo(step.getCollegeId())
+                                .andGradeEqualTo(step.getGrade())
                                 .andPrizeIdEqualTo(gradePrize.getCollegePrizeId())
-                                .andStatusIn(tmp);
+                                .andStatusIn(used);
                         Long usedNumber = applicationStepMapper.countByExample(stepExample);
 
-                        if (gradePrize.getNumber() <= usedNumber) {
+                        if (gradePrize.getNumber() <= usedNumber ||
+                                gradePrize.getNumber() < usedNumber + ids.size()) {
                             throw new WSPException(ErrorInfo.FULL_NUMBER);
                         }
+                    } else {
+                        throw new WSPException(ErrorInfo.PARAMS_ERROR);
                     }
-
                 } else if (userService.isCollegeManger(user)) {
                     CollegePrize collegePrize = collegePrizeMapper.selectByPrimaryKey(application.getPrizeId());
+
+
+                    if (collegePrize.getSubmitStatus() == false) {
+                        throw new WSPException(ErrorInfo.CLOSE_COLLEGE_SUBMIT);
+                    }
+
                     List<Integer> tmp = new ArrayList<>();
                     tmp.add(ApplicationPrizeStatusEnum.PASS.code);
-                    tmp.add(ApplicationPrizeStatusEnum.WAIT_PASS.code);
+//                    tmp.add(ApplicationPrizeStatusEnum.WAIT_PASS.code);
                     ApplicationStepExample stepExample = new ApplicationStepExample();
                     stepExample.createCriteria().andFlowTemplateStepIdEqualTo(step.getFlowTemplateStepId())
-                            .andPrimaryTeachingInstitutionIdEqualTo(step.getPrimaryTeachingInstitutionId())
-                            .andGradeIdEqualTo(step.getGradeId())
+                            .andCollegeIdEqualTo(step.getCollegeId())
+                            .andGradeEqualTo(step.getGrade())
                             .andPrizeIdEqualTo(collegePrize.getId())
                             .andStatusIn(tmp);
                     Long usedNumber = applicationStepMapper.countByExample(stepExample);
@@ -919,11 +867,11 @@ public class ApplicationService implements IApplicationService {
                     SchoolPrize schoolPrize = schoolPrizeMapper.selectByPrimaryKey(collegePrize.getSchoolPrizeId());
                     List<Integer> tmp = new ArrayList<>();
                     tmp.add(ApplicationPrizeStatusEnum.PASS.code);
-                    tmp.add(ApplicationPrizeStatusEnum.WAIT_PASS.code);
+//                    tmp.add(ApplicationPrizeStatusEnum.WAIT_PASS.code);
                     ApplicationStepExample stepExample = new ApplicationStepExample();
                     stepExample.createCriteria().andFlowTemplateStepIdEqualTo(step.getFlowTemplateStepId())
-                            .andPrimaryTeachingInstitutionIdEqualTo(step.getPrimaryTeachingInstitutionId())
-                            .andGradeIdEqualTo(step.getGradeId())
+                            .andCollegeIdEqualTo(step.getCollegeId())
+                            .andGradeEqualTo(step.getGrade())
                             .andPrizeIdEqualTo(collegePrize.getId())
                             .andStatusIn(tmp);
                     Long usedNumber = applicationStepMapper.countByExample(stepExample);
@@ -932,25 +880,78 @@ public class ApplicationService implements IApplicationService {
                         throw new WSPException(ErrorInfo.FULL_NUMBER);
                     }
                 }
+            } else {
+                return;
+            }
+            for (Long id : ids) {
+                ApplicationStep step = applicationStepMapper.selectByPrimaryKey(id);
+                FlowTemplateStep flowTemplateStep = flowTemplateStepMapper.selectByPrimaryKey(step.getFlowTemplateStepId());
+                FlowTemplateStep nextStep = flowTemplateService.findTheNextStep(flowTemplateStep.getFlowTemplateId(),
+                        flowTemplateStep.getId());
+
+                Application application = applicationMapper.selectByPrimaryKey(step.getApplicationId());
+
+
+                step.setStatus(ApplicationPrizeStatusEnum.PASS.code);
+                step.setOperatorId(user.getId());
+                step.setOperationDate(new Date());
+                applicationStepMapper.updateByPrimaryKeySelective(step);
+
 
                 if (nextStep == null) {
-
-                    step.setStatus(ApplicationPrizeStatusEnum.PASS.code);
-                    step.setOperatorId(user.getId());
-                    step.setOperationDate(new Date());
-                    applicationStepMapper.updateByPrimaryKeySelective(step);
-
                     application.setPrizeStatus(result.code);
                     applicationMapper.updateByPrimaryKeySelective(application);
                 } else {
-                    step.setStatus(ApplicationPrizeStatusEnum.WAIT_PASS.code);
-                    step.setOperatorId(user.getId());
-                    step.setOperationDate(new Date());
-                    applicationStepMapper.updateByPrimaryKeySelective(step);
-
                     application.setPrizeStatus(ApplicationPrizeStatusEnum.SUBMIT.code);
                     applicationMapper.updateByPrimaryKeySelective(application);
 
+                    ApplicationStepExample testExample = new ApplicationStepExample();
+                    testExample.createCriteria().andCollegeIdEqualTo(step.getCollegeId())
+                            .andApplicationIdEqualTo(step.getApplicationId())
+                            .andPrizeIdEqualTo(step.getPrizeId())
+                            .andFlowTemplateStepIdEqualTo(nextStep.getId());
+                    long tmpNum = applicationStepMapper.countByExample(testExample);
+                    if (tmpNum != 0) {
+                        throw new WSPException(ErrorInfo.FULL_NUMBER);
+                    }
+                    ApplicationStep applicationStep = new ApplicationStep();
+                    applicationStep.setFlowTemplateStepId(nextStep.getId());
+                    applicationStep.setStatus(ApplicationPrizeStatusEnum.SUBMIT.code);
+                    applicationStep.setCollegeId(step.getCollegeId());
+                    applicationStep.setGrade(step.getGrade());
+                    applicationStep.setPrizeId(step.getPrizeId());
+                    applicationStep.setApplicationId(step.getApplicationId());
+                    applicationStepMapper.insertSelective(applicationStep);
+                }
+
+                //补充 将同奖项其他等级申请设置为不通过
+                ApplicationExample applicationExample = new ApplicationExample();
+                applicationExample.createCriteria().andScholarshipIdEqualTo(application.getScholarshipId())
+                        .andUserIdEqualTo(application.getUserId())
+                        .andStatusEqualTo(ApplicationStatusEnum.SUBMIT.code)
+                        .andPrizeStatusEqualTo(ApplicationPrizeStatusEnum.SUBMIT.code)
+                        .andIdNotEqualTo(application.getId());
+                List<Application> applications = applicationMapper.selectByExampleWithBLOBs(applicationExample);
+                for (Application other : applications) {
+                    other.setStatus(ApplicationStatusEnum.REJECT.code);
+                    other.setPrizeStatus(ApplicationPrizeStatusEnum.REJECT.code);
+                    applicationMapper.updateByPrimaryKeySelective(other);
+
+                    ApplicationStepExample otherStepExample = new ApplicationStepExample();
+                    otherStepExample.createCriteria()
+                            .andApplicationIdEqualTo(other.getId())
+                            .andFlowTemplateStepIdEqualTo(flowTemplateStep.getId())
+                            .andPrizeIdEqualTo(other.getPrizeId())
+                            .andStatusEqualTo(ApplicationPrizeStatusEnum.SUBMIT.code);
+
+//                    List<ApplicationStep> ll = applicationStepMapper.selectByExample(otherStepExample);
+//                    System.out.println(ll.size());
+                    ApplicationStep tmp = new ApplicationStep();
+                    tmp.setStatus(ApplicationPrizeStatusEnum.REJECT.code);
+                    tmp.setOperatorId(user.getId());
+                    tmp.setOperationDate(new Date());
+//
+                    applicationStepMapper.updateByExampleSelective(tmp, otherStepExample);
                 }
             }
         }
@@ -958,7 +959,7 @@ public class ApplicationService implements IApplicationService {
     }
 
     @Override
-    public PageInfo getCollegePrizeForAwardCheck(UserDTO user, Long prizeId, Integer pageNum, Integer pageSize) {
+    public PageInfo getCollegePrizeForAwardCheck(UserDTO user, Long prizeId, Integer pageNum, Integer pageSize) throws RemoteException {
         SchoolPrize schoolPrize = schoolPrizeMapper.selectByPrimaryKey(prizeId);
         PrizeInfo prizeInfo = prizeInfoMapper.selectByPrimaryKey(schoolPrize.getPrizeInfoId());
         CollegePrizeExample collegePrizeExample = new CollegePrizeExample();
@@ -971,6 +972,7 @@ public class ApplicationService implements IApplicationService {
         }
         List<ApplicationAwardCheckListBO> res = new ArrayList<>();
         Scholarship scholarship = scholarshipMapper.selectByPrimaryKey(prizeInfo.getScholarshipId());
+        RemoteService rs = new RemoteService();
         for (CollegePrize collegePrize : collegePrizes) {
             ApplicationAwardCheckListBO bo = new ApplicationAwardCheckListBO();
             bo.setPrizeInfoId(prizeInfo.getId());
@@ -978,14 +980,15 @@ public class ApplicationService implements IApplicationService {
             bo.setAvailableNumber(collegePrize.getNumber().longValue());
 
             bo.setEndDate(scholarship.getCollegeEndDate());
+            bo.setSubmitStatus(collegePrize.getSubmitStatus());
+            bo.setApplyStatus(collegePrize.getApplyStatus());
 
-            PrimaryTeachingInstitution primaryTeachingInstitution = primaryTeachingInstitutionMapper
-                    .selectByPrimaryKey(collegePrize.getPrimaryTeachingInstitutionId());
-            bo.setUnitName(primaryTeachingInstitution.getName());
-            bo.setUnitId(primaryTeachingInstitution.getId());
+            String name = rs.findCollegeNameById(collegePrize.getCollegeId());
+            bo.setUnitName(name);
+            bo.setUnitId(collegePrize.getCollegeId());
 
             RFlowTemplateStepAndUserRoleExample roleExample = new RFlowTemplateStepAndUserRoleExample();
-            roleExample.createCriteria().andRoleTypeEqualTo(RoleTypeEnum.SCHOOL_USER.code);
+            roleExample.createCriteria().andRoleTypeEqualTo(RoleTypeEnum.SCHOOL.code);
             List<RFlowTemplateStepAndUserRole> rFlowTemplateStepAndUserRoles = rFlowTemplateStepAndUserRoleMapper
                     .selectByExample(roleExample);
             List<Long> flowTemplateStepIds = new ArrayList<>();
@@ -998,7 +1001,7 @@ public class ApplicationService implements IApplicationService {
 
             ApplicationExample applicationExample = new ApplicationExample();
             applicationExample.createCriteria().andPrizeInfoIdEqualTo(prizeInfo.getId())
-                    .andPrimaryTeachingInstitutionIdEqualTo(collegePrize.getPrimaryTeachingInstitutionId());
+                    .andCollegeIdEqualTo(collegePrize.getCollegeId());
             List<Application> applications = applicationMapper.selectByExampleWithBLOBs(applicationExample);
             if (applications.size() == 0) {
                 bo.setApplyNumber(0L);
@@ -1045,7 +1048,10 @@ public class ApplicationService implements IApplicationService {
             PrizeInfo prizeInfo = prizeInfoMapper.selectByPrimaryKey(application.getPrizeInfoId());
             bo.setPrizeName(prizeInfo.getPrizeName());
             bo.setMoney(prizeInfo.getMoney());
-            bo.setYear("暂无");
+
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy");
+            bo.setYear(simpleDateFormat.format(scholarship.getCreateDate()));
+
             res.add(bo);
         }
         pageInfo.setList(res);
@@ -1056,90 +1062,96 @@ public class ApplicationService implements IApplicationService {
     @Transactional(rollbackFor = Exception.class)
     public void closeSubmit(UserDTO user, Long id, Long unitId) throws WSPException {
         Scholarship scholarship;
-        ApplicationExample applicationExample = new ApplicationExample();
 
         if (userService.isSchoolUser(user)) {
-            SchoolPrize schoolPrize = schoolPrizeMapper.selectByPrimaryKey(id);
-            schoolPrize.setSubmitStatus(false);
-            schoolPrizeMapper.updateByPrimaryKeySelective(schoolPrize);
-
-            scholarship = scholarshipMapper.selectByPrimaryKey(schoolPrize.getScholarshipId());
-            applicationExample.createCriteria().andPrizeInfoIdEqualTo(schoolPrize.getPrizeInfoId());
-        } else if (userService.isCollegeManger(user)) {
             CollegePrize collegePrize = collegePrizeMapper.selectByPrimaryKey(id);
             collegePrize.setSubmitStatus(false);
+            collegePrizeMapper.updateByPrimaryKeySelective(collegePrize);
+
+            scholarship = scholarshipMapper.selectByPrimaryKey(collegePrize.getScholarshipId());
+            FlowTemplateStepExample flowTemplateStepExample = new FlowTemplateStepExample();
+            flowTemplateStepExample.createCriteria().andFlowTemplateIdEqualTo(scholarship.getFlowTemplateId());
+            List<FlowTemplateStep> flowTemplateSteps = flowTemplateStepMapper.selectByExample(flowTemplateStepExample);
+            List<Long> stepIds = new ArrayList<>();
+            for (FlowTemplateStep step : flowTemplateSteps) {
+                stepIds.add(step.getId());
+            }
+
+            RFlowTemplateStepAndUserRoleExample roleExample = new RFlowTemplateStepAndUserRoleExample();
+            roleExample.createCriteria().andRoleTypeEqualTo(RoleTypeEnum.SCHOOL.code)
+                    .andFlowTemplateStepIdIn(stepIds);
+            List<RFlowTemplateStepAndUserRole> rFlowTemplateStepAndUserRoles = rFlowTemplateStepAndUserRoleMapper
+                    .selectByExample(roleExample);
+            if (rFlowTemplateStepAndUserRoles.size() == 1) {
+                RFlowTemplateStepAndUserRole tmp = rFlowTemplateStepAndUserRoles.get(0);
+                Long nowStep = tmp.getFlowTemplateStepId();
+
+                rejectStepBefore(nowStep, unitId);
+            } else {
+                return;
+            }
+        } else if (userService.isCollegeManger(user)) {
+            CollegePrize collegePrize = collegePrizeMapper.selectByPrimaryKey(id);
             collegePrize.setApplyStatus(false);
             collegePrizeMapper.updateByPrimaryKeySelective(collegePrize);
-            scholarship = scholarshipMapper.selectByPrimaryKey(collegePrize.getScholarshipId());
-            applicationExample.createCriteria().andPrizeInfoIdEqualTo(collegePrize.getPrizeInfoId())
-                    .andPrimaryTeachingInstitutionIdEqualTo(collegePrize.getPrimaryTeachingInstitutionId());
+
+            GradePrizeExample gradePrizeExample = new GradePrizeExample();
+            gradePrizeExample.createCriteria().andCollegeIdEqualTo(collegePrize.getCollegeId())
+                    .andCollegePrizeIdEqualTo(collegePrize.getId());
+            List<GradePrize> gradePrizes = gradePrizeMapper.selectByExample(gradePrizeExample);
+            for (GradePrize gradePrize : gradePrizes) {
+                gradePrize.setStatus(StatusEnum.CLOSE.code);
+                gradePrizeMapper.updateByPrimaryKeySelective(gradePrize);
+
+                scholarship = scholarshipMapper.selectByPrimaryKey(collegePrize.getScholarshipId());
+                FlowTemplateStepExample flowTemplateStepExample = new FlowTemplateStepExample();
+                flowTemplateStepExample.createCriteria().andFlowTemplateIdEqualTo(scholarship.getFlowTemplateId());
+                List<FlowTemplateStep> flowTemplateSteps = flowTemplateStepMapper.selectByExample(flowTemplateStepExample);
+                List<Long> stepIds = new ArrayList<>();
+                for (FlowTemplateStep step : flowTemplateSteps) {
+                    stepIds.add(step.getId());
+                }
+
+                RFlowTemplateStepAndUserRoleExample roleExample = new RFlowTemplateStepAndUserRoleExample();
+                roleExample.createCriteria().andRoleTypeEqualTo(RoleTypeEnum.COLLEGE.code)
+                        .andFlowTemplateStepIdIn(stepIds);
+                List<RFlowTemplateStepAndUserRole> rFlowTemplateStepAndUserRoles = rFlowTemplateStepAndUserRoleMapper
+                        .selectByExample(roleExample);
+                if (rFlowTemplateStepAndUserRoles.size() == 1) {
+                    RFlowTemplateStepAndUserRole tmp = rFlowTemplateStepAndUserRoles.get(0);
+                    Long nowStep = tmp.getFlowTemplateStepId();
+                    rejectStepBefore(nowStep, collegePrize.getCollegeId());
+
+                }
+            }
         } else {
             return;
         }
+    }
 
-        List<Application> applications = applicationMapper.selectByExampleWithBLOBs(applicationExample);
-        List<Long> applicationIds = new ArrayList<>();
-        if (applications.size() == 0) {
-            return;
-        }
-        for (Application application : applications) {
-            applicationIds.add(application.getId());
-        }
-
-        FlowTemplateStepExample flowTemplateStepExample = new FlowTemplateStepExample();
-        flowTemplateStepExample.createCriteria().andFlowTemplateIdEqualTo(scholarship.getFlowTemplateId());
-        List<FlowTemplateStep> flowTemplateSteps = flowTemplateStepMapper.selectByExample(flowTemplateStepExample);
-        List<Long> stepIds = new ArrayList<>();
-        for (FlowTemplateStep step : flowTemplateSteps) {
-            stepIds.add(step.getId());
-        }
-
-        RFlowTemplateStepAndUserRoleExample roleExample = new RFlowTemplateStepAndUserRoleExample();
-        if (userService.isCollegeManger(user)) {
-            roleExample.createCriteria().andRoleTypeEqualTo(RoleTypeEnum.GRADE_ADVISER.code)
-                    .andFlowTemplateStepIdIn(stepIds);
-        } else if (userService.isSchoolUser(user)) {
-            roleExample.createCriteria().andRoleTypeEqualTo(RoleTypeEnum.SPECIAL_ADVISER.code)
-                    .andFlowTemplateStepIdIn(stepIds);
-        }
-
-        List<RFlowTemplateStepAndUserRole> rFlowTemplateStepAndUserRoles = rFlowTemplateStepAndUserRoleMapper
-                .selectByExample(roleExample);
-        if (rFlowTemplateStepAndUserRoles.size() == 1) {
-
-
-            RFlowTemplateStepAndUserRole role = rFlowTemplateStepAndUserRoles.get(0);
+    private void rejectStepBefore(Long nowStep, Long collegeId) {
+        FlowTemplateStep flowTemplateStep = flowTemplateStepMapper.selectByPrimaryKey(nowStep);
+        FlowTemplateStep frontStep = flowTemplateService.findTheFrontStep(flowTemplateStep.getFlowTemplateId(),
+                nowStep);
+        while (frontStep != null) {
             ApplicationStepExample applicationStepExample = new ApplicationStepExample();
-            if (userService.isSchoolUser(user)) {
-                applicationStepExample.createCriteria().andFlowTemplateStepIdEqualTo(role.getFlowTemplateStepId())
-                        .andStatusEqualTo(ApplicationPrizeStatusEnum.WAIT_PASS.code)
-                        .andApplicationIdIn(applicationIds);
-            } else if (userService.isCollegeManger(user)) {
-                CollegePrize collegePrize = collegePrizeMapper.selectByPrimaryKey(id);
-                applicationStepExample.createCriteria().andFlowTemplateStepIdEqualTo(role.getFlowTemplateStepId())
-                        .andPrimaryTeachingInstitutionIdEqualTo(collegePrize.getPrimaryTeachingInstitutionId())
-                        .andStatusEqualTo(ApplicationPrizeStatusEnum.WAIT_PASS.code)
-                        .andApplicationIdIn(applicationIds);
-            }
-            List<ApplicationStep> applicationSteps = applicationStepMapper.selectByExample(applicationStepExample);
 
-            for (ApplicationStep step : applicationSteps) {
-                step.setStatus(ApplicationPrizeStatusEnum.PASS.code);
+            applicationStepExample.createCriteria().andFlowTemplateStepIdEqualTo(frontStep.getId())
+                    .andStatusEqualTo(ApplicationPrizeStatusEnum.SUBMIT.code)
+                    .andCollegeIdEqualTo(collegeId);
+            List<ApplicationStep> list = applicationStepMapper.selectByExample(applicationStepExample);
+            for (ApplicationStep step : list) {
+                step.setStatus(ApplicationPrizeStatusEnum.REJECT.code);
                 applicationStepMapper.updateByPrimaryKeySelective(step);
 
-                FlowTemplateStep flowTemplateStep = flowTemplateStepMapper.selectByPrimaryKey(step.getFlowTemplateStepId());
-                FlowTemplateStep nextStep = flowTemplateService.findTheNextStep(flowTemplateStep.getFlowTemplateId(),
-                        flowTemplateStep.getId());
-
-                ApplicationStep applicationStep = new ApplicationStep();
-                applicationStep.setFlowTemplateStepId(nextStep.getId());
-                applicationStep.setStatus(ApplicationPrizeStatusEnum.SUBMIT.code);
-                applicationStep.setPrimaryTeachingInstitutionId(step.getPrimaryTeachingInstitutionId());
-                applicationStep.setGradeId(step.getGradeId());
-                applicationStep.setPrizeId(step.getPrizeId());
-                applicationStep.setApplicationId(step.getApplicationId());
-                applicationStepMapper.insertSelective(applicationStep);
+                Application application = applicationMapper.selectByPrimaryKey(step.getApplicationId());
+                application.setStatus(ApplicationPrizeStatusEnum.REJECT.code);
+                applicationMapper.updateByPrimaryKeySelective(application);
             }
+
+            nowStep = frontStep.getId();
+            frontStep = flowTemplateService.findTheFrontStep(flowTemplateStep.getFlowTemplateId(),
+                    nowStep);
         }
     }
 
@@ -1153,59 +1165,33 @@ public class ApplicationService implements IApplicationService {
             schoolPrize.setSubmitStatus(false);
             schoolPrizeMapper.updateByPrimaryKeySelective(schoolPrize);
 
-            ApplicationExample applicationExample = new ApplicationExample();
-            Scholarship scholarship = scholarshipMapper.selectByPrimaryKey(schoolPrize.getScholarshipId());
-            applicationExample.createCriteria().andPrizeInfoIdEqualTo(schoolPrize.getPrizeInfoId());
+            CollegePrizeExample collegePrizeExample = new CollegePrizeExample();
+            collegePrizeExample.createCriteria().andSchoolPrizeIdEqualTo(schoolPrize.getId());
+            List<CollegePrize> collegePrizes = collegePrizeMapper.selectByExample(collegePrizeExample);
+            for (CollegePrize collegePrize : collegePrizes) {
+//                collegePrize.setApplyStatus(false);
+                collegePrize.setSubmitStatus(false);
+                collegePrizeMapper.updateByPrimaryKeySelective(collegePrize);
 
-            List<Application> applications = applicationMapper.selectByExampleWithBLOBs(applicationExample);
-            List<Long> applicationIds = new ArrayList<>();
-            if (applications.size() == 0) {
-                return;
-            }
-            for (Application application : applications) {
-                applicationIds.add(application.getId());
-            }
+                Scholarship scholarship = scholarshipMapper.selectByPrimaryKey(collegePrize.getScholarshipId());
+                FlowTemplateStepExample flowTemplateStepExample = new FlowTemplateStepExample();
+                flowTemplateStepExample.createCriteria().andFlowTemplateIdEqualTo(scholarship.getFlowTemplateId());
+                List<FlowTemplateStep> flowTemplateSteps = flowTemplateStepMapper.selectByExample(flowTemplateStepExample);
+                List<Long> stepIds = new ArrayList<>();
+                for (FlowTemplateStep step : flowTemplateSteps) {
+                    stepIds.add(step.getId());
+                }
 
-            FlowTemplateStepExample flowTemplateStepExample = new FlowTemplateStepExample();
-            flowTemplateStepExample.createCriteria().andFlowTemplateIdEqualTo(scholarship.getFlowTemplateId());
-            List<FlowTemplateStep> flowTemplateSteps = flowTemplateStepMapper.selectByExample(flowTemplateStepExample);
-            List<Long> stepIds = new ArrayList<>();
-            for (FlowTemplateStep step : flowTemplateSteps) {
-                stepIds.add(step.getId());
-            }
+                RFlowTemplateStepAndUserRoleExample roleExample = new RFlowTemplateStepAndUserRoleExample();
+                roleExample.createCriteria().andRoleTypeEqualTo(RoleTypeEnum.SCHOOL.code)
+                        .andFlowTemplateStepIdIn(stepIds);
+                List<RFlowTemplateStepAndUserRole> rFlowTemplateStepAndUserRoles = rFlowTemplateStepAndUserRoleMapper
+                        .selectByExample(roleExample);
+                if (rFlowTemplateStepAndUserRoles.size() == 1) {
+                    RFlowTemplateStepAndUserRole tmp = rFlowTemplateStepAndUserRoles.get(0);
+                    Long nowStep = tmp.getFlowTemplateStepId();
 
-            RFlowTemplateStepAndUserRoleExample roleExample = new RFlowTemplateStepAndUserRoleExample();
-            roleExample.createCriteria().andRoleTypeEqualTo(RoleTypeEnum.SPECIAL_ADVISER.code)
-                    .andFlowTemplateStepIdIn(stepIds);
-
-            List<RFlowTemplateStepAndUserRole> rFlowTemplateStepAndUserRoles = rFlowTemplateStepAndUserRoleMapper
-                    .selectByExample(roleExample);
-            if (rFlowTemplateStepAndUserRoles.size() == 1) {
-
-
-                RFlowTemplateStepAndUserRole role = rFlowTemplateStepAndUserRoles.get(0);
-                ApplicationStepExample applicationStepExample = new ApplicationStepExample();
-                applicationStepExample.createCriteria().andFlowTemplateStepIdEqualTo(role.getFlowTemplateStepId())
-                        .andStatusEqualTo(ApplicationPrizeStatusEnum.WAIT_PASS.code)
-                        .andApplicationIdIn(applicationIds);
-                List<ApplicationStep> applicationSteps = applicationStepMapper.selectByExample(applicationStepExample);
-
-                for (ApplicationStep step : applicationSteps) {
-                    step.setStatus(ApplicationPrizeStatusEnum.PASS.code);
-                    applicationStepMapper.updateByPrimaryKeySelective(step);
-
-                    FlowTemplateStep flowTemplateStep = flowTemplateStepMapper.selectByPrimaryKey(step.getFlowTemplateStepId());
-                    FlowTemplateStep nextStep = flowTemplateService.findTheNextStep(flowTemplateStep.getFlowTemplateId(),
-                            flowTemplateStep.getId());
-
-                    ApplicationStep applicationStep = new ApplicationStep();
-                    applicationStep.setFlowTemplateStepId(nextStep.getId());
-                    applicationStep.setStatus(ApplicationPrizeStatusEnum.SUBMIT.code);
-                    applicationStep.setPrimaryTeachingInstitutionId(step.getPrimaryTeachingInstitutionId());
-                    applicationStep.setGradeId(step.getGradeId());
-                    applicationStep.setPrizeId(step.getPrizeId());
-                    applicationStep.setApplicationId(step.getApplicationId());
-                    applicationStepMapper.insertSelective(applicationStep);
+                    rejectStepBefore(nowStep, collegePrize.getCollegeId());
                 }
             }
         }
@@ -1216,64 +1202,35 @@ public class ApplicationService implements IApplicationService {
     public void closeGradeSubmitForSchedule(Long scholarshipId, Long unitId) {
         CollegePrizeExample collegePrizeExample = new CollegePrizeExample();
         collegePrizeExample.createCriteria().andSchoolPrizeIdEqualTo(scholarshipId)
-                .andPrimaryTeachingInstitutionIdEqualTo(unitId);
+                .andCollegeIdEqualTo(unitId);
         List<CollegePrize> collegePrizes = collegePrizeMapper.selectByExample(collegePrizeExample);
         for (CollegePrize collegePrize : collegePrizes) {
-            ApplicationExample applicationExample = new ApplicationExample();
-            collegePrize.setSubmitStatus(false);
-            collegePrizeMapper.updateByPrimaryKeySelective(collegePrize);
-            Scholarship scholarship = scholarshipMapper.selectByPrimaryKey(collegePrize.getScholarshipId());
-            applicationExample.createCriteria().andPrizeInfoIdEqualTo(collegePrize.getPrizeInfoId())
-                    .andPrimaryTeachingInstitutionIdEqualTo(collegePrize.getPrimaryTeachingInstitutionId());
 
-            List<Application> applications = applicationMapper.selectByExampleWithBLOBs(applicationExample);
-            List<Long> applicationIds = new ArrayList<>();
-            if (applications.size() == 0) {
-                return;
-            }
-            for (Application application : applications) {
-                applicationIds.add(application.getId());
-            }
+            GradePrizeExample gradePrizeExample = new GradePrizeExample();
+            gradePrizeExample.createCriteria().andCollegePrizeIdEqualTo(collegePrize.getId());
+            List<GradePrize> gradePrizes = gradePrizeMapper.selectByExample(gradePrizeExample);
+            for (GradePrize gradePrize : gradePrizes) {
+                gradePrize.setStatus(StatusEnum.CLOSE.code);
+                gradePrizeMapper.updateByPrimaryKeySelective(gradePrize);
 
-            FlowTemplateStepExample flowTemplateStepExample = new FlowTemplateStepExample();
-            flowTemplateStepExample.createCriteria().andFlowTemplateIdEqualTo(scholarship.getFlowTemplateId());
-            List<FlowTemplateStep> flowTemplateSteps = flowTemplateStepMapper.selectByExample(flowTemplateStepExample);
-            List<Long> stepIds = new ArrayList<>();
-            for (FlowTemplateStep step : flowTemplateSteps) {
-                stepIds.add(step.getId());
-            }
+                Scholarship scholarship = scholarshipMapper.selectByPrimaryKey(collegePrize.getScholarshipId());
+                FlowTemplateStepExample flowTemplateStepExample = new FlowTemplateStepExample();
+                flowTemplateStepExample.createCriteria().andFlowTemplateIdEqualTo(scholarship.getFlowTemplateId());
+                List<FlowTemplateStep> flowTemplateSteps = flowTemplateStepMapper.selectByExample(flowTemplateStepExample);
+                List<Long> stepIds = new ArrayList<>();
+                for (FlowTemplateStep step : flowTemplateSteps) {
+                    stepIds.add(step.getId());
+                }
 
-            RFlowTemplateStepAndUserRoleExample roleExample = new RFlowTemplateStepAndUserRoleExample();
-            roleExample.createCriteria().andRoleTypeEqualTo(RoleTypeEnum.GRADE_ADVISER.code)
-                    .andFlowTemplateStepIdIn(stepIds);
-
-            List<RFlowTemplateStepAndUserRole> rFlowTemplateStepAndUserRoles = rFlowTemplateStepAndUserRoleMapper
-                    .selectByExample(roleExample);
-            if (rFlowTemplateStepAndUserRoles.size() == 1) {
-                RFlowTemplateStepAndUserRole role = rFlowTemplateStepAndUserRoles.get(0);
-                ApplicationStepExample applicationStepExample = new ApplicationStepExample();
-                applicationStepExample.createCriteria().andFlowTemplateStepIdEqualTo(role.getFlowTemplateStepId())
-                        .andPrimaryTeachingInstitutionIdEqualTo(collegePrize.getPrimaryTeachingInstitutionId())
-                        .andStatusEqualTo(ApplicationPrizeStatusEnum.WAIT_PASS.code)
-                        .andApplicationIdIn(applicationIds);
-                List<ApplicationStep> applicationSteps = applicationStepMapper.selectByExample(applicationStepExample);
-
-                for (ApplicationStep step : applicationSteps) {
-                    step.setStatus(ApplicationPrizeStatusEnum.PASS.code);
-                    applicationStepMapper.updateByPrimaryKeySelective(step);
-
-                    FlowTemplateStep flowTemplateStep = flowTemplateStepMapper.selectByPrimaryKey(step.getFlowTemplateStepId());
-                    FlowTemplateStep nextStep = flowTemplateService.findTheNextStep(flowTemplateStep.getFlowTemplateId(),
-                            flowTemplateStep.getId());
-
-                    ApplicationStep applicationStep = new ApplicationStep();
-                    applicationStep.setFlowTemplateStepId(nextStep.getId());
-                    applicationStep.setStatus(ApplicationPrizeStatusEnum.SUBMIT.code);
-                    applicationStep.setPrimaryTeachingInstitutionId(step.getPrimaryTeachingInstitutionId());
-                    applicationStep.setGradeId(step.getGradeId());
-                    applicationStep.setPrizeId(step.getPrizeId());
-                    applicationStep.setApplicationId(step.getApplicationId());
-                    applicationStepMapper.insertSelective(applicationStep);
+                RFlowTemplateStepAndUserRoleExample roleExample = new RFlowTemplateStepAndUserRoleExample();
+                roleExample.createCriteria().andRoleTypeEqualTo(RoleTypeEnum.COLLEGE.code)
+                        .andFlowTemplateStepIdIn(stepIds);
+                List<RFlowTemplateStepAndUserRole> rFlowTemplateStepAndUserRoles = rFlowTemplateStepAndUserRoleMapper
+                        .selectByExample(roleExample);
+                if (rFlowTemplateStepAndUserRoles.size() == 1) {
+                    RFlowTemplateStepAndUserRole tmp = rFlowTemplateStepAndUserRoles.get(0);
+                    Long nowStep = tmp.getFlowTemplateStepId();
+                    rejectStepBefore(nowStep, unitId);
                 }
             }
         }
@@ -1284,17 +1241,16 @@ public class ApplicationService implements IApplicationService {
     public void closeApplyForSchedule(Long scholarshipId, Long unitId) {
         CollegePrizeExample collegePrizeExample = new CollegePrizeExample();
         collegePrizeExample.createCriteria().andSchoolPrizeIdEqualTo(scholarshipId)
-                .andPrimaryTeachingInstitutionIdEqualTo(unitId);
+                .andCollegeIdEqualTo(unitId);
         List<CollegePrize> collegePrizes = collegePrizeMapper.selectByExample(collegePrizeExample);
         for (CollegePrize collegePrize : collegePrizes) {
-            ApplicationExample applicationExample = new ApplicationExample();
             collegePrize.setApplyStatus(false);
             collegePrizeMapper.updateByPrimaryKeySelective(collegePrize);
         }
     }
 
     @Override
-    public PageInfo getAwardApplicationsByScholarship(UserDTO user, Long scholarshipId, List<Long> studentIds, Integer pageNum, Integer pageSize) {
+    public PageInfo getAwardApplicationsByScholarship(UserDTO user, Long scholarshipId, List<Long> studentIds, Integer pageNum, Integer pageSize) throws RemoteException {
         if (studentIds.size() == 0) {
             return new PageInfo();
         }
@@ -1310,6 +1266,7 @@ public class ApplicationService implements IApplicationService {
         List<Application> list = applicationMapper.selectByExampleWithBLOBs(applicationExample);
         PageInfo pageInfo = new PageInfo(list);
         List<WinningRecordDetailBO> res = new ArrayList<>();
+        RemoteService rs = new RemoteService();
         for (Application application : list) {
             WinningRecordDetailBO bo = new WinningRecordDetailBO();
             Scholarship scholarship = scholarshipMapper.selectByPrimaryKey(application.getScholarshipId());
@@ -1321,28 +1278,12 @@ public class ApplicationService implements IApplicationService {
             if (student != null) {
                 bo.setName(student.getName());
                 bo.setSn(student.getSn());
-            }
 
-            if (student.getPrimaryTeachingInstitutionId() != null) {
-                PrimaryTeachingInstitution primaryTeachingInstitution = primaryTeachingInstitutionMapper
-                        .selectByPrimaryKey(student.getPrimaryTeachingInstitutionId());
-                bo.setCollegeName(primaryTeachingInstitution.getName());
-            }
-
-            if (student.getSecondaryTeachingInstitutionId() != null) {
-                SecondaryTeachingInstitution secondaryTeachingInstitution = secondaryTeachingInstitutionMapper
-                        .selectByPrimaryKey(student.getSecondaryTeachingInstitutionId());
-                bo.setMajorName(secondaryTeachingInstitution.getName());
-            }
-
-            if (student.getGradeId() != null) {
-                Grade grade = gradeMapper.selectByPrimaryKey(student.getGradeId());
-                bo.setGradeName(grade.getName());
-            }
-
-            if (student.getClassesId() != null) {
-                Classes classes = classesMapper.selectByPrimaryKey(student.getClassesId());
-                bo.setClassName(classes.getName());
+                NewStudent tmp = rs.findStudentInfoBySn(student.getSn());
+                bo.setMajorName(tmp.getMajorName());
+                bo.setGradeName(tmp.getGrade());
+                bo.setClassName(tmp.getClassName());
+                bo.setCollegeName(tmp.getCollegeName());
             }
 
             ApplicationExample applicationExample2 = new ApplicationExample();
@@ -1387,8 +1328,8 @@ public class ApplicationService implements IApplicationService {
         List<Integer> status = new ArrayList<>();
         status.add(StatusEnum.OPEN.code);
         GradePrizeExample gradePrizeExample = new GradePrizeExample();
-        gradePrizeExample.createCriteria().andGradeIdIn(user.getMangeGradeId())
-                .andPrimaryTeachingInstitutionIdEqualTo(user.getPrimaryTeachingInstitution().getId())
+        gradePrizeExample.createCriteria().andGradeIn(user.getManageGrades())
+                .andCollegeIdEqualTo(unitId)
                 .andStatusIn(status).andScholarshipIdIn(scholarshipIds);
         List<GradePrize> gradePrizes = gradePrizeMapper.selectByExample(gradePrizeExample);
         if (gradePrizes.size() == 0) {
@@ -1416,7 +1357,7 @@ public class ApplicationService implements IApplicationService {
             bo.setPrizeName(prizeInfo.getPrizeName());
 
             CollegePrizeExample collegePrizeExample = new CollegePrizeExample();
-            collegePrizeExample.createCriteria().andPrimaryTeachingInstitutionIdEqualTo(user.getPrimaryTeachingInstitution().getId())
+            collegePrizeExample.createCriteria().andCollegeIdEqualTo(unitId)
                     .andPrizeInfoIdEqualTo(prizeInfo.getId());
             List<CollegePrize> collegePrizes = collegePrizeMapper.selectByExample(collegePrizeExample);
             CollegePrize collegePrize;
@@ -1430,8 +1371,8 @@ public class ApplicationService implements IApplicationService {
             bo.setApplyStatus(collegePrize.getApplyStatus());
 
             GradePrizeExample gradePrizeExample2 = new GradePrizeExample();
-            gradePrizeExample2.createCriteria().andGradeIdIn(user.getMangeGradeId())
-                    .andPrimaryTeachingInstitutionIdEqualTo(user.getPrimaryTeachingInstitution().getId())
+            gradePrizeExample2.createCriteria().andGradeIn(user.getManageGrades())
+                    .andCollegeIdEqualTo(unitId)
                     .andStatusIn(status).andPrizeInfoIdEqualTo(prizeInfo.getId());
             List<GradePrize> mangeGradePrizes = gradePrizeMapper.selectByExample(gradePrizeExample2);
             Long availableNumber = 0L;
@@ -1441,7 +1382,7 @@ public class ApplicationService implements IApplicationService {
             bo.setAvailableNumber(availableNumber);
 
             PrizeCollegeLimitTimeExample limitTimeExample = new PrizeCollegeLimitTimeExample();
-            limitTimeExample.createCriteria().andPrimaryTeachingInstitutionIdEqualTo(user.getPrimaryTeachingInstitution().getId())
+            limitTimeExample.createCriteria().andCollegeIdEqualTo(unitId)
                     .andScholarshipIdEqualTo(prizeInfo.getScholarshipId());
             List<PrizeCollegeLimitTime> prizeCollegeLimitTimes = prizeCollegeLimitTimeMapper.selectByExample(limitTimeExample);
             if (prizeCollegeLimitTimes.size() == 1) {
@@ -1450,7 +1391,7 @@ public class ApplicationService implements IApplicationService {
             }
 
             RFlowTemplateStepAndUserRoleExample roleExample = new RFlowTemplateStepAndUserRoleExample();
-            roleExample.createCriteria().andRoleTypeEqualTo(RoleTypeEnum.GRADE_ADVISER.code);
+            roleExample.createCriteria().andRoleTypeEqualTo(RoleTypeEnum.GRADE.code);
             List<RFlowTemplateStepAndUserRole> rFlowTemplateStepAndUserRoles = rFlowTemplateStepAndUserRoleMapper
                     .selectByExample(roleExample);
             List<Long> flowTemplateStepIds = new ArrayList<>();
@@ -1463,8 +1404,8 @@ public class ApplicationService implements IApplicationService {
 
             ApplicationExample applicationExample = new ApplicationExample();
             applicationExample.createCriteria().andPrizeInfoIdEqualTo(prizeInfo.getId())
-                    .andPrimaryTeachingInstitutionIdEqualTo(user.getPrimaryTeachingInstitution().getId())
-                    .andGradeIdIn(user.getMangeGradeId());
+                    .andCollegeIdEqualTo(unitId)
+                    .andGradeIn(user.getManageGrades());
             List<Application> applications = applicationMapper.selectByExampleWithBLOBs(applicationExample);
             if (applications.size() == 0) {
                 bo.setApplyNumber(0L);
@@ -1483,7 +1424,7 @@ public class ApplicationService implements IApplicationService {
                 stepExample.clear();
                 List<Integer> tmp = new ArrayList<>();
                 tmp.add(ApplicationPrizeStatusEnum.PASS.code);
-                tmp.add(ApplicationPrizeStatusEnum.WAIT_PASS.code);
+//                tmp.add(ApplicationPrizeStatusEnum.WAIT_PASS.code);
                 stepExample.createCriteria()
                         .andStatusIn(tmp)
                         .andApplicationIdIn(applicationIds).andFlowTemplateStepIdIn(flowTemplateStepIds);
@@ -1500,7 +1441,7 @@ public class ApplicationService implements IApplicationService {
 
     private PageInfo getPrizeForCollegeCheck(UserDTO user, Long unitId, Integer pageNum, Integer pageSize) {
         RFlowTemplateStepAndUserRoleExample roleExample = new RFlowTemplateStepAndUserRoleExample();
-        roleExample.createCriteria().andRoleTypeEqualTo(RoleTypeEnum.SPECIAL_ADVISER.code);
+        roleExample.createCriteria().andRoleTypeEqualTo(RoleTypeEnum.COLLEGE.code);
         List<RFlowTemplateStepAndUserRole> rFlowTemplateStepAndUserRoles = rFlowTemplateStepAndUserRoleMapper
                 .selectByExample(roleExample);
         List<Long> flowTemplateStepIds = new ArrayList<>();
@@ -1515,7 +1456,7 @@ public class ApplicationService implements IApplicationService {
         status.add(StatusEnum.OPEN.code);
         CollegePrizeExample collegePrizeExample = new CollegePrizeExample();
         collegePrizeExample.createCriteria()
-                .andPrimaryTeachingInstitutionIdEqualTo(unitId)
+                .andCollegeIdEqualTo(unitId)
                 .andStatusIn(status);
         PageHelper.startPage(pageNum, pageSize);
         List<CollegePrize> collegePrizes = collegePrizeMapper.selectByExample(collegePrizeExample);
@@ -1544,7 +1485,7 @@ public class ApplicationService implements IApplicationService {
 
             ApplicationExample applicationExample = new ApplicationExample();
             applicationExample.createCriteria().andPrizeInfoIdEqualTo(prizeInfo.getId())
-                    .andPrimaryTeachingInstitutionIdEqualTo(unitId);
+                    .andCollegeIdEqualTo(unitId);
             List<Application> applications = applicationMapper.selectByExampleWithBLOBs(applicationExample);
             if (applications.size() == 0) {
                 bo.setApplyNumber(0L);
@@ -1563,7 +1504,7 @@ public class ApplicationService implements IApplicationService {
                 stepExample.clear();
                 List<Integer> tmp = new ArrayList<>();
                 tmp.add(ApplicationPrizeStatusEnum.PASS.code);
-                tmp.add(ApplicationPrizeStatusEnum.WAIT_PASS.code);
+//                tmp.add(ApplicationPrizeStatusEnum.WAIT_PASS.code);
                 stepExample.createCriteria()
                         .andStatusIn(tmp)
                         .andApplicationIdIn(applicationIds).andFlowTemplateStepIdIn(flowTemplateStepIds);
@@ -1579,7 +1520,7 @@ public class ApplicationService implements IApplicationService {
 
     private PageInfo getPrizeForSchoolCheck(UserDTO user, Long unitId, Integer pageNum, Integer pageSize) {
         RFlowTemplateStepAndUserRoleExample roleExample = new RFlowTemplateStepAndUserRoleExample();
-        roleExample.createCriteria().andRoleTypeEqualTo(RoleTypeEnum.SCHOOL_USER.code);
+        roleExample.createCriteria().andRoleTypeEqualTo(RoleTypeEnum.SCHOOL.code);
         List<RFlowTemplateStepAndUserRole> rFlowTemplateStepAndUserRoles = rFlowTemplateStepAndUserRoleMapper
                 .selectByExample(roleExample);
         List<Long> flowTemplateStepIds = new ArrayList<>();
@@ -1638,7 +1579,7 @@ public class ApplicationService implements IApplicationService {
                 stepExample.clear();
                 List<Integer> tmp = new ArrayList<>();
                 tmp.add(ApplicationPrizeStatusEnum.PASS.code);
-                tmp.add(ApplicationPrizeStatusEnum.WAIT_PASS.code);
+//                tmp.add(ApplicationPrizeStatusEnum.WAIT_PASS.code);
                 stepExample.createCriteria()
                         .andStatusIn(tmp)
                         .andApplicationIdIn(applicationIds).andFlowTemplateStepIdIn(flowTemplateStepIds);

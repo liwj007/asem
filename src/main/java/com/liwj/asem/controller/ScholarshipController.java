@@ -6,6 +6,7 @@ import com.liwj.asem.bo.SelectOfScholarshipBO;
 import com.liwj.asem.data.ResponseData;
 import com.liwj.asem.dto.UserDTO;
 import com.liwj.asem.exception.WSPException;
+import com.liwj.asem.remote.RemoteException;
 import com.liwj.asem.service.IApplicationService;
 import com.liwj.asem.service.IScholarshipService;
 import com.liwj.asem.service.IUserService;
@@ -49,7 +50,7 @@ public class ScholarshipController {
     @RequestMapping(value = "/info", method = RequestMethod.GET)
     public ResponseData getScholarshipInfo(@RequestParam(value = "token") String token,
                                            @RequestParam(value = "id") Long scholarshipId,
-                                           @RequestParam(value = "manageUnit", required = false) Long unitId) throws WSPException {
+                                           @RequestParam(value = "manageUnit", required = false) Long unitId) throws WSPException, RemoteException {
         UserDTO user = userService.getUserByToken(token);
         EntireScholarshipForm bo = scholarshipService.getScholarshipDetailInfo(user, scholarshipId, unitId);
         ResponseData responseData = new ResponseData();
@@ -103,11 +104,11 @@ public class ScholarshipController {
                                                           @RequestParam(value = "pageNum") Integer pageNum,
                                                           @RequestParam(value = "collegeId", required = false) Long collegeId,
                                                           @RequestParam(value = "majorId", required = false) Long majorId,
-                                                          @RequestParam(value = "gradeId", required = false) Long gradeId,
+                                                          @RequestParam(value = "gradeId", required = false) String grade,
                                                           @RequestParam(value = "classId", required = false) Long classId,
-                                                          @RequestParam(value = "content", required = false) String content) throws WSPException {
+                                                          @RequestParam(value = "content", required = false) String content) throws WSPException, RemoteException {
         UserDTO user = userService.getUserByToken(token);
-        List<Long> studentIds = userService.selectStudentsByFilters(collegeId,majorId,gradeId,classId,content);
+        List<Long> studentIds = userService.selectStudentsByFilters(collegeId,majorId,grade,classId,content);
         PageInfo pageInfo = applicationService.getAwardApplicationsByScholarship(user, scholarshipId,studentIds,pageNum, pageSize);
         ResponseData responseData = new ResponseData();
         responseData.setSuccessData(pageInfo);

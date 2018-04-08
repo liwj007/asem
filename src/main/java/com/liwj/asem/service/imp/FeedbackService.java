@@ -10,6 +10,8 @@ import com.liwj.asem.enums.FeedbackStatusEnum;
 import com.liwj.asem.enums.FeedbackTypeEnum;
 import com.liwj.asem.exception.WSPException;
 import com.liwj.asem.model.*;
+import com.liwj.asem.remote.RemoteException;
+import com.liwj.asem.remote.RemoteService;
 import com.liwj.asem.service.IFeedbackService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,14 +32,12 @@ public class FeedbackService implements IFeedbackService {
     @Autowired
     private CollegePrizeMapper collegePrizeMapper;
 
-    @Autowired
-    private PrimaryTeachingInstitutionMapper primaryTeachingInstitutionMapper;
 
     @Autowired
     private PrizeInfoMapper prizeInfoMapper;
 
     @Override
-    @Transactional(rollbackFor=Exception.class)
+    @Transactional(rollbackFor = Exception.class)
     public void applyQuota(UserDTO user, List<FeedbackBO> feedbackBOList) {
         for (FeedbackBO bo : feedbackBOList) {
             QuotaFeedback quotaFeedback = new QuotaFeedback();
@@ -46,7 +46,7 @@ public class FeedbackService implements IFeedbackService {
             quotaFeedback.setPrizeId(bo.getPrizeId());
 
             CollegePrize prize = collegePrizeMapper.selectByPrimaryKey(bo.getPrizeId());
-            quotaFeedback.setPrimaryTeachingInstitutionId(prize.getPrimaryTeachingInstitutionId());
+            quotaFeedback.setCollegeId(prize.getCollegeId());
             quotaFeedback.setApplyUserId(user.getId());
             quotaFeedback.setApplyDate(new Date());
             quotaFeedback.setApplyType(FeedbackTypeEnum.APPLY.code);
@@ -59,7 +59,7 @@ public class FeedbackService implements IFeedbackService {
     }
 
     @Override
-    @Transactional(rollbackFor=Exception.class)
+    @Transactional(rollbackFor = Exception.class)
     public void applyBack(UserDTO user, List<FeedbackBO> feedbackBOList) throws WSPException {
         for (FeedbackBO bo : feedbackBOList) {
             QuotaFeedback quotaFeedback = new QuotaFeedback();
@@ -68,7 +68,7 @@ public class FeedbackService implements IFeedbackService {
             quotaFeedback.setPrizeId(bo.getPrizeId());
 
             CollegePrize collegePrize = collegePrizeMapper.selectByPrimaryKey(bo.getPrizeId());
-            quotaFeedback.setPrimaryTeachingInstitutionId(collegePrize.getPrimaryTeachingInstitutionId());
+            quotaFeedback.setCollegeId(collegePrize.getCollegeId());
             quotaFeedback.setApplyUserId(user.getId());
             quotaFeedback.setApplyDate(new Date());
             quotaFeedback.setApplyType(FeedbackTypeEnum.BACK.code);
@@ -94,7 +94,7 @@ public class FeedbackService implements IFeedbackService {
     public PageInfo getQuotaList(UserDTO user, FeedbackTypeEnum feedbackType, Integer pageSize, Integer pageNum) {
         List<FeedbackBO> res = new ArrayList<>();
         QuotaFeedbackExample quotaFeedbackExample = new QuotaFeedbackExample();
-        quotaFeedbackExample.createCriteria().andPrimaryTeachingInstitutionIdIn(user.getManageCollegeId())
+        quotaFeedbackExample.createCriteria().andCollegeIdIn(user.getManageCollegeIDs())
                 .andApplyTypeEqualTo(feedbackType.code);
         PageHelper.startPage(pageNum, pageSize);
         List<QuotaFeedback> list = quotaFeedbackMapper.selectByExample(quotaFeedbackExample);
@@ -117,13 +117,14 @@ public class FeedbackService implements IFeedbackService {
     }
 
     @Override
-    public PageInfo getAllQuotaList(UserDTO user, FeedbackTypeEnum feedbackType, Integer pageSize, Integer pageNum) {
+    public PageInfo getAllQuotaList(UserDTO user, FeedbackTypeEnum feedbackType, Integer pageSize, Integer pageNum) throws RemoteException {
         List<FeedbackBO> res = new ArrayList<>();
         QuotaFeedbackExample quotaFeedbackExample = new QuotaFeedbackExample();
         quotaFeedbackExample.createCriteria().andApplyTypeEqualTo(feedbackType.code);
         PageHelper.startPage(pageNum, pageSize);
         List<QuotaFeedback> list = quotaFeedbackMapper.selectByExample(quotaFeedbackExample);
         PageInfo pageInfo = new PageInfo(list);
+        RemoteService rs = new RemoteService();
         for (QuotaFeedback quotaFeedback : list) {
             FeedbackBO bo = new FeedbackBO();
             Scholarship scholarship = scholarshipMapper.selectByPrimaryKey(quotaFeedback.getScholarshipId());
@@ -134,8 +135,8 @@ public class FeedbackService implements IFeedbackService {
             bo.setAllocationNumber(quotaFeedback.getAllocationNumber());
             bo.setApplyNumber(quotaFeedback.getApplyNumber());
             bo.setStatus(FeedbackStatusEnum.getNameByCode(quotaFeedback.getStatus()));
-            PrimaryTeachingInstitution institution = primaryTeachingInstitutionMapper.selectByPrimaryKey(quotaFeedback.getPrimaryTeachingInstitutionId());
-            bo.setUnitName(institution.getName());
+            String name = rs.findCollegeNameById(quotaFeedback.getCollegeId());
+            bo.setUnitName(name);
             bo.setId(quotaFeedback.getId());
 
             res.add(bo);
@@ -145,7 +146,7 @@ public class FeedbackService implements IFeedbackService {
     }
 
     @Override
-    @Transactional(rollbackFor=Exception.class)
+    @Transactional(rollbackFor = Exception.class)
     public void checkApplyBatch(List<Long> ids, FeedbackStatusEnum result) {
         for (Long id : ids) {
             QuotaFeedback quotaFeedback = quotaFeedbackMapper.selectByPrimaryKey(id);

@@ -9,7 +9,8 @@ import com.liwj.asem.dto.UserDTO;
 import com.liwj.asem.enums.*;
 import com.liwj.asem.exception.WSPException;
 import com.liwj.asem.model.*;
-import com.liwj.asem.service.IOrganizationService;
+import com.liwj.asem.remote.RemoteException;
+import com.liwj.asem.remote.RemoteService;
 import com.liwj.asem.service.IPrizeService;
 import com.liwj.asem.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,21 +37,21 @@ public class PrizeService implements IPrizeService {
     private GradePrizeMapper gradePrizeMapper;
 
     @Autowired
-    private PrimaryTeachingInstitutionMapper primaryTeachingInstitutionMapper;
-
-    @Autowired
-    private GradeMapper gradeMapper;
-
-    @Autowired
     private IUserService userService;
-
-    @Autowired
-    private IOrganizationService organizationService;
 
     @Autowired
     private PrizeCollegeLimitTimeMapper prizeCollegeLimitTimeMapper;
 
 
+    /**
+     * 学院或学校用户获取管理的奖学金（等级）列表
+     * @param user
+     * @param pageNum
+     * @param pageSize
+     * @param unitId
+     * @return
+     * @throws WSPException
+     */
     @Override
     public PageInfo getManagePrizeLists(UserDTO user, Integer pageNum, Integer pageSize, Long unitId) throws WSPException {
         if (userService.isSchoolUser(user)) {
@@ -68,7 +69,7 @@ public class PrizeService implements IPrizeService {
                 throw new WSPException(ErrorInfo.PARAMS_ERROR);
             }
             CollegePrizeExample collegePrizeExample = new CollegePrizeExample();
-            collegePrizeExample.createCriteria().andPrimaryTeachingInstitutionIdEqualTo(unitId)
+            collegePrizeExample.createCriteria().andCollegeIdEqualTo(unitId)
                     .andStatusNotEqualTo(StatusEnum.CLOSE.code)
                     .andStatusNotEqualTo(StatusEnum.UNREADY.code);
             collegePrizeExample.setOrderByClause("create_date desc, prize_info_id asc");
@@ -105,7 +106,7 @@ public class PrizeService implements IPrizeService {
             }
         } else if (userService.isCollegeManger(user)) {
             CollegePrizeExample collegePrizeExample = new CollegePrizeExample();
-            collegePrizeExample.createCriteria().andPrimaryTeachingInstitutionIdEqualTo(unitId)
+            collegePrizeExample.createCriteria().andCollegeIdEqualTo(unitId)
                     .andStatusNotEqualTo(StatusEnum.CLOSE.code).andStatusNotEqualTo(StatusEnum.UNREADY.code)
                     .andAllocationNumberStatusEqualTo(false);
             List<CollegePrize> collegePrizes = collegePrizeMapper.selectByExample(collegePrizeExample);
@@ -148,7 +149,7 @@ public class PrizeService implements IPrizeService {
                 collegePrize.setNumber(unitPrizeBO.getNumber());
                 collegePrize.setPrizeInfoId(schoolPrize.getPrizeInfoId());
                 collegePrize.setScholarshipId(schoolPrize.getScholarshipId());
-                collegePrize.setPrimaryTeachingInstitutionId(unitPrizeBO.getUnitId());
+                collegePrize.setCollegeId(unitPrizeBO.getUnitId());
                 collegePrize.setScholarshipType(schoolPrize.getScholarshipType());
                 collegePrize.setSchoolPrizeId(schoolPrize.getId());
                 collegePrize.setStatus(StatusEnum.UNREADY.code);
@@ -171,10 +172,14 @@ public class PrizeService implements IPrizeService {
                 gradePrize.setNumber(unitPrizeBO.getNumber());
                 gradePrize.setPrizeInfoId(collegePrize.getPrizeInfoId());
                 gradePrize.setScholarshipId(collegePrize.getScholarshipId());
-                gradePrize.setPrimaryTeachingInstitutionId(collegePrize.getPrimaryTeachingInstitutionId());
-                gradePrize.setGradeId(unitPrizeBO.getUnitId());
+                gradePrize.setCollegeId(collegePrize.getCollegeId());
+                gradePrize.setGrade(unitPrizeBO.getUnitId().toString());
                 gradePrize.setScholarshipType(collegePrize.getScholarshipType());
-                gradePrize.setStatus(StatusEnum.NEW.code);
+                if (collegePrize.getStatus()==StatusEnum.OPEN.code){
+                    gradePrize.setStatus(StatusEnum.OPEN.code);
+                }else{
+                    gradePrize.setStatus(StatusEnum.NEW.code);
+                }
                 gradePrize.setCreateDate(new Date());
                 gradePrize.setCollegePrizeId(collegePrize.getId());
                 gradePrizeMapper.insertSelective(gradePrize);
@@ -197,7 +202,7 @@ public class PrizeService implements IPrizeService {
             return pageInfo;
         } else if (userService.isCollegeManger(user)) {
             CollegePrizeExample collegePrizeExample = new CollegePrizeExample();
-            collegePrizeExample.createCriteria().andPrimaryTeachingInstitutionIdEqualTo(unitId)
+            collegePrizeExample.createCriteria().andCollegeIdEqualTo(unitId)
                     .andStatusNotEqualTo(StatusEnum.CLOSE.code)
                     .andStatusNotEqualTo(StatusEnum.UNREADY.code)
                     .andAllocationNumberStatusEqualTo(true);
@@ -212,7 +217,7 @@ public class PrizeService implements IPrizeService {
     }
 
     @Override
-    public EntireUnitPrizeForm getAwardDetailOfAllocatedNumber(UserDTO user, Long prizeId) throws WSPException {
+    public EntireUnitPrizeForm getAwardDetailOfAllocatedNumber(UserDTO user, Long prizeId) throws WSPException, RemoteException {
         EntireUnitPrizeForm form = new EntireUnitPrizeForm();
         if (userService.isSchoolUser(user)) {
             SchoolPrize schoolPrize = schoolPrizeMapper.selectByPrimaryKey(prizeId);
@@ -233,15 +238,18 @@ public class PrizeService implements IPrizeService {
             CollegePrizeExample collegePrizeExample = new CollegePrizeExample();
             collegePrizeExample.createCriteria().andSchoolPrizeIdEqualTo(schoolPrize.getId());
             List<CollegePrize> collegePrizes = collegePrizeMapper.selectByExample(collegePrizeExample);
+            RemoteService rs = new RemoteService();
             for (CollegePrize child : collegePrizes) {
                 UnitPrizeBO bo = new UnitPrizeBO();
                 bo.setId(child.getId());
                 bo.setNumber(child.getNumber());
                 bo.setMax(schoolPrize.getNumber() - schoolPrize.getRestNumber());
-                PrimaryTeachingInstitution college = primaryTeachingInstitutionMapper
-                        .selectByPrimaryKey(child.getPrimaryTeachingInstitutionId());
-                bo.setUnitName(college.getName());
-                bo.setUnitNumber(organizationService.getNumberOfPrimaryTeachingInstitution(college.getId()));
+
+                String collegeName = rs.findCollegeNameById(child.getCollegeId());
+                bo.setUnitName(collegeName);
+
+                Integer num = rs.findCollegeStudentCount(child.getCollegeId());
+                bo.setUnitNumber(num);
                 form.getList().add(bo);
             }
             return form;
@@ -264,14 +272,16 @@ public class PrizeService implements IPrizeService {
             GradePrizeExample gradePrizeExample = new GradePrizeExample();
             gradePrizeExample.createCriteria().andCollegePrizeIdEqualTo(collegePrize.getId());
             List<GradePrize> gradePrizes = gradePrizeMapper.selectByExample(gradePrizeExample);
+
+            RemoteService rs = new RemoteService();
             for (GradePrize child : gradePrizes) {
                 UnitPrizeBO bo = new UnitPrizeBO();
                 bo.setId(child.getId());
                 bo.setMax(collegePrize.getNumber() - collegePrize.getRestNumber());
                 bo.setNumber(child.getNumber());
-                Grade grade = gradeMapper.selectByPrimaryKey(child.getGradeId());
-                bo.setUnitName(grade.getName());
-                bo.setUnitNumber(organizationService.getNumberOfGrade(grade.getId()));
+                bo.setUnitName(child.getGrade());
+                Integer num = rs.getStudentCountByCollegeAndGrade(child.getCollegeId(),child.getGrade());
+                bo.setUnitNumber(num);
                 form.getList().add(bo);
             }
             return form;
@@ -330,11 +340,11 @@ public class PrizeService implements IPrizeService {
                 criteria.andStatusNotEqualTo(StatusEnum.CLOSE.code).andAllocationTimeStatusEqualTo(false)
                         .andScholarshipTypeEqualTo(ScholarshipTypeEnum.COLLEGE.code)
                         .andNeedGradeCheckEqualTo(needGrade)
-                        .andPrimaryTeachingInstitutionIdEqualTo(unitId);
+                        .andCollegeIdEqualTo(unitId);
                 scholarships = scholarshipMapper.selectByExample(example);
             } else if (scholarshipType == ScholarshipTypeEnum.SCHOOL) {
                 PrizeCollegeLimitTimeExample timeExample = new PrizeCollegeLimitTimeExample();
-                timeExample.createCriteria().andPrimaryTeachingInstitutionIdEqualTo(unitId)
+                timeExample.createCriteria().andCollegeIdEqualTo(unitId)
                         .andAllocationTimeStatusEqualTo(false);
                 List<PrizeCollegeLimitTime> prizeCollegeLimitTimes = prizeCollegeLimitTimeMapper.selectByExample(timeExample);
 
@@ -400,7 +410,7 @@ public class PrizeService implements IPrizeService {
 
                 PrizeCollegeLimitTimeExample timeExample = new PrizeCollegeLimitTimeExample();
                 timeExample.createCriteria().andScholarshipIdEqualTo(scholarship.getId())
-                        .andPrimaryTeachingInstitutionIdEqualTo(bo.getManageUnit());
+                        .andCollegeIdEqualTo(bo.getManageUnit());
                 List<PrizeCollegeLimitTime> limitTimes = prizeCollegeLimitTimeMapper.selectByExample(timeExample);
                 if (limitTimes.size() == 1) {
                     PrizeCollegeLimitTime collegeLimitTime = limitTimes.get(0);
@@ -437,7 +447,7 @@ public class PrizeService implements IPrizeService {
             }
         } else if (userService.isCollegeManger(user)) {
             PrizeCollegeLimitTimeExample limitTimeExample = new PrizeCollegeLimitTimeExample();
-            limitTimeExample.createCriteria().andPrimaryTeachingInstitutionIdEqualTo(unitId)
+            limitTimeExample.createCriteria().andCollegeIdEqualTo(unitId)
                     .andAllocationTimeStatusEqualTo(true);
             List<PrizeCollegeLimitTime> prizeCollegeLimitTimes = prizeCollegeLimitTimeMapper.selectByExample(limitTimeExample);
             List<Long> scholarshipIds = new ArrayList<>();
@@ -461,7 +471,7 @@ public class PrizeService implements IPrizeService {
 
                     PrizeCollegeLimitTimeExample example = new PrizeCollegeLimitTimeExample();
                     example.createCriteria().andScholarshipIdEqualTo(scholarship.getId())
-                            .andPrimaryTeachingInstitutionIdEqualTo(unitId);
+                            .andCollegeIdEqualTo(unitId);
                     List<PrizeCollegeLimitTime> list2 = prizeCollegeLimitTimeMapper.selectByExample(example);
                     if (list2.size() == 1) {
                         PrizeCollegeLimitTime limitTime = list2.get(0);
@@ -489,7 +499,7 @@ public class PrizeService implements IPrizeService {
         if (userService.isCollegeManger(user)) {
             PrizeCollegeLimitTimeExample limitTimeExample = new PrizeCollegeLimitTimeExample();
             limitTimeExample.createCriteria().andScholarshipIdEqualTo(scholarshipId)
-                    .andPrimaryTeachingInstitutionIdEqualTo(unitId);
+                    .andCollegeIdEqualTo(unitId);
             List<PrizeCollegeLimitTime> list = prizeCollegeLimitTimeMapper.selectByExample(limitTimeExample);
             if (list.size() == 1) {
                 PrizeCollegeLimitTime prizeCollegeLimitTime = list.get(0);
@@ -546,13 +556,13 @@ public class PrizeService implements IPrizeService {
 
                 PrizeCollegeLimitTimeExample limitTimeExample = new PrizeCollegeLimitTimeExample();
                 limitTimeExample.createCriteria().andScholarshipIdEqualTo(collegePrize.getScholarshipId())
-                        .andPrimaryTeachingInstitutionIdEqualTo(collegePrize.getPrimaryTeachingInstitutionId());
+                        .andCollegeIdEqualTo(collegePrize.getCollegeId());
                 Long tmp = prizeCollegeLimitTimeMapper.countByExample(limitTimeExample);
                 if (tmp == 0) {
                     PrizeCollegeLimitTime limitTime = new PrizeCollegeLimitTime();
                     limitTime.setAllocationTimeStatus(false);
                     limitTime.setScholarshipId(collegePrize.getScholarshipId());
-                    limitTime.setPrimaryTeachingInstitutionId(collegePrize.getPrimaryTeachingInstitutionId());
+                    limitTime.setCollegeId(collegePrize.getCollegeId());
                     prizeCollegeLimitTimeMapper.insertSelective(limitTime);
                 }
             }
@@ -562,7 +572,7 @@ public class PrizeService implements IPrizeService {
     @Override
     public List<SelectOfScholarshipBO> getScholarshipSelectionForQuotaFeedback(UserDTO user, Long unitId) {
         CollegePrizeExample collegePrizeExample = new CollegePrizeExample();
-        collegePrizeExample.createCriteria().andPrimaryTeachingInstitutionIdEqualTo(unitId)
+        collegePrizeExample.createCriteria().andCollegeIdEqualTo(unitId)
                 .andScholarshipTypeEqualTo(ScholarshipTypeEnum.SCHOOL.code)
                 .andStatusNotEqualTo(StatusEnum.UNREADY.code)
                 .andStatusNotEqualTo(StatusEnum.CLOSE.code);
@@ -659,7 +669,7 @@ public class PrizeService implements IPrizeService {
 
             PrizeCollegeLimitTimeExample timeExample = new PrizeCollegeLimitTimeExample();
             timeExample.createCriteria().andScholarshipIdEqualTo(collegePrize.getScholarshipId())
-                    .andPrimaryTeachingInstitutionIdEqualTo(collegePrize.getPrimaryTeachingInstitutionId());
+                    .andCollegeIdEqualTo(collegePrize.getCollegeId());
             List<PrizeCollegeLimitTime> limitTimes = prizeCollegeLimitTimeMapper.selectByExample(timeExample);
             if (limitTimes.size()>0){
                 PrizeCollegeLimitTime prizeCollegeLimitTime = limitTimes.get(0);

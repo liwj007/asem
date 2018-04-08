@@ -2,6 +2,7 @@ package com.liwj.asem.controller;
 
 import com.liwj.asem.data.ErrorInfo;
 import com.liwj.asem.data.ResponseData;
+import com.liwj.asem.utils.PropertiesUtil;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
@@ -13,6 +14,8 @@ import java.util.UUID;
 @RestController
 @RequestMapping(value = "/files")
 public class FileController {
+    public final static String fileMenu = PropertiesUtil.getStringByKey("uploadFiles");
+
     @RequestMapping(value = "upload", method = RequestMethod.POST)
     public ResponseData testUploadFile(HttpServletRequest req,
                                        MultipartHttpServletRequest multiReq) {
@@ -39,7 +42,7 @@ public class FileController {
         FileInputStream fis = null;
         try {
             fis = (FileInputStream) multiReq.getFile("file").getInputStream();
-            fos = new FileOutputStream(new File(".//uploadFiles//" + newFileName
+            fos = new FileOutputStream(new File(fileMenu + "//" + newFileName
                     + ".")
                     + uploadFileSuffix);
             byte[] temp = new byte[1024];
@@ -82,7 +85,7 @@ public class FileController {
         OutputStream os = null;
         try {
             os = res.getOutputStream();
-            bis = new BufferedInputStream(new FileInputStream(new File(".//uploadFiles//"
+            bis = new BufferedInputStream(new FileInputStream(new File(fileMenu + "//"
                     + fileName)));
             int i = bis.read(buff);
             while (i != -1) {

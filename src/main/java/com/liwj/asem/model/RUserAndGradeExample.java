@@ -224,63 +224,138 @@ public class RUserAndGradeExample {
             return (Criteria) this;
         }
 
-        public Criteria andGradeIdIsNull() {
-            addCriterion("grade_id is null");
+        public Criteria andGradeIsNull() {
+            addCriterion("grade is null");
             return (Criteria) this;
         }
 
-        public Criteria andGradeIdIsNotNull() {
-            addCriterion("grade_id is not null");
+        public Criteria andGradeIsNotNull() {
+            addCriterion("grade is not null");
             return (Criteria) this;
         }
 
-        public Criteria andGradeIdEqualTo(Long value) {
-            addCriterion("grade_id =", value, "gradeId");
+        public Criteria andGradeEqualTo(String value) {
+            addCriterion("grade =", value, "grade");
             return (Criteria) this;
         }
 
-        public Criteria andGradeIdNotEqualTo(Long value) {
-            addCriterion("grade_id <>", value, "gradeId");
+        public Criteria andGradeNotEqualTo(String value) {
+            addCriterion("grade <>", value, "grade");
             return (Criteria) this;
         }
 
-        public Criteria andGradeIdGreaterThan(Long value) {
-            addCriterion("grade_id >", value, "gradeId");
+        public Criteria andGradeGreaterThan(String value) {
+            addCriterion("grade >", value, "grade");
             return (Criteria) this;
         }
 
-        public Criteria andGradeIdGreaterThanOrEqualTo(Long value) {
-            addCriterion("grade_id >=", value, "gradeId");
+        public Criteria andGradeGreaterThanOrEqualTo(String value) {
+            addCriterion("grade >=", value, "grade");
             return (Criteria) this;
         }
 
-        public Criteria andGradeIdLessThan(Long value) {
-            addCriterion("grade_id <", value, "gradeId");
+        public Criteria andGradeLessThan(String value) {
+            addCriterion("grade <", value, "grade");
             return (Criteria) this;
         }
 
-        public Criteria andGradeIdLessThanOrEqualTo(Long value) {
-            addCriterion("grade_id <=", value, "gradeId");
+        public Criteria andGradeLessThanOrEqualTo(String value) {
+            addCriterion("grade <=", value, "grade");
             return (Criteria) this;
         }
 
-        public Criteria andGradeIdIn(List<Long> values) {
-            addCriterion("grade_id in", values, "gradeId");
+        public Criteria andGradeLike(String value) {
+            addCriterion("grade like", value, "grade");
             return (Criteria) this;
         }
 
-        public Criteria andGradeIdNotIn(List<Long> values) {
-            addCriterion("grade_id not in", values, "gradeId");
+        public Criteria andGradeNotLike(String value) {
+            addCriterion("grade not like", value, "grade");
             return (Criteria) this;
         }
 
-        public Criteria andGradeIdBetween(Long value1, Long value2) {
-            addCriterion("grade_id between", value1, value2, "gradeId");
+        public Criteria andGradeIn(List<String> values) {
+            addCriterion("grade in", values, "grade");
             return (Criteria) this;
         }
 
-        public Criteria andGradeIdNotBetween(Long value1, Long value2) {
-            addCriterion("grade_id not between", value1, value2, "gradeId");
+        public Criteria andGradeNotIn(List<String> values) {
+            addCriterion("grade not in", values, "grade");
+            return (Criteria) this;
+        }
+
+        public Criteria andGradeBetween(String value1, String value2) {
+            addCriterion("grade between", value1, value2, "grade");
+            return (Criteria) this;
+        }
+
+        public Criteria andGradeNotBetween(String value1, String value2) {
+            addCriterion("grade not between", value1, value2, "grade");
+            return (Criteria) this;
+        }
+
+        public Criteria andCollegeIdIsNull() {
+            addCriterion("college_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCollegeIdIsNotNull() {
+            addCriterion("college_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCollegeIdEqualTo(Long value) {
+            addCriterion("college_id =", value, "collegeId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCollegeIdNotEqualTo(Long value) {
+            addCriterion("college_id <>", value, "collegeId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCollegeIdGreaterThan(Long value) {
+            addCriterion("college_id >", value, "collegeId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCollegeIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("college_id >=", value, "collegeId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCollegeIdLessThan(Long value) {
+            addCriterion("college_id <", value, "collegeId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCollegeIdLessThanOrEqualTo(Long value) {
+            addCriterion("college_id <=", value, "collegeId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCollegeIdIn(List<Long> values) {
+            addCriterion("college_id in", values, "collegeId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCollegeIdNotIn(List<Long> values) {
+            addCriterion("college_id not in", values, "collegeId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCollegeIdBetween(Long value1, Long value2) {
+            addCriterion("college_id between", value1, value2, "collegeId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCollegeIdNotBetween(Long value1, Long value2) {
+            addCriterion("college_id not between", value1, value2, "collegeId");
+            return (Criteria) this;
+        }
+
+        public Criteria andGradeLikeInsensitive(String value) {
+            addCriterion("upper(grade) like", value.toUpperCase(), "grade");
             return (Criteria) this;
         }
     }

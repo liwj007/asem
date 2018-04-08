@@ -17,7 +17,7 @@ import java.io.IOException;
 @Configuration
 @WebFilter(urlPatterns = "/")
 public class CorsFilter extends OncePerRequestFilter {
-    private final static String ALLOWORIGIN_CORS_A = PropertiesUtil.getStringByKey("frontServer");;
+    private final static String ALLOWORIGIN_CORS_A = PropertiesUtil.getStringByKey("frontServer");
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {

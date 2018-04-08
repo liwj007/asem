@@ -5,17 +5,10 @@ import java.util.Map;
 
 public enum RoleTypeEnum {
     ADMIN(0, "管理员"),
-    OTHER(1, "其他"),
-    INSTRUCTOR(2, "辅导员"),
-    CLASS_TEACHER(3, "班主任"),
-    GRADE_ADVISER(4, "年级辅导员"),
-    DUTY_ADVISER(5, "责任辅导员"),
-    SPECIAL_ADVISER(6, "专项辅导员"),
-    COLLEGE_USER(7, "学院用户"),
-    SCHOOL_USER(8, "学校用户"),
-    SCHOOL_ASSISTANT(9, "学生工作助理"),
-    CLASS_COMMITTEE(10, "班委"),
-    STUDENT(11, "学生");
+    GRADE(1, "年级"),
+    COLLEGE(3, "学院"),
+    SCHOOL(4, "学校"),
+    STUDENT(5, "学生");
 
     public final String desc;
     public final int code;

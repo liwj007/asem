@@ -4,12 +4,12 @@
   <resultMap id="BaseResultMap" type="com.liwj.asem.model.GradePrize">
     <constructor>
       <idArg column="id" javaType="java.lang.Long" jdbcType="BIGINT" />
-      <arg column="primary_teaching_institution_id" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="college_id" javaType="java.lang.Long" jdbcType="BIGINT" />
       <arg column="number" javaType="java.lang.Integer" jdbcType="INTEGER" />
       <arg column="prize_info_id" javaType="java.lang.Long" jdbcType="BIGINT" />
       <arg column="scholarship_id" javaType="java.lang.Long" jdbcType="BIGINT" />
       <arg column="scholarship_type" javaType="java.lang.Integer" jdbcType="INTEGER" />
-      <arg column="grade_id" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="grade" javaType="java.lang.String" jdbcType="VARCHAR" />
       <arg column="status" javaType="java.lang.Integer" jdbcType="INTEGER" />
       <arg column="college_prize_id" javaType="java.lang.Long" jdbcType="BIGINT" />
       <arg column="create_date" javaType="java.util.Date" jdbcType="TIMESTAMP" />
@@ -74,8 +74,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, primary_teaching_institution_id, number, prize_info_id, scholarship_id, scholarship_type, 
-    grade_id, status, college_prize_id, create_date
+    id, college_id, number, prize_info_id, scholarship_id, scholarship_type, grade, status, 
+    college_prize_id, create_date
   </sql>
   <select id="selectByExample" parameterType="com.liwj.asem.model.GradePrizeExample" resultMap="BaseResultMap">
     select
@@ -112,14 +112,14 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into grade_prize (primary_teaching_institution_id, number, 
-      prize_info_id, scholarship_id, scholarship_type, 
-      grade_id, status, college_prize_id, 
-      create_date)
-    values (#{primaryTeachingInstitutionId,jdbcType=BIGINT}, #{number,jdbcType=INTEGER}, 
-      #{prizeInfoId,jdbcType=BIGINT}, #{scholarshipId,jdbcType=BIGINT}, #{scholarshipType,jdbcType=INTEGER}, 
-      #{gradeId,jdbcType=BIGINT}, #{status,jdbcType=INTEGER}, #{collegePrizeId,jdbcType=BIGINT}, 
-      #{createDate,jdbcType=TIMESTAMP})
+    insert into grade_prize (college_id, number, prize_info_id, 
+      scholarship_id, scholarship_type, grade, 
+      status, college_prize_id, create_date
+      )
+    values (#{collegeId,jdbcType=BIGINT}, #{number,jdbcType=INTEGER}, #{prizeInfoId,jdbcType=BIGINT}, 
+      #{scholarshipId,jdbcType=BIGINT}, #{scholarshipType,jdbcType=INTEGER}, #{grade,jdbcType=VARCHAR}, 
+      #{status,jdbcType=INTEGER}, #{collegePrizeId,jdbcType=BIGINT}, #{createDate,jdbcType=TIMESTAMP}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.liwj.asem.model.GradePrize">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -127,8 +127,8 @@
     </selectKey>
     insert into grade_prize
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="primaryTeachingInstitutionId != null">
-        primary_teaching_institution_id,
+      <if test="collegeId != null">
+        college_id,
       </if>
       <if test="number != null">
         number,
@@ -142,8 +142,8 @@
       <if test="scholarshipType != null">
         scholarship_type,
       </if>
-      <if test="gradeId != null">
-        grade_id,
+      <if test="grade != null">
+        grade,
       </if>
       <if test="status != null">
         status,
@@ -156,8 +156,8 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="primaryTeachingInstitutionId != null">
-        #{primaryTeachingInstitutionId,jdbcType=BIGINT},
+      <if test="collegeId != null">
+        #{collegeId,jdbcType=BIGINT},
       </if>
       <if test="number != null">
         #{number,jdbcType=INTEGER},
@@ -171,8 +171,8 @@
       <if test="scholarshipType != null">
         #{scholarshipType,jdbcType=INTEGER},
       </if>
-      <if test="gradeId != null">
-        #{gradeId,jdbcType=BIGINT},
+      <if test="grade != null">
+        #{grade,jdbcType=VARCHAR},
       </if>
       <if test="status != null">
         #{status,jdbcType=INTEGER},
@@ -197,8 +197,8 @@
       <if test="record.id != null">
         id = #{record.id,jdbcType=BIGINT},
       </if>
-      <if test="record.primaryTeachingInstitutionId != null">
-        primary_teaching_institution_id = #{record.primaryTeachingInstitutionId,jdbcType=BIGINT},
+      <if test="record.collegeId != null">
+        college_id = #{record.collegeId,jdbcType=BIGINT},
       </if>
       <if test="record.number != null">
         number = #{record.number,jdbcType=INTEGER},
@@ -212,8 +212,8 @@
       <if test="record.scholarshipType != null">
         scholarship_type = #{record.scholarshipType,jdbcType=INTEGER},
       </if>
-      <if test="record.gradeId != null">
-        grade_id = #{record.gradeId,jdbcType=BIGINT},
+      <if test="record.grade != null">
+        grade = #{record.grade,jdbcType=VARCHAR},
       </if>
       <if test="record.status != null">
         status = #{record.status,jdbcType=INTEGER},
@@ -232,12 +232,12 @@
   <update id="updateByExample" parameterType="map">
     update grade_prize
     set id = #{record.id,jdbcType=BIGINT},
-      primary_teaching_institution_id = #{record.primaryTeachingInstitutionId,jdbcType=BIGINT},
+      college_id = #{record.collegeId,jdbcType=BIGINT},
       number = #{record.number,jdbcType=INTEGER},
       prize_info_id = #{record.prizeInfoId,jdbcType=BIGINT},
       scholarship_id = #{record.scholarshipId,jdbcType=BIGINT},
       scholarship_type = #{record.scholarshipType,jdbcType=INTEGER},
-      grade_id = #{record.gradeId,jdbcType=BIGINT},
+      grade = #{record.grade,jdbcType=VARCHAR},
       status = #{record.status,jdbcType=INTEGER},
       college_prize_id = #{record.collegePrizeId,jdbcType=BIGINT},
       create_date = #{record.createDate,jdbcType=TIMESTAMP}
@@ -248,8 +248,8 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.liwj.asem.model.GradePrize">
     update grade_prize
     <set>
-      <if test="primaryTeachingInstitutionId != null">
-        primary_teaching_institution_id = #{primaryTeachingInstitutionId,jdbcType=BIGINT},
+      <if test="collegeId != null">
+        college_id = #{collegeId,jdbcType=BIGINT},
       </if>
       <if test="number != null">
         number = #{number,jdbcType=INTEGER},
@@ -263,8 +263,8 @@
       <if test="scholarshipType != null">
         scholarship_type = #{scholarshipType,jdbcType=INTEGER},
       </if>
-      <if test="gradeId != null">
-        grade_id = #{gradeId,jdbcType=BIGINT},
+      <if test="grade != null">
+        grade = #{grade,jdbcType=VARCHAR},
       </if>
       <if test="status != null">
         status = #{status,jdbcType=INTEGER},
@@ -280,12 +280,12 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.liwj.asem.model.GradePrize">
     update grade_prize
-    set primary_teaching_institution_id = #{primaryTeachingInstitutionId,jdbcType=BIGINT},
+    set college_id = #{collegeId,jdbcType=BIGINT},
       number = #{number,jdbcType=INTEGER},
       prize_info_id = #{prizeInfoId,jdbcType=BIGINT},
       scholarship_id = #{scholarshipId,jdbcType=BIGINT},
       scholarship_type = #{scholarshipType,jdbcType=INTEGER},
-      grade_id = #{gradeId,jdbcType=BIGINT},
+      grade = #{grade,jdbcType=VARCHAR},
       status = #{status,jdbcType=INTEGER},
       college_prize_id = #{collegePrizeId,jdbcType=BIGINT},
       create_date = #{createDate,jdbcType=TIMESTAMP}

@@ -7,14 +7,17 @@ public class RUserAndGrade implements Serializable {
 
     private Long userId;
 
-    private Long gradeId;
+    private String grade;
+
+    private Long collegeId;
 
     private static final long serialVersionUID = 1L;
 
-    public RUserAndGrade(Long id, Long userId, Long gradeId) {
+    public RUserAndGrade(Long id, Long userId, String grade, Long collegeId) {
         this.id = id;
         this.userId = userId;
-        this.gradeId = gradeId;
+        this.grade = grade;
+        this.collegeId = collegeId;
     }
 
     public RUserAndGrade() {
@@ -37,12 +40,20 @@ public class RUserAndGrade implements Serializable {
         this.userId = userId;
     }
 
-    public Long getGradeId() {
-        return gradeId;
+    public String getGrade() {
+        return grade;
     }
 
-    public void setGradeId(Long gradeId) {
-        this.gradeId = gradeId;
+    public void setGrade(String grade) {
+        this.grade = grade == null ? null : grade.trim();
+    }
+
+    public Long getCollegeId() {
+        return collegeId;
+    }
+
+    public void setCollegeId(Long collegeId) {
+        this.collegeId = collegeId;
     }
 
     @Override
@@ -59,7 +70,8 @@ public class RUserAndGrade implements Serializable {
         RUserAndGrade other = (RUserAndGrade) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
             && (this.getUserId() == null ? other.getUserId() == null : this.getUserId().equals(other.getUserId()))
-            && (this.getGradeId() == null ? other.getGradeId() == null : this.getGradeId().equals(other.getGradeId()));
+            && (this.getGrade() == null ? other.getGrade() == null : this.getGrade().equals(other.getGrade()))
+            && (this.getCollegeId() == null ? other.getCollegeId() == null : this.getCollegeId().equals(other.getCollegeId()));
     }
 
     @Override
@@ -68,7 +80,8 @@ public class RUserAndGrade implements Serializable {
         int result = 1;
         result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
         result = prime * result + ((getUserId() == null) ? 0 : getUserId().hashCode());
-        result = prime * result + ((getGradeId() == null) ? 0 : getGradeId().hashCode());
+        result = prime * result + ((getGrade() == null) ? 0 : getGrade().hashCode());
+        result = prime * result + ((getCollegeId() == null) ? 0 : getCollegeId().hashCode());
         return result;
     }
 }

@@ -4,11 +4,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum UserTypeEnum {
+    NONE(-1, "无用户"),
     ADMIN(0, "管理员"),
-    SCHOOL_USER(1, "学校用户"),
-    COLLEGE_USER(2, "学院用户"),
-    INSTRUCTOR(3, "辅导员用户"),
-    STUDENT(4, "学生用户");
+    STUDENT(1, "学生用户"),
+    SCHOOL_USER(3, "学校用户"),
+    GRADE_INSTRUCTOR(4, "年级辅导员用户"),
+    COLLEGE_USER(5, "学院用户"),
+    SPECIAL_INSTRUCTOR(7, "专项辅导员用户");
 
     public final String desc;
     public final int code;

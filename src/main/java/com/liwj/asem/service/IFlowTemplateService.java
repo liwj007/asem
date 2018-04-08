@@ -13,6 +13,8 @@ import java.util.List;
 public interface IFlowTemplateService {
     FlowTemplateStep findTheNextStep(Long flowTemplateId, Long fromStepTemplateId);
 
+    FlowTemplateStep findTheFrontStep(Long flowTemplateId, Long toStepTemplateId);
+
     void createNewFlowTemplateBySchoolUser(String name, ScholarshipTypeEnum type, Boolean needGradeCheck, Boolean gradeStudent, Boolean collegeStudent);
 
 

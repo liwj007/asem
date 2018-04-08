@@ -14,9 +14,12 @@ import com.liwj.asem.model.AssessmentRecord;
 import com.liwj.asem.model.AssessmentRecordExample;
 import com.liwj.asem.model.User;
 import com.liwj.asem.model.UserExample;
+import com.liwj.asem.remote.RemoteException;
+import com.liwj.asem.remote.RemoteService;
 import com.liwj.asem.service.IComprehensiveEvaluationService;
 import com.liwj.asem.service.IUserService;
 import com.liwj.asem.utils.Common;
+import com.liwj.asem.utils.PropertiesUtil;
 import com.liwj.asem.utils.Util;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -47,38 +50,40 @@ public class ComprehensiveEvaluationService implements IComprehensiveEvaluationS
     @Autowired
     private UserMapper userMapper;
 
+    public final static String fileMenu = PropertiesUtil.getStringByKey("uploadFiles");
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void uploadFiles(List<FileBO> fileBOList) throws IOException, WSPException {
         for (FileBO bo : fileBOList) {
             String fileName = bo.getName();
-            String path = ".//uploadFiles//" + fileName;
+            String path = fileMenu + "//" + fileName;
             readFile(path);
         }
     }
 
     @Override
-    public PageInfo getAssessmentRecordList(Long year, Long college, Long major, Long grade,
-                                            Integer pageNum, Integer pageSize) {
+    public PageInfo getAssessmentRecordList(Long year, Long college, Long major, String grade,
+                                            Integer pageNum, Integer pageSize) throws RemoteException {
         UserExample userExample = new UserExample();
         UserExample.Criteria criteria = userExample.createCriteria();
         boolean flag = false;
         if (college != null && college != 0) {
-            criteria.andPrimaryTeachingInstitutionIdEqualTo(college);
+            criteria.andCollegeIdEqualTo(college);
             flag = true;
         }
         if (major != null && major != 0) {
-            criteria.andSecondaryTeachingInstitutionIdEqualTo(major);
+            criteria.andMajorIdEqualTo(major);
             flag = true;
         }
-        if (grade != null && grade != 0) {
-            criteria.andGradeIdEqualTo(grade);
+        if (grade != null && !"0".equals(grade) && !"".equals(grade)) {
+            criteria.andGradeEqualTo(grade);
             flag = true;
         }
 
         List<String> userSns = new ArrayList<>();
         if (flag) {
-            criteria.andUserTypeEqualTo(RoleTypeEnum.STUDENT.code);
+            criteria.andUserRoleEqualTo(RoleTypeEnum.STUDENT.code);
             List<User> users = userMapper.selectByExample(userExample);
             if (users.size() == 0) {
                 return new PageInfo();
@@ -100,6 +105,7 @@ public class ComprehensiveEvaluationService implements IComprehensiveEvaluationS
         List<AssessmentRecord> list = assessmentRecordMapper.selectByExample(example);
         PageInfo pageInfo = new PageInfo(list);
         List<AssessmentRecordBO> res = new ArrayList<>();
+        RemoteService rs = new RemoteService();
         for (AssessmentRecord record : list) {
             AssessmentRecordBO bo = new AssessmentRecordBO();
             bo.setSn(record.getSn());
@@ -111,6 +117,10 @@ public class ComprehensiveEvaluationService implements IComprehensiveEvaluationS
             User user = userService.getUserBySN(record.getSn());
             if (user != null)
                 bo.setName(user.getName());
+            else {
+                String name = rs.findUserNameBySn(bo.getSn());
+                bo.setName(name);
+            }
             res.add(bo);
         }
         pageInfo.setList(res);
@@ -172,8 +182,8 @@ public class ComprehensiveEvaluationService implements IComprehensiveEvaluationS
             HSSFRow hssfRow = hssfSheet.getRow(rowNum);
 
             Integer academicYear = new Double(hssfRow.getCell(0).getNumericCellValue()).intValue();
-            String Sn  = hssfRow.getCell(1).toString();
-            
+            String Sn = hssfRow.getCell(1).toString();
+
             Integer majorNumber = new Double(hssfRow.getCell(2).getNumericCellValue()).intValue();
             Double compositeScore = hssfRow.getCell(3).getNumericCellValue();
             Integer compositeRank = new Double(hssfRow.getCell(4).getNumericCellValue()).intValue();

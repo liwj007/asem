@@ -6,7 +6,7 @@ import java.util.Date;
 public class CollegePrize implements Serializable {
     private Long id;
 
-    private Long primaryTeachingInstitutionId;
+    private Long collegeId;
 
     private Integer number;
 
@@ -38,9 +38,9 @@ public class CollegePrize implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public CollegePrize(Long id, Long primaryTeachingInstitutionId, Integer number, Integer restNumber, Long prizeInfoId, Long scholarshipId, Integer scholarshipType, Integer status, Integer allocationRule, Integer allocationMethod, Boolean allocationNumberStatus, Long schoolPrizeId, Boolean submitStatus, Boolean applyStatus, Date createDate, Date allocationDate) {
+    public CollegePrize(Long id, Long collegeId, Integer number, Integer restNumber, Long prizeInfoId, Long scholarshipId, Integer scholarshipType, Integer status, Integer allocationRule, Integer allocationMethod, Boolean allocationNumberStatus, Long schoolPrizeId, Boolean submitStatus, Boolean applyStatus, Date createDate, Date allocationDate) {
         this.id = id;
-        this.primaryTeachingInstitutionId = primaryTeachingInstitutionId;
+        this.collegeId = collegeId;
         this.number = number;
         this.restNumber = restNumber;
         this.prizeInfoId = prizeInfoId;
@@ -69,12 +69,12 @@ public class CollegePrize implements Serializable {
         this.id = id;
     }
 
-    public Long getPrimaryTeachingInstitutionId() {
-        return primaryTeachingInstitutionId;
+    public Long getCollegeId() {
+        return collegeId;
     }
 
-    public void setPrimaryTeachingInstitutionId(Long primaryTeachingInstitutionId) {
-        this.primaryTeachingInstitutionId = primaryTeachingInstitutionId;
+    public void setCollegeId(Long collegeId) {
+        this.collegeId = collegeId;
     }
 
     public Integer getNumber() {
@@ -202,7 +202,7 @@ public class CollegePrize implements Serializable {
         }
         CollegePrize other = (CollegePrize) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-            && (this.getPrimaryTeachingInstitutionId() == null ? other.getPrimaryTeachingInstitutionId() == null : this.getPrimaryTeachingInstitutionId().equals(other.getPrimaryTeachingInstitutionId()))
+            && (this.getCollegeId() == null ? other.getCollegeId() == null : this.getCollegeId().equals(other.getCollegeId()))
             && (this.getNumber() == null ? other.getNumber() == null : this.getNumber().equals(other.getNumber()))
             && (this.getRestNumber() == null ? other.getRestNumber() == null : this.getRestNumber().equals(other.getRestNumber()))
             && (this.getPrizeInfoId() == null ? other.getPrizeInfoId() == null : this.getPrizeInfoId().equals(other.getPrizeInfoId()))
@@ -224,7 +224,7 @@ public class CollegePrize implements Serializable {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
-        result = prime * result + ((getPrimaryTeachingInstitutionId() == null) ? 0 : getPrimaryTeachingInstitutionId().hashCode());
+        result = prime * result + ((getCollegeId() == null) ? 0 : getCollegeId().hashCode());
         result = prime * result + ((getNumber() == null) ? 0 : getNumber().hashCode());
         result = prime * result + ((getRestNumber() == null) ? 0 : getRestNumber().hashCode());
         result = prime * result + ((getPrizeInfoId() == null) ? 0 : getPrizeInfoId().hashCode());
