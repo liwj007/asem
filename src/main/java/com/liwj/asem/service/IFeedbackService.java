@@ -8,6 +8,7 @@ import com.liwj.asem.enums.FeedbackStatusEnum;
 import com.liwj.asem.enums.FeedbackTypeEnum;
 import com.liwj.asem.exception.WSPException;
 import com.liwj.asem.remote.RemoteException;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -22,6 +23,8 @@ public interface IFeedbackService {
 
     PageInfo getAllQuotaList(UserDTO user, FeedbackTypeEnum feedbackType, Integer pageSize, Integer pageNum) throws RemoteException;
 
-    void checkApplyBatch(List<Long> ids, FeedbackStatusEnum result);
+    void checkApplyBatch(List<Long> ids, FeedbackStatusEnum result) throws WSPException;
 
+    @Transactional(rollbackFor = Exception.class)
+    void checkSingleApply(Long ids, Integer number) throws WSPException;
 }

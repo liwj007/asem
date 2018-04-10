@@ -42,13 +42,14 @@ public interface IApplicationService {
     void closeSubmit(UserDTO user, Long id, Long unitId) throws WSPException;
 
     @Transactional
-    void closeCollegeSubmitForSchedule(Long scholarshipId);
+    void closeCollegeSubmit(Long scholarshipId);
 
     @Transactional
-    void closeGradeSubmitForSchedule(Long scholarshipId, Long unitId);
+    void closeGradeSubmit(Long scholarshipId, Long unitId);
 
-    @Transactional
-    void closeApplyForSchedule(Long scholarshipId, Long unitId);
+
+    @Transactional(rollbackFor = Exception.class)
+    void closeStudentSubmit(Long scholarshipId, Long unitId);
 
     PageInfo getAwardApplicationsByScholarship(UserDTO user, Long scholarshipId, List<Long> studentIds, Integer pageNum, Integer pageSize) throws RemoteException;
 }

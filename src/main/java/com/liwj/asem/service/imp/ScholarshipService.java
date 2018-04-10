@@ -70,6 +70,7 @@ public class ScholarshipService implements IScholarshipService {
 
     /**
      * 创建奖学金，包括奖学金Scholarship，奖学金等级信息PrizeInfo，学院奖学金等级CollegePrize，学校奖学金SchoolPrize
+     *
      * @param user
      * @param scholarshipBO
      */
@@ -128,7 +129,7 @@ public class ScholarshipService implements IScholarshipService {
                 schoolPrize.setCheckStatus(CheckStatusEnum.NEW.code);
                 schoolPrize.setPrizeInfoId(prizeInfo.getId());
                 schoolPrize.setNumber(avgNumber);
-                schoolPrize.setRestNumber(0);
+                schoolPrize.setRestNumber(avgNumber);
                 schoolPrize.setCreateDate(scholarship.getCreateDate());
                 schoolPrize.setScholarshipId(prizeInfo.getScholarshipId());
                 schoolPrize.setScholarshipType(prizeInfo.getScholarshipType());
@@ -140,7 +141,7 @@ public class ScholarshipService implements IScholarshipService {
                 collegePrize.setPrizeInfoId(prizeInfo.getId());
                 collegePrize.setNumber(avgNumber);
                 collegePrize.setCollegeId(collegeId);
-                collegePrize.setRestNumber(0);
+                collegePrize.setRestNumber(avgNumber);
                 collegePrize.setCreateDate(scholarship.getCreateDate());
                 collegePrize.setScholarshipId(prizeInfo.getScholarshipId());
                 collegePrize.setScholarshipType(prizeInfo.getScholarshipType());
@@ -169,7 +170,7 @@ public class ScholarshipService implements IScholarshipService {
                     schoolPrize.setCheckStatus(CheckStatusEnum.NEW.code);
                     schoolPrize.setPrizeInfoId(prizeInfo.getId());
                     schoolPrize.setNumber(bo.getNumber());
-                    schoolPrize.setRestNumber(0);
+                    schoolPrize.setRestNumber(bo.getNumber());
                     schoolPrize.setCreateDate(scholarship.getCreateDate());
                     schoolPrize.setScholarshipId(prizeInfo.getScholarshipId());
                     schoolPrize.setScholarshipType(prizeInfo.getScholarshipType());
@@ -180,7 +181,7 @@ public class ScholarshipService implements IScholarshipService {
                     collegePrize.setAllocationNumberStatus(false);
                     collegePrize.setPrizeInfoId(prizeInfo.getId());
                     collegePrize.setNumber(bo.getNumber());
-                    collegePrize.setRestNumber(0);
+                    collegePrize.setRestNumber(bo.getNumber());
                     collegePrize.setCreateDate(scholarship.getCreateDate());
                     collegePrize.setScholarshipId(prizeInfo.getScholarshipId());
                     collegePrize.setScholarshipType(prizeInfo.getScholarshipType());
@@ -221,7 +222,6 @@ public class ScholarshipService implements IScholarshipService {
         bo.setScholarshipTypeName(ScholarshipTypeEnum.getNameByCode(scholarship.getScholarshipType()));
         bo.setPrimaryTeachingInstitutionId(scholarship.getCollegeId());
         bo.setScholarshipType(ScholarshipTypeEnum.getByCode(scholarship.getScholarshipType()));
-
 
 
         ScholarshipFileExample fileExample = new ScholarshipFileExample();
@@ -339,80 +339,94 @@ public class ScholarshipService implements IScholarshipService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void openToStudent(UserDTO user, Long scholarshipId) {
+        List<Integer> status = new ArrayList<>();
+        status.add(StatusEnum.RELEASE.code);
+        status.add(StatusEnum.OPEN.code);
+
         Scholarship scholarship = scholarshipMapper.selectByPrimaryKey(scholarshipId);
-        if (scholarship.getAllocationTimeStatus() == false) {
-            return;
-        }
+
         scholarship.setStatus(StatusEnum.OPEN.code);
         scholarshipMapper.updateByPrimaryKeySelective(scholarship);
 
         if (scholarship.getScholarshipType() == ScholarshipTypeEnum.SCHOOL.code) {
             SchoolPrizeExample schoolPrizeExample = new SchoolPrizeExample();
-            schoolPrizeExample.createCriteria().andScholarshipIdEqualTo(scholarshipId);
+            schoolPrizeExample.createCriteria().andScholarshipIdEqualTo(scholarshipId)
+                    .andStatusIn(status);
 
             List<SchoolPrize> schoolPrizes = schoolPrizeMapper.selectByExample(schoolPrizeExample);
             for (SchoolPrize schoolPrize : schoolPrizes) {
                 if (schoolPrize.getAllocationNumberStatus() == false) {
                     continue;
                 }
-                schoolPrize.setStatus(StatusEnum.OPEN.code);
-                schoolPrizeMapper.updateByPrimaryKeySelective(schoolPrize);
 
                 CollegePrizeExample collegePrizeExample = new CollegePrizeExample();
-                collegePrizeExample.createCriteria().andScholarshipIdEqualTo(scholarshipId);
+                collegePrizeExample.createCriteria()
+                        .andScholarshipIdEqualTo(scholarshipId)
+                        .andStatusEqualTo(StatusEnum.NEW.code);
                 List<CollegePrize> collegePrizes = collegePrizeMapper.selectByExample(collegePrizeExample);
-                for (CollegePrize collegePrize: collegePrizes){
+                for (CollegePrize collegePrize : collegePrizes) {
+                    if (scholarship.getNeedGradeCheck()) {
+                        if (collegePrize.getAllocationNumberStatus() == false) {
+                            continue;
+                        }
+
+                        PrizeCollegeLimitTimeExample timeExample = new PrizeCollegeLimitTimeExample();
+                        timeExample.createCriteria().andScholarshipIdEqualTo(scholarshipId)
+                                .andCollegeIdEqualTo(collegePrize.getCollegeId())
+                                .andGradeEndDateIsNotNull();
+                        long c = prizeCollegeLimitTimeMapper.countByExample(timeExample);
+                        if (c == 0) {
+                            continue;
+                        }
+
+                        GradePrizeExample gradePrizeExample = new GradePrizeExample();
+                        gradePrizeExample.createCriteria().andCollegePrizeIdEqualTo(collegePrize.getId());
+                        List<GradePrize> gradePrizes = gradePrizeMapper.selectByExample(gradePrizeExample);
+                        for (GradePrize gradePrize : gradePrizes) {
+                            gradePrize.setStatus(StatusEnum.OPEN.code);
+                            gradePrizeMapper.updateByPrimaryKeySelective(gradePrize);
+                        }
+                    }
                     collegePrize.setStatus(StatusEnum.OPEN.code);
                     collegePrizeMapper.updateByPrimaryKeySelective(collegePrize);
-
-                    PrizeCollegeLimitTimeExample limitTimeExample = new PrizeCollegeLimitTimeExample();
-                    limitTimeExample.createCriteria().andScholarshipIdEqualTo(collegePrize.getScholarshipId())
-                            .andCollegeIdEqualTo(collegePrize.getCollegeId());
-                    Long tmp = prizeCollegeLimitTimeMapper.countByExample(limitTimeExample);
-                    if (tmp == 0) {
-                        PrizeCollegeLimitTime limitTime = new PrizeCollegeLimitTime();
-                        limitTime.setAllocationTimeStatus(true);
-                        limitTime.setScholarshipId(collegePrize.getScholarshipId());
-                        limitTime.setCollegeId(collegePrize.getCollegeId());
-                        limitTime.setStudentEndDate(scholarship.getCollegeEndDate());
-                        if (scholarship.getNeedGradeCheck()){
-                            limitTime.setGradeEndDate(scholarship.getCollegeEndDate());
-                        }
-                        prizeCollegeLimitTimeMapper.insertSelective(limitTime);
-                    }
                 }
 
-                GradePrizeExample gradePrizeExample = new GradePrizeExample();
-                gradePrizeExample.createCriteria().andScholarshipIdEqualTo(scholarshipId);
-
-                GradePrize gradePrize = new GradePrize();
-                gradePrize.setStatus(StatusEnum.OPEN.code);
-
-                gradePrizeMapper.updateByExampleSelective(gradePrize, gradePrizeExample);
+                if (schoolPrize.getStatus() == StatusEnum.RELEASE.code) {
+                    schoolPrize.setStatus(StatusEnum.OPEN.code);
+                    schoolPrizeMapper.updateByPrimaryKeySelective(schoolPrize);
+                }
             }
         } else if (scholarship.getScholarshipType() == ScholarshipTypeEnum.COLLEGE.code) {
             CollegePrizeExample collegePrizeExample = new CollegePrizeExample();
-            collegePrizeExample.createCriteria().andScholarshipIdEqualTo(scholarshipId);
+            collegePrizeExample.createCriteria().andScholarshipIdEqualTo(scholarshipId)
+                    .andStatusEqualTo(StatusEnum.NEW.code);
             List<CollegePrize> collegePrizes = collegePrizeMapper.selectByExample(collegePrizeExample);
 
             for (CollegePrize collegePrize : collegePrizes) {
-                if (collegePrize.getAllocationNumberStatus() == false) {
-                    continue;
+                if (scholarship.getNeedGradeCheck()) {
+                    if (collegePrize.getAllocationNumberStatus() == false) {
+                        continue;
+                    }
+                    PrizeCollegeLimitTimeExample timeExample = new PrizeCollegeLimitTimeExample();
+                    timeExample.createCriteria().andScholarshipIdEqualTo(scholarshipId)
+                            .andCollegeIdEqualTo(collegePrize.getCollegeId())
+                            .andGradeEndDateIsNotNull();
+                    long c = prizeCollegeLimitTimeMapper.countByExample(timeExample);
+                    if (c == 0) {
+                        continue;
+                    }
+                    GradePrizeExample gradePrizeExample = new GradePrizeExample();
+                    gradePrizeExample.createCriteria().andCollegePrizeIdEqualTo(collegePrize.getId());
+                    List<GradePrize> gradePrizes = gradePrizeMapper.selectByExample(gradePrizeExample);
+                    for (GradePrize gradePrize : gradePrizes) {
+                        gradePrize.setStatus(StatusEnum.OPEN.code);
+                        gradePrizeMapper.updateByPrimaryKeySelective(gradePrize);
+                    }
                 }
                 collegePrize.setStatus(StatusEnum.OPEN.code);
                 collegePrizeMapper.updateByPrimaryKeySelective(collegePrize);
-
-                GradePrizeExample gradePrizeExample = new GradePrizeExample();
-                gradePrizeExample.createCriteria().andScholarshipIdEqualTo(scholarshipId);
-
-                GradePrize gradePrize = new GradePrize();
-                gradePrize.setStatus(StatusEnum.OPEN.code);
-
-                gradePrizeMapper.updateByExampleSelective(gradePrize, gradePrizeExample);
             }
         }
-
-
     }
 
     @Override
@@ -453,7 +467,7 @@ public class ScholarshipService implements IScholarshipService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void closeScholarship(UserDTO user, Long scholarshipId) throws WSPException{
+    public void closeScholarship(UserDTO user, Long scholarshipId) throws WSPException {
         Scholarship scholarship = scholarshipMapper.selectByPrimaryKey(scholarshipId);
         if (scholarship == null) {
             return;
@@ -509,7 +523,7 @@ public class ScholarshipService implements IScholarshipService {
                 schoolPrize.setStatus(StatusEnum.CLOSE.code);
                 schoolPrizeMapper.updateByPrimaryKeySelective(schoolPrize);
             }
-        }else if (scholarship.getScholarshipType()==ScholarshipTypeEnum.COLLEGE.code){
+        } else if (scholarship.getScholarshipType() == ScholarshipTypeEnum.COLLEGE.code) {
             FlowTemplateStepExample flowTemplateStepExample = new FlowTemplateStepExample();
             flowTemplateStepExample.createCriteria().andFlowTemplateIdEqualTo(scholarship.getFlowTemplateId());
             List<FlowTemplateStep> flowTemplateSteps = flowTemplateStepMapper.selectByExample(flowTemplateStepExample);

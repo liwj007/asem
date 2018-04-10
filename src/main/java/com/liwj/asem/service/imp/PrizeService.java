@@ -45,6 +45,7 @@ public class PrizeService implements IPrizeService {
 
     /**
      * 学院或学校用户获取管理的奖学金（等级）列表
+     *
      * @param user
      * @param pageNum
      * @param pageSize
@@ -71,7 +72,7 @@ public class PrizeService implements IPrizeService {
             CollegePrizeExample collegePrizeExample = new CollegePrizeExample();
             collegePrizeExample.createCriteria().andCollegeIdEqualTo(unitId)
                     .andStatusNotEqualTo(StatusEnum.CLOSE.code)
-                    .andStatusNotEqualTo(StatusEnum.UNREADY.code);
+                    .andStatusNotEqualTo(StatusEnum.INVISIBLE.code);
             collegePrizeExample.setOrderByClause("create_date desc, prize_info_id asc");
             List<CollegePrize> collegePrizes = collegePrizeMapper.selectByExample(collegePrizeExample);
             PageInfo pageInfo = new PageInfo(collegePrizes);
@@ -82,13 +83,19 @@ public class PrizeService implements IPrizeService {
         return new PageInfo();
     }
 
-    //allocation number
+    /**
+     * 获取未分配过名额的奖学金（等级）列表
+     *
+     * @param user
+     * @param unitId
+     * @return
+     */
     @Override
     public List<SelectOfPrizeBO> getSelectOfUnAllocationNumberPrizes(UserDTO user, Long unitId) {
         List<SelectOfPrizeBO> res = new ArrayList<>();
         if (userService.isSchoolUser(user)) {
             SchoolPrizeExample schoolPrizeExample = new SchoolPrizeExample();
-            schoolPrizeExample.createCriteria().andStatusNotEqualTo(StatusEnum.CLOSE.code)
+            schoolPrizeExample.createCriteria().andStatusEqualTo(StatusEnum.NEW.code)
                     .andAllocationNumberStatusEqualTo(false);
             List<SchoolPrize> schoolPrizes = schoolPrizeMapper.selectByExample(schoolPrizeExample);
             for (SchoolPrize schoolPrize : schoolPrizes) {
@@ -107,7 +114,7 @@ public class PrizeService implements IPrizeService {
         } else if (userService.isCollegeManger(user)) {
             CollegePrizeExample collegePrizeExample = new CollegePrizeExample();
             collegePrizeExample.createCriteria().andCollegeIdEqualTo(unitId)
-                    .andStatusNotEqualTo(StatusEnum.CLOSE.code).andStatusNotEqualTo(StatusEnum.UNREADY.code)
+                    .andStatusEqualTo(StatusEnum.NEW.code)
                     .andAllocationNumberStatusEqualTo(false);
             List<CollegePrize> collegePrizes = collegePrizeMapper.selectByExample(collegePrizeExample);
             for (CollegePrize collegePrize : collegePrizes) {
@@ -127,6 +134,12 @@ public class PrizeService implements IPrizeService {
         return res;
     }
 
+    /**
+     * 为奖学金（等级）分配名额
+     *
+     * @param user
+     * @param entireUnitPrizeForm
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void allocationNumber(UserDTO user, EntireUnitPrizeForm entireUnitPrizeForm) {
@@ -152,7 +165,7 @@ public class PrizeService implements IPrizeService {
                 collegePrize.setCollegeId(unitPrizeBO.getUnitId());
                 collegePrize.setScholarshipType(schoolPrize.getScholarshipType());
                 collegePrize.setSchoolPrizeId(schoolPrize.getId());
-                collegePrize.setStatus(StatusEnum.UNREADY.code);
+                collegePrize.setStatus(StatusEnum.INVISIBLE.code);
                 collegePrize.setCreateDate(new Date());
                 collegePrizeMapper.insertSelective(collegePrize);
             }
@@ -175,11 +188,7 @@ public class PrizeService implements IPrizeService {
                 gradePrize.setCollegeId(collegePrize.getCollegeId());
                 gradePrize.setGrade(unitPrizeBO.getUnitId().toString());
                 gradePrize.setScholarshipType(collegePrize.getScholarshipType());
-                if (collegePrize.getStatus()==StatusEnum.OPEN.code){
-                    gradePrize.setStatus(StatusEnum.OPEN.code);
-                }else{
-                    gradePrize.setStatus(StatusEnum.NEW.code);
-                }
+                gradePrize.setStatus(collegePrize.getStatus());
                 gradePrize.setCreateDate(new Date());
                 gradePrize.setCollegePrizeId(collegePrize.getId());
                 gradePrizeMapper.insertSelective(gradePrize);
@@ -188,6 +197,14 @@ public class PrizeService implements IPrizeService {
 
     }
 
+    /**
+     * 获取已经分配过名额的奖学金（等级）列表
+     * @param user
+     * @param pageNum
+     * @param pageSize
+     * @param unitId
+     * @return
+     */
     @Override
     public PageInfo getAllocatedNumberPrizes(UserDTO user, Integer pageNum, Integer pageSize, Long unitId) {
         if (userService.isSchoolUser(user)) {
@@ -204,7 +221,7 @@ public class PrizeService implements IPrizeService {
             CollegePrizeExample collegePrizeExample = new CollegePrizeExample();
             collegePrizeExample.createCriteria().andCollegeIdEqualTo(unitId)
                     .andStatusNotEqualTo(StatusEnum.CLOSE.code)
-                    .andStatusNotEqualTo(StatusEnum.UNREADY.code)
+                    .andStatusNotEqualTo(StatusEnum.INVISIBLE.code)
                     .andAllocationNumberStatusEqualTo(true);
             collegePrizeExample.setOrderByClause("allocation_date desc, prize_info_id asc");
             List<CollegePrize> collegePrizes = collegePrizeMapper.selectByExample(collegePrizeExample);
@@ -280,7 +297,7 @@ public class PrizeService implements IPrizeService {
                 bo.setMax(collegePrize.getNumber() - collegePrize.getRestNumber());
                 bo.setNumber(child.getNumber());
                 bo.setUnitName(child.getGrade());
-                Integer num = rs.getStudentCountByCollegeAndGrade(child.getCollegeId(),child.getGrade());
+                Integer num = rs.getStudentCountByCollegeAndGrade(child.getCollegeId(), child.getGrade());
                 bo.setUnitNumber(num);
                 form.getList().add(bo);
             }
@@ -320,7 +337,15 @@ public class PrizeService implements IPrizeService {
     }
 
 
-    //allocation time
+    /**
+     * 获取未分配评定时间的奖学金列表
+     *
+     * @param user
+     * @param scholarshipType
+     * @param needGrade
+     * @param unitId
+     * @return
+     */
     @Override
     public List<SelectOfScholarshipBO> getSelectOfUnAllocationTimeScholarships(UserDTO user,
                                                                                ScholarshipTypeEnum scholarshipType,
@@ -330,14 +355,16 @@ public class PrizeService implements IPrizeService {
         if (userService.isSchoolUser(user)) {
             ScholarshipExample example = new ScholarshipExample();
             ScholarshipExample.Criteria criteria = example.createCriteria();
-            criteria.andStatusNotEqualTo(StatusEnum.CLOSE.code).andAllocationTimeStatusEqualTo(false)
+            criteria.andStatusEqualTo(StatusEnum.NEW.code)
+                    .andAllocationTimeStatusEqualTo(false)
                     .andScholarshipTypeEqualTo(ScholarshipTypeEnum.SCHOOL.code);
             scholarships = scholarshipMapper.selectByExample(example);
         } else if (userService.isCollegeManger(user)) {
             if (scholarshipType == ScholarshipTypeEnum.COLLEGE) {
                 ScholarshipExample example = new ScholarshipExample();
                 ScholarshipExample.Criteria criteria = example.createCriteria();
-                criteria.andStatusNotEqualTo(StatusEnum.CLOSE.code).andAllocationTimeStatusEqualTo(false)
+                criteria.andStatusEqualTo(StatusEnum.NEW.code)
+                        .andAllocationTimeStatusEqualTo(false)
                         .andScholarshipTypeEqualTo(ScholarshipTypeEnum.COLLEGE.code)
                         .andNeedGradeCheckEqualTo(needGrade)
                         .andCollegeIdEqualTo(unitId);
@@ -358,7 +385,10 @@ public class PrizeService implements IPrizeService {
                 List<Long> scholarshipIds = new ArrayList<>();
                 scholarshipIds.addAll(tmp);
                 ScholarshipExample example = new ScholarshipExample();
-                example.createCriteria().andStatusNotEqualTo(StatusEnum.CLOSE.code)
+                List<Integer> status = new ArrayList<>();
+                status.add(StatusEnum.RELEASE.code);
+                status.add(StatusEnum.OPEN.code);
+                example.createCriteria().andStatusIn(status)
                         .andIdIn(scholarshipIds)
                         .andNeedGradeCheckEqualTo(needGrade)
                         .andScholarshipTypeEqualTo(ScholarshipTypeEnum.SCHOOL.code);
@@ -378,6 +408,13 @@ public class PrizeService implements IPrizeService {
         return res;
     }
 
+    /**
+     * 为奖学金安排评定时间
+     *
+     * @param user
+     * @param list
+     * @throws WSPException
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void allocationTime(UserDTO user, List<TimeLimitBO> list) throws WSPException {
@@ -425,6 +462,14 @@ public class PrizeService implements IPrizeService {
         }
     }
 
+    /**
+     * 获取已安排评定时间的奖学金列表
+     * @param user
+     * @param pageNum
+     * @param pageSize
+     * @param unitId
+     * @return
+     */
     @Override
     public PageInfo getScholarshipsOfAllocatedTime(UserDTO user, Integer pageNum, Integer pageSize, Long unitId) {
         List<ScholarshipForListBO> res = new ArrayList<>();
@@ -432,6 +477,7 @@ public class PrizeService implements IPrizeService {
         if (userService.isSchoolUser(user)) {
             ScholarshipExample scholarshipExample = new ScholarshipExample();
             scholarshipExample.createCriteria().andAllocationTimeStatusEqualTo(true)
+                    .andStatusNotEqualTo(StatusEnum.CLOSE.code)
                     .andScholarshipTypeEqualTo(ScholarshipTypeEnum.SCHOOL.code);
             scholarshipExample.setOrderByClause("allocation_time_date desc");
             PageHelper.startPage(pageNum, pageSize);
@@ -443,6 +489,7 @@ public class PrizeService implements IPrizeService {
                 bo.setScholarshipName(scholarship.getScholarshipName());
                 bo.setStudentBeginDate(scholarship.getStudentBeginDate());
                 bo.setCollegeEndDate(scholarship.getCollegeEndDate());
+                bo.setStatus(StatusEnum.getNameByCode(scholarship.getStatus()));
                 res.add(bo);
             }
         } else if (userService.isCollegeManger(user)) {
@@ -468,6 +515,7 @@ public class PrizeService implements IPrizeService {
                     bo.setScholarshipName(scholarship.getScholarshipName());
                     bo.setStudentBeginDate(scholarship.getStudentBeginDate());
                     bo.setCollegeEndDate(scholarship.getCollegeEndDate());
+                    bo.setStatus(StatusEnum.getNameByCode(scholarship.getStatus()));
 
                     PrizeCollegeLimitTimeExample example = new PrizeCollegeLimitTimeExample();
                     example.createCriteria().andScholarshipIdEqualTo(scholarship.getId())
@@ -539,16 +587,34 @@ public class PrizeService implements IPrizeService {
         }
     }
 
+    /**
+     * 学校奖学金发布给学院管理员
+     *
+     * @param prizeList
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void releaseToCollege(List<Long> prizeList) {
+    public void releaseToCollege(List<Long> prizeList) throws WSPException {
         for (Long id : prizeList) {
             SchoolPrize schoolPrize = schoolPrizeMapper.selectByPrimaryKey(id);
+            Scholarship scholarship = scholarshipMapper.selectByPrimaryKey(schoolPrize.getScholarshipId());
+
+            if (scholarship.getAllocationTimeStatus()==false ||
+                    schoolPrize.getAllocationNumberStatus() == false){
+                throw new WSPException(ErrorInfo.NO_ARRANGE);
+            }
+
+
             schoolPrize.setStatus(StatusEnum.RELEASE.code);
             schoolPrizeMapper.updateByPrimaryKeySelective(schoolPrize);
 
+
+            scholarship.setStatus(StatusEnum.RELEASE.code);
+            scholarshipMapper.updateByPrimaryKeySelective(scholarship);
+
             CollegePrizeExample collegePrizeExample = new CollegePrizeExample();
-            collegePrizeExample.createCriteria().andSchoolPrizeIdEqualTo(schoolPrize.getId());
+            collegePrizeExample.createCriteria().andSchoolPrizeIdEqualTo(schoolPrize.getId())
+                    .andStatusEqualTo(StatusEnum.INVISIBLE.code);
             List<CollegePrize> collegePrizes = collegePrizeMapper.selectByExample(collegePrizeExample);
             for (CollegePrize collegePrize : collegePrizes) {
                 collegePrize.setStatus(StatusEnum.NEW.code);
@@ -569,12 +635,18 @@ public class PrizeService implements IPrizeService {
         }
     }
 
+    /**
+     * 为名额申请或退回获取学校奖学金（等级）列表
+     * @param user
+     * @param unitId
+     * @return
+     */
     @Override
     public List<SelectOfScholarshipBO> getScholarshipSelectionForQuotaFeedback(UserDTO user, Long unitId) {
         CollegePrizeExample collegePrizeExample = new CollegePrizeExample();
         collegePrizeExample.createCriteria().andCollegeIdEqualTo(unitId)
                 .andScholarshipTypeEqualTo(ScholarshipTypeEnum.SCHOOL.code)
-                .andStatusNotEqualTo(StatusEnum.UNREADY.code)
+                .andStatusNotEqualTo(StatusEnum.INVISIBLE.code)
                 .andStatusNotEqualTo(StatusEnum.CLOSE.code);
         List<CollegePrize> collegePrizes = collegePrizeMapper.selectByExample(collegePrizeExample);
         HashMap<Long, SelectOfScholarshipBO> map = new HashMap<>();
@@ -671,10 +743,10 @@ public class PrizeService implements IPrizeService {
             timeExample.createCriteria().andScholarshipIdEqualTo(collegePrize.getScholarshipId())
                     .andCollegeIdEqualTo(collegePrize.getCollegeId());
             List<PrizeCollegeLimitTime> limitTimes = prizeCollegeLimitTimeMapper.selectByExample(timeExample);
-            if (limitTimes.size()>0){
+            if (limitTimes.size() > 0) {
                 PrizeCollegeLimitTime prizeCollegeLimitTime = limitTimes.get(0);
                 bo.setTimeStatus(prizeCollegeLimitTime.getAllocationTimeStatus());
-            }else{
+            } else {
                 bo.setTimeStatus(false);
             }
 

@@ -33,7 +33,7 @@ public interface IPrizeService {
 
     void updateAllocationTime(UserDTO user,TimeLimitBO timeLimitBO);
 
-    void releaseToCollege(List<Long> prizeList);
+    void releaseToCollege(List<Long> prizeList) throws WSPException;
 
     List<SelectOfScholarshipBO> getScholarshipSelectionForQuotaFeedback(UserDTO user, Long unitId);
 

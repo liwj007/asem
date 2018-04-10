@@ -30,6 +30,9 @@ public class FeedbackService implements IFeedbackService {
     private ScholarshipMapper scholarshipMapper;
 
     @Autowired
+    private SchoolPrizeMapper schoolPrizeMapper;
+
+    @Autowired
     private CollegePrizeMapper collegePrizeMapper;
 
 
@@ -85,6 +88,10 @@ public class FeedbackService implements IFeedbackService {
                 throw new WSPException(ErrorInfo.NUMBER_OUT_LIMIT);
             }
             collegePrizeMapper.updateByPrimaryKeySelective(collegePrize);
+
+            SchoolPrize schoolPrize = schoolPrizeMapper.selectByPrimaryKey(collegePrize.getSchoolPrizeId());
+            schoolPrize.setRestNumber(schoolPrize.getRestNumber() + bo.getApplyNumber());
+            schoolPrizeMapper.updateByPrimaryKeySelective(schoolPrize);
 
         }
     }
@@ -147,17 +154,49 @@ public class FeedbackService implements IFeedbackService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void checkApplyBatch(List<Long> ids, FeedbackStatusEnum result) {
+    public void checkApplyBatch(List<Long> ids, FeedbackStatusEnum result) throws WSPException {
         for (Long id : ids) {
             QuotaFeedback quotaFeedback = quotaFeedbackMapper.selectByPrimaryKey(id);
-            quotaFeedback.setStatus(result.code);
-            quotaFeedbackMapper.updateByPrimaryKeySelective(quotaFeedback);
 
             if (result == FeedbackStatusEnum.PASS) {
                 CollegePrize collegePrize = collegePrizeMapper.selectByPrimaryKey(quotaFeedback.getPrizeId());
-                collegePrize.setNumber(collegePrize.getNumber() + quotaFeedback.getApplyNumber());
-                collegePrizeMapper.updateByPrimaryKeySelective(collegePrize);
+                SchoolPrize schoolPrize = schoolPrizeMapper.selectByPrimaryKey(collegePrize.getSchoolPrizeId());
+                if (schoolPrize.getRestNumber() >= quotaFeedback.getApplyNumber()) {
+                    collegePrize.setNumber(collegePrize.getNumber() + quotaFeedback.getApplyNumber());
+                    collegePrizeMapper.updateByPrimaryKeySelective(collegePrize);
+
+                    schoolPrize.setRestNumber(schoolPrize.getRestNumber() - quotaFeedback.getApplyNumber());
+                    schoolPrizeMapper.updateByPrimaryKeySelective(schoolPrize);
+                } else {
+                    throw new WSPException(ErrorInfo.NO_REST_NUMBER);
+                }
             }
+
+            quotaFeedback.setStatus(result.code);
+            quotaFeedbackMapper.updateByPrimaryKeySelective(quotaFeedback);
         }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void checkSingleApply(Long id, Integer number) throws WSPException {
+        QuotaFeedback quotaFeedback = quotaFeedbackMapper.selectByPrimaryKey(id);
+
+        CollegePrize collegePrize = collegePrizeMapper.selectByPrimaryKey(quotaFeedback.getPrizeId());
+        SchoolPrize schoolPrize = schoolPrizeMapper.selectByPrimaryKey(collegePrize.getSchoolPrizeId());
+        if (schoolPrize.getRestNumber() >= number) {
+            collegePrize.setNumber(collegePrize.getNumber() + number);
+            collegePrizeMapper.updateByPrimaryKeySelective(collegePrize);
+
+            quotaFeedback.setStatus(FeedbackStatusEnum.PASS.code);
+            quotaFeedback.setApplyNumber(number);
+            quotaFeedbackMapper.updateByPrimaryKeySelective(quotaFeedback);
+
+            schoolPrize.setRestNumber(schoolPrize.getRestNumber() - number);
+            schoolPrizeMapper.updateByPrimaryKeySelective(schoolPrize);
+        } else {
+            throw new WSPException(ErrorInfo.NO_REST_NUMBER);
+        }
+
     }
 }

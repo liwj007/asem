@@ -536,10 +536,11 @@ public class PublicityService implements IPublicityService {
         publicityExample.createCriteria().andCollegeIdEqualTo(unitId)
                 .andStatusIn(status);
         List<Publicity> publicities = publicityMapper.selectByExample(publicityExample);
-        List<Long> publicityIds = new ArrayList<>();
-        if (publicityIds.size()==0){
+
+        if (publicities.size()==0){
             return  new PageInfo();
         }
+        List<Long> publicityIds = new ArrayList<>();
         for (Publicity publicity : publicities) {
             publicityIds.add(publicity.getId());
         }

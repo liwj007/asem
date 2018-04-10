@@ -6,8 +6,8 @@
     <groupId>com.liwj</groupId>
     <artifactId>asem</artifactId>
     <version>1.0</version>
-    <packaging>jar</packaging>
-    <!--<packaging>war</packaging>-->
+    <!--<packaging>jar</packaging>-->
+    <packaging>war</packaging>
 
     <name>asem</name>
     <description>asem</description>
@@ -125,7 +125,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-tomcat</artifactId>
-            <!--<scope>provided</scope>-->
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

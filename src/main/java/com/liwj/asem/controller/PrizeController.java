@@ -137,6 +137,17 @@ public class PrizeController {
         return responseData;
     }
 
+    @RequestMapping(value = "/check_single_quota_apply", method = RequestMethod.POST)
+    public ResponseData getAllApplyQuotaList(@RequestParam(value = "token") String token,
+                                             @RequestParam(value = "id") Long id,
+                                             @RequestParam(value = "number") Integer number) throws WSPException {
+//        UserDTO user = userService.getUserByToken(token);
+        feedbackService.checkSingleApply(id, number);
+        ResponseData responseData = new ResponseData();
+        responseData.setSuccessData(null);
+        return responseData;
+    }
+
     @RequestMapping(value = "/getPrizesByScholarship", method = RequestMethod.GET)
     public ResponseData getPrizesByScholarship(@RequestParam(value = "token") String token,
                                              @RequestParam(value = "scholarshipId") Long scholarshipId) throws WSPException {
